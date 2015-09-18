@@ -1,0 +1,16 @@
+# language_setting
+language: node_js
+
+# version numberes, testing against two versions of node
+node_js:
+  - 0.11.15
+
+# npm install runs by default but shown here for illustrative purposes
+before_install:
+ - npm install docco
+ - npm install coffee-script
+
+# Running npm test to run your test cases
+script:
+ - npm test
+
