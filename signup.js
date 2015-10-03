@@ -6,29 +6,21 @@ var server = require('http').createServer(app);
 var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
 var dbfile = "database.db";
-var existed = (function() {
-	try {
-		return fs.statSync(dbfile).isFile();
-	} catch (err) {
-		return false;
-	}
-})(dbfile);
+var dbExisted = false;
 
 
 var bodyParser = require('body-parser');
-var db = new sqlite3.Database(dbfile);
+var db = new sqlite3.Database(dbfile, function(err) {
+	if (!err) {
+		db.serialize(function() {
+			db.run("CREATE TABLE IF NOT EXISTS users (user TEXT, password TEXT)");
+		});
+		dbExisted = true;
+	}
+});
 
 var bannedUsersDict = {}; // a dictionary of banned users
 parseBannedUsers();
-
-
-// Initializes database
-db.serialize(function() {
-	if (!existed) {
-		db.run('CREATE TABLE users (user TEXT, password TEXT)');
-		existed = true;
-	}
-});
 
 
 app.use(bodyParser.json()); // support JSON-encoded bodies
@@ -42,6 +34,8 @@ app.use(bodyParser.urlencoded( { // support URL-encoded bodies
 app.post('/register', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
+	//console.log(username);
+	//console.log(password);
 	if (!qualifiedUsernamePassword(username, password)) {
 		response(res, 401, username, "Username and/or password does not meet requirements");
 	} else {
@@ -69,7 +63,7 @@ function response(res, statusCode, username, mess) {
 var loggedInUsers = {}; // for unit test only, delete when intergrate
 function checkUserExisted(res, username, password) {
 	db.serialize(function() {
-		if (existed) {
+		if (dbExisted) {
 			db.get("SELECT * FROM users WHERE user='" + username +"'", function(err, row) {
 				if (err) {
 					response(res, 500, username, "Internal server error");
