@@ -6,58 +6,114 @@ var server = require('http').createServer(app);
 var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
 var dbfile = "database.db";
-var existed = fs.existsSync(dbfile);
+var existed = (function() {
+	try {
+		return fs.statSync(dbfile).isFile();
+	} catch (err) {
+		return false;
+	}
+})(dbfile);
+
+
 var bodyParser = require('body-parser');
 var db = new sqlite3.Database(dbfile);
+
+var bannedUsersDict = {}; // a dictionary of banned users
+parseBannedUsers();
+
 
 // Initializes database
 db.serialize(function() {
 	if (!existed) {
 		db.run('CREATE TABLE users (user TEXT, password TEXT)');
+		existed = true;
 	}
 });
 
 
-// Gets info from signup page
-// Returns the signup status code to imply types of success or failure
 app.use(bodyParser.json()); // support JSON-encoded bodies
 app.use(bodyParser.urlencoded( { // support URL-encoded bodies
 	extended: true,
 }));
 
+
+// Gets info from signup page
+// Returns the signup status code to imply types of success or failure
 app.post('/register', function(req, res) {
 	var username = req.body.username;
 	var password = req.body.password;
-	checkUserExisted(res, username, password);
+	if (!qualifiedUsernamePassword(username, password)) {
+		response(res, 401, username, "Username and/or password does not meet requirements");
+	} else {
+		checkUserExisted(res, username, password);
+	}
 });
 
 
+// Sends response with statusCode, username and statusMessage
+function response(res, statusCode, username, mess) {
+	res.set("Content-Type", "application/json");
+	var jsonData = JSON.stringify({
+		"username": username,
+		"statusMessage": mess
+	});
+	res.status(statusCode).send(jsonData);
+}
+
+
 // Checks if users existed 
-// If not: creates new user in database, returns code 204
-// If existed and correct password: returns code 200
+// If not: creates new user in database, returns code 201
+// If existed and correct password: adds to loggedInUsers list, returns code 200
 // If existed and incorrect password: returns error code 401
 // If cannot query database: returns error code 500
+var loggedInUsers = {}; // for unit test only, delete when intergrate
 function checkUserExisted(res, username, password) {
 	db.serialize(function() {
 		if (existed) {
-			db.get("SELECT * FROM users WHERE user=" + escape(username), function(err, row) {
+			db.get("SELECT * FROM users WHERE user='" + username +"'", function(err, row) {
 				if (err) {
-					res.status(500).send("Internal Server Error"); 
+					response(res, 500, username, "Internal server error");
+					return;
 				}
 
 				if (row === undefined) { // empty result
 					db.run("INSERT into users (user, password) VALUES (?, ?)",
 						username, password);
-						res.status(204).send("New Account Created");
+						response(res, 201, username, "New user created");
+				} else if (row.password === password) {
+					loggedInUsers[username] = true;
+					response(res, 200, username, "OK");
 				} else {
-					if (row.password === password) {
-						res.status(200).send("OK");
-					} else {
-						res.status(401).send("Unauthorized");
-					}
+					response(res, 401, username, "Unauthorized");
 				}
 			});
+		} else {
+			response(res, 500, username, "Internal server error");
+			//console.log("database not existed");
 		}	
+	});
+}
+
+
+// Checks if username and password comply with the requirements, return a boolean value
+// Usrename must have >= 3 characters and not in the list
+// http://blog.postbit.com/reserved-username-list.html
+// Password must have >= 4 characters
+function qualifiedUsernamePassword(username, password) {
+	if (username.length < 3 || password.length < 4 || username in bannedUsersDict) {
+		return false;
+	}
+	return true;
+}
+
+
+// Parses the banned users text file into a dictionary
+function parseBannedUsers() {
+	fs.readFile("bannedUsers.txt", "utf8", function (err, data) {
+		bannedList = data.split(/\s+/);
+		for (var i = 0; i < bannedList.length; i++) {
+			bannedUsersDict[bannedList[i]] = true;
+		}
 	});
 }
 
