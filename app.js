@@ -21,7 +21,14 @@ var loggedInUsers = {}
 
 passport.use(new Strategy(
   function(username, password, cb) {
+    if (loggedInUsers[username]) {
+      var dic ={}
+      dic["username"] = username;
+      // console.log("This way");
+      return cb(null, dic);
+    }
     login.findByUsername(username, function(err, user) {
+      // console.log("ASD");
       if (err) { return cb(err); }
       if (!user) { return cb(null, false); }
       if (user.password != password) { return cb(null, false); }
@@ -30,12 +37,12 @@ passport.use(new Strategy(
   }));
 
 passport.serializeUser(function(user, cb) {
-  	cb(null, user.id);
+  	cb(null, user.username);
 });
 
 passport.deserializeUser(function(id, cb) {
 	console.log("deserializer: " + id);
-  login.findById(id, function (err, user) {
+  login.findByUsername(id, function (err, user) {
     if (err) { return cb(err); }
     cb(null, user);
   });
@@ -61,14 +68,14 @@ app.get('/login', function(req, res) {
   res.sendFile(__dirname + '/login.html');
 });
 
-app.get('/isLogin',
-  function(req, res) {
-    if (req.isAuthenticated()) {
-      res.json(req.user);
-    }else{
-      res.end("NO");
-    }
-  });
+// app.get('/isLogin',
+//   function(req, res) {
+//     if (req.isAuthenticated()) {
+//       res.json(req.user);
+//     }else{
+//       res.end("NO");
+//     }
+//   });
 
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/' }),
@@ -88,14 +95,18 @@ app.get('/logout',
     res.redirect('/');
   });
 
-app.post('/register', signup.register, passport.authenticate('local', { failureRedirect: '/' }),
+app.post('/register', signup.register, function(req, res, next){
+  console.log(req.body.username);
+  loggedInUsers[req.body.username] = true;
+  next();
+}, passport.authenticate('local', { failureRedirect: '/' }),
   function(req, res) {
     loggedInUsers[req.user.username] = true;
     console.log("login");
     console.log(loggedInUsers);
     res.status(200).json({"success": true});
 });
-app.get('/getUsers', function(req, res){
+app.get('/getUsers', require('connect-ensure-login').ensureLoggedIn(), function(req, res){
   getUsers.getAllUsers(req, res, loggedInUsers);
 });
 
