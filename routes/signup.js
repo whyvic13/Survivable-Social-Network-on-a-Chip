@@ -1,90 +1,93 @@
 // Process signup function
-// Checks if the user existed and returns a success/error code 
+// Checks if the user existed and returns a success/error code
 
-var app = require('express')();
-var server = require('http').createServer(app);
 var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
-var dbfile = "database.db";
-var dbExisted = false;
-
+var path = require('path');
+var dbfile = path.join(__dirname, "./database.db");
+// var dbExisted = false;
 
 var bodyParser = require('body-parser');
-var db = new sqlite3.Database(dbfile, function(err) {
-	if (!err) {
-		db.serialize(function() {
-			db.run("CREATE TABLE IF NOT EXISTS users (user TEXT, password TEXT)");
-		});
-		dbExisted = true;
-	}
-});
+var db = new sqlite3.Database(dbfile);
+// var db = new sqlite3.Database(dbfile, function(err) {
+// 	if (!err) {
+// 		db.serialize(function() {
+// 			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT)");
+// 		});
+// 		dbExisted = true;
+// 	}
+// });
 
 var bannedUsersDict = {}; // a dictionary of banned users
 parseBannedUsers();
 
-
-app.use(bodyParser.json()); // support JSON-encoded bodies
-app.use(bodyParser.urlencoded( { // support URL-encoded bodies
-	extended: true,
-}));
+// app.use(bodyParser.json()); // support JSON-encoded bodies
+// app.use(bodyParser.urlencoded( { // support URL-encoded bodies
+// 	extended: true,
+// }));
 
 
 // Gets info from signup page
 // Returns the signup status code to imply types of success or failure
-app.post('/register', function(req, res) {
+exports.register = function(req, res, next) {
 	var username = req.body.username;
 	var password = req.body.password;
 	//console.log(username);
 	//console.log(password);
 	if (!qualifiedUsernamePassword(username, password)) {
-		response(res, 401, username, "Username and/or password does not meet requirements");
+		response(req, res, 401, username, "Username and/or password does not meet requirements", next);
 	} else {
-		checkUserExisted(res, username, password);
+		checkUserExisted(req, res, username, password, next);
 	}
-});
-
-
-// Sends response with statusCode, username and statusMessage
-function response(res, statusCode, username, mess) {
-	res.set("Content-Type", "application/json");
-	var jsonData = JSON.stringify({
-		"username": username,
-		"statusMessage": mess
-	});
-	res.status(statusCode).send(jsonData);
 }
 
 
-// Checks if users existed 
+
+// Sends response with statusCode, username and statusMessage
+function response(req, res, statusCode, username, mess, next) {
+	res.set("Content-Type", "application/json");
+
+	var jsonData = JSON.stringify({
+		"username": username,
+		"statusMessage": mess,
+		"statusCode": statusCode
+	});
+	res.status(statusCode).send(jsonData);
+
+}
+
+
+// Checks if users existed
 // If not: creates new user in database, returns code 201
 // If existed and correct password: adds to loggedInUsers list, returns code 200
 // If existed and incorrect password: returns error code 401
 // If cannot query database: returns error code 500
-var loggedInUsers = {}; // for unit test only, delete when intergrate
-function checkUserExisted(res, username, password) {
+// var loggedInUsers = {}; // for unit test only, delete when intergrate
+function checkUserExisted(req, res, username, password, next) {
 	db.serialize(function() {
 		if (dbExisted) {
-			db.get("SELECT * FROM users WHERE user='" + username +"'", function(err, row) {
+			db.get("SELECT * FROM users WHERE username='" + username +"'", function(err, row) {
 				if (err) {
-					response(res, 500, username, "Internal server error");
+					response(req, res, 500, username, "Internal server error", next);
 					return;
 				}
 
 				if (row === undefined) { // empty result
-					db.run("INSERT into users (user, password) VALUES (?, ?)",
+					db.run("INSERT into users (username, password) VALUES (?, ?)",
 						username, password);
-						response(res, 201, username, "New user created");
+						response(req, res, 201, username, "New user created", next);
 				} else if (row.password === password) {
-					loggedInUsers[username] = true;
-					response(res, 200, username, "OK");
+					// loggedInUsers[username] = true;
+					// response(req, res, 200, username, "OK", next);
+					next();
 				} else {
-					response(res, 401, username, "Unauthorized");
+					response(req, res, 401, username, "Unauthorized", next);
 				}
 			});
 		} else {
-			response(res, 500, username, "Internal server error");
+			response(req, res, 500, username, "Internal server error", next);
 			//console.log("database not existed");
-		}	
+		}
 	});
 }
 
@@ -103,14 +106,11 @@ function qualifiedUsernamePassword(username, password) {
 
 // Parses the banned users text file into a dictionary
 function parseBannedUsers() {
-	fs.readFile("bannedUsers.txt", "utf8", function (err, data) {
+	var file = path.join(__dirname, "./bannedUsers.txt");
+	fs.readFile(file, "utf8", function (err, data) {
 		bannedList = data.split(/\s+/);
 		for (var i = 0; i < bannedList.length; i++) {
 			bannedUsersDict[bannedList[i]] = true;
 		}
 	});
 }
-
-
-server.listen(8080);
-//module.exports = app;

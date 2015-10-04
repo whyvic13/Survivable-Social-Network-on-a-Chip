@@ -1,6 +1,30 @@
 {
-	"name": "SSoNC",
-	"version": "0.0.1",
-	"description": "Chat system for use in emergency cases",
-	"dependencies": {}
+  "name": "ssonc",
+  "version": "0.0.1",
+  "description": "Chat system for use in emergency cases",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "connect-ensure-login": "^0.1.1",
+    "cookie-parser": "^1.4.0",
+    "express": "^4.13.3",
+    "express-session": "^1.11.3",
+    "passport": "^0.3.0",
+    "passport-local": "^1.0.0",
+    "sqlite3": "^3.1.0",
+    "underscore": "^1.8.3"
+  },
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmusv-fse/FSE-F15-SA4-SSNoC.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cmusv-fse/FSE-F15-SA4-SSNoC/issues"
+  },
+  "homepage": "https://github.com/cmusv-fse/FSE-F15-SA4-SSNoC#readme"
 }

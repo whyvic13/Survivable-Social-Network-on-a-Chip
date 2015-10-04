@@ -1,0 +1,4 @@
+node_modules/*
+.DS_Store
+routes/database.db
+
