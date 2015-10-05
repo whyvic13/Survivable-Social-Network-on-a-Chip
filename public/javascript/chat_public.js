@@ -103,7 +103,7 @@ $(document).ready(function() {
       });
     }
     $public_message.val('');
-    //addUserList(username,true);//for test
+    addUserList(username,false);//for test
     //socket.emit('new public message',{username:username,message:message});
   });
 

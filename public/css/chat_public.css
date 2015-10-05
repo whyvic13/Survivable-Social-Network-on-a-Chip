@@ -2,19 +2,33 @@
   width: 970px;
 }
 
+.userlist_head {
+  border:2px solid #ddd;
+  border-bottom: 0px;
+  box-shadow: -2px 0 3px #ddd;
+  text-align: center;
+  padding: 5px;
+  max-height: 400px;
+}
+
+.userlist_head h3{
+  margin-top: 5px;
+  margin-bottom: 5px;
+
+}
 .contact__status.online {
     border: 2px solid #00B570;
 }
 .contact__status {
-    position: absolute;
-    margin-top: 10px;
-    width: 8px;
-    height: 8px;
-    border: 2px solid #EA1632;
-    border-radius: 50%;
-    opacity: 1;
-    -webkit-transition: opacity 0.3s;
-    transition: opacity 0.3s;
+  position: absolute;
+  margin-top: 10px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #EA1632;
+  border-radius: 50%;
+  opacity: 1;
+  -webkit-transition: opacity 0.3s;
+  transition: opacity 0.3s;
 }
 .conversation-wrap
 {
