@@ -75,10 +75,13 @@ function checkUserExisted(req, res, username, password, next) {
 				if (row === undefined) { // empty result
 					db.run("INSERT into users (username, password) VALUES (?, ?)",
 						username, password);
-						response(req, res, 201, username, "New user created", next);
+						// response(req, res, 201, username, "New user created", next);
+						req.statusCode = 201;
+						next();
 				} else if (row.password === password) {
 					// loggedInUsers[username] = true;
 					// response(req, res, 200, username, "OK", next);
+					req.statusCode = 200;
 					next();
 				} else {
 					response(req, res, 401, username, "Unauthorized", next);

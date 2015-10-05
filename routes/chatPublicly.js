@@ -9,10 +9,10 @@ exports.getPublicMessages = function(req, res) {
   db.all(sqlstm, function(err, row){
     if (err) {
       console.log(err);
-      res.status(400).end("Bad request");
+      res.status(400).json({"statusCode": 400, "message": "Bad request"});
     }else{
       console.log(row);
-      res.status(200).json(row);
+      res.status(200).json({"statusCode": 200, "data": row});
     }
   });
 }
