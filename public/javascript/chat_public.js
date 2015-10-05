@@ -1,12 +1,16 @@
 
-//var socket = io();
-$(document).ready(function() {
 
+$(document).ready(function() {
+  var socket = io();
   var $public_post = $("#public_post")
       $public_message = $("#public_message")
       $userlist = $("#userlist")
       $public_body = $("#public_body")    
   var load_time = Date.parse(new Date()) / 1000;
+  var href = window.location.href;
+  console.log(href);
+  var username = href.split('?')[1].split('=')[1];
+  console.log(username);
   var userList = {};//save up all the registered user
             //{username:"XXX", online_status: true or false}
 
@@ -46,13 +50,16 @@ $(document).ready(function() {
     $public_body.animate({scrollTop: $public_body[0].scrollHeight}, 500);
   }
 
-  /*
+  
   //get all users from REST GET
   $.get("/users",
-  function(response,status){
-    if(status === 200){
+  function(response){
+    if(response.statusCode === 200){
       userList = response;
       for(key in userList){
+        if(key === "statusCode"){
+          continue;
+        }
         if(userList[key] === 1){
           userList[key] = true;
           addUserList(key,true);
@@ -72,9 +79,9 @@ $(document).ready(function() {
   $.get("/getPublicMessages",{
     start: load_time
   },
-  function(response,status){
-    if(status === 200){
-      response.forEach(function(value,index){
+  function(response){
+    if(response.statusCode === 200){
+      response.data.forEach(function(value,index){
         addPublicMessage({
           username: value.sender,
           message: value.message,
@@ -86,11 +93,11 @@ $(document).ready(function() {
       alert("bad database request.");
     }
   });
-*/
+
   //public chat
   $public_post.click(function(event) {
     event.preventDefault();
-    var username = "wdc";
+    
     var message = $public_message.val().trim();
     var timestamp = "09:15am"
     message = cleanInput(message);
@@ -104,7 +111,7 @@ $(document).ready(function() {
     }
     $public_message.val('');
     addUserList(username,false);//for test
-    //socket.emit('new public message',{username:username,message:message});
+    socket.emit('new public message',{username:username,message:message});
   });
 
     
@@ -117,9 +124,11 @@ $(document).ready(function() {
     socket.on('user join', function (username) {
         console.log(username + ' joined');
         if (userList.hasOwnProperty(username)){
+          console.log("update user list");
           updateUserList(username,true);
         }
         else{
+          console.log("add user List");
           addUserList(username,true);
         }
     });

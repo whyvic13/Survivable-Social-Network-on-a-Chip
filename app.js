@@ -76,11 +76,11 @@ var io = require('socket.io')(server);
 // Define routes.
 app.get('/',
   function(req, res) {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/public/index.html');
   });
 
 app.get('/login', function(req, res) {
-  res.sendFile(__dirname + '/login.html');
+  res.sendFile(__dirname + '/public/login.html');
 });
 
 
@@ -101,7 +101,7 @@ function loginProcess(req, res){
   io.on('connection', function(socket){
     io.emit('user join', req.user.username);
   });
-  res.status(200).json({"success": true});
+  res.status(200).json({"success": true, "statusCode": 200});
 }
 
 app.post('/user/login',
