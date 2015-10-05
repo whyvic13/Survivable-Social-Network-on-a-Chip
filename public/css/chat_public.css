@@ -1,6 +1,14 @@
+body {
+  background: url(../img/intro-bg.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
 .container{
   width: 970px;
 }
+
 
 .userlist_head {
   border:2px solid #ddd;
@@ -9,12 +17,12 @@
   text-align: center;
   padding: 5px;
   max-height: 400px;
+  background: rgba(0, 0, 0, 0.35);
 }
 
 .userlist_head h3{
   margin-top: 5px;
   margin-bottom: 5px;
-
 }
 .contact__status.online {
     border: 2px solid #00B570;
@@ -36,6 +44,7 @@
   padding:0;
   max-height: 400px;
   overflow: auto;
+  background: rgba(0, 0, 0, 0.35);
 }
 .conversation
 {
@@ -48,7 +57,7 @@
 {
   box-shadow: 0 0 3px #ddd;
   padding:0;
-
+  background: rgba(0, 0, 0, 0.35);
 }
 .msg
 {
@@ -103,9 +112,10 @@
 
 .btn-panel .btn
 {
-  color:#b8b8b8;
-
+  color: #fff;
+  background: #de615e;
   transition: 0.2s all ease-in-out;
+  border-radius: 4px;
 }
 
 .btn-panel .btn:hover
@@ -122,7 +132,7 @@
 .btn-panel-conversation .btn,.btn-panel-msg .btn
 {
 
-  background: #f8f8f8;
+  
 }
 .btn-panel-conversation .btn:first-child
 {
