@@ -21,25 +21,23 @@ var db = new sqlite3.Database(dbfile, function(err) {
 
 exports.getAllUsers = function(req, res, loggedInUsers) {
 	if (dbExisted) {
-
-		var usersArray = [];
+		var usersDict = {};
 		db.each("SELECT username FROM users", function(err, row) {
 			if (err) {
 				res.sendStatus(500);
 				return false;
 			}
-			var userDict = {};
+
 			console.log(loggedInUsers);
-			userDict["username"] = row.username;
+
 			if (row.username in loggedInUsers) {
-				userDict["online_status"] = "online";
+				usersDict[row.username] = 1;
 			} else {
-				userDict["online_status"] = "offline";
+				usersDict[row.username] = 0;
 			}
-			usersArray.push(userDict);
 		}, function() { // called after db.each is completed
 			res.set("Content-Type", "application/json");
-			var jsonData = JSON.stringify(usersArray);
+			var jsonData = JSON.stringify(usersDict);
 			res.status(200).send(jsonData);
 		});
 	} else {
