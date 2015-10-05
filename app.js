@@ -99,7 +99,7 @@ function loginProcess(req, res){
   console.log("login");
   console.log(loggedInUsers);
   io.on('connection', function(socket){
-    io.emit('login', req.user.username);
+    io.emit('user join', req.user.username);
   });
   res.status(200).json({"success": true});
 }
@@ -113,7 +113,7 @@ app.get('/user/logout',
   	console.log("logout: " + req.user.username);
   	delete loggedInUsers[req.user.username];
     io.on('connection', function(socket){
-      io.emit('logout', req.user.username);
+      io.emit('user left', req.user.username);
     });
     req.logout();
     console.log(loggedInUsers);
