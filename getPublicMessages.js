@@ -56,7 +56,7 @@ app.get('/getPublicMessages', function(req, res) {
 				"message": row.message,
 				"sender": row.sender,
 				"timestamp": row.timestamp,
-				"senttatus": row.sentStatus,
+				"sentstatus": row.sentStatus,
 				"sentLocation": row.sentLocation
 			};
 
