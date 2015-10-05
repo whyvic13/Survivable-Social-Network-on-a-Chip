@@ -1,4 +1,4 @@
 node_modules/*
 .DS_Store
 routes/database.db
-
+routes/publicChat.db
