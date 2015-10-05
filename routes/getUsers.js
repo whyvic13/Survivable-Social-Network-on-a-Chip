@@ -24,7 +24,7 @@ exports.getAllUsers = function(req, res, loggedInUsers) {
 		var usersDict = {};
 		db.each("SELECT username FROM users", function(err, row) {
 			if (err) {
-				res.sendStatus(500);
+				res.status(500).json({"statusCode": 500, "message": "Internal server error"});
 				return false;
 			}
 
@@ -37,10 +37,11 @@ exports.getAllUsers = function(req, res, loggedInUsers) {
 			}
 		}, function() { // called after db.each is completed
 			res.set("Content-Type", "application/json");
+			usersDict["statusCode"] = 200;
 			var jsonData = JSON.stringify(usersDict);
 			res.status(200).send(jsonData);
 		});
 	} else {
-		res.sendStatus(500);
+		res.status(500).json({"statusCode": 500, "message": "Internal server error"});
 	}
 }

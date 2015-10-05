@@ -33,6 +33,7 @@ var loggedInUsers = {}
 
 passport.use(new Strategy(
   function(username, password, cb) {
+		// console.log("Strategy");
     if (loggedInUsers[username]) {
       var dic ={}
       dic["username"] = username;
@@ -83,17 +84,6 @@ app.get('/login', function(req, res) {
   res.sendFile(__dirname + '/login.html');
 });
 
-
-
-// app.get('/isLogin',
-//   function(req, res) {
-//     if (req.isAuthenticated()) {
-//       res.json(req.user);
-//     }else{
-//       res.end("NO");
-//     }
-//   });
-
 function loginProcess(req, res){
   loggedInUsers[req.user.username] = true;
   console.log("login");
@@ -101,12 +91,42 @@ function loginProcess(req, res){
   io.on('connection', function(socket){
     io.emit('user join', req.user.username);
   });
-  res.status(200).json({"success": true});
+	if (req.statusCode && req.statusCode == 201) {
+		res.status(201).json({"statusCode": req.statusCode, "username": req.user.username});
+	}else {
+		res.status(200).json({"statusCode": 200, "username": req.user.username});
+	}
 }
 
-app.post('/user/login',
-  passport.authenticate('local', { failureRedirect: '/' }), loginProcess
-);
+// app.post('/user/login',
+//   passport.authenticate('local', { failureRedirect: '/' }), loginProcess
+// );
+
+app.post('/user/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+		console.log("authenticate");
+    if (err) {
+			// return next(err);
+			console.log(err);
+			return res.status(401).json({"statusCode": 401, "message": "Unauthorized"});
+		}
+    if (!user) {
+			// return res.redirect('/login');
+			console.log("!user");
+			return res.status(401).json({"statusCode": 401, "message": "Unauthorized"});
+		}
+    req.logIn(user, function(err) {
+      if (err) {
+				// return next(err);
+				console.log(err);
+				return res.status(401).json({"statusCode": 401, "message": "Unauthorized"});
+			}
+      // return res.redirect('/users/' + user.username);
+			console.log("Good");
+			return next();
+    });
+  })(req, res, next)
+}, loginProcess);
 
 app.get('/user/logout',
   function(req, res){
@@ -152,9 +172,3 @@ io.on("connection", function(socket) {
 app.get('/getPublicMessages',  function(req, res, next){
   login.checkLogin(req,res, next, loggedInUsers);
 }, chatPublicly.getPublicMessages);
-
-app.get('/test', function(req, res, next){
-  login.checkLogin(req,res, next, loggedInUsers);
-}, function(req, res){
-  res.end("Z");
-});
