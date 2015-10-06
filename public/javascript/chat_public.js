@@ -1,12 +1,17 @@
 
-//var socket = io();
-$(document).ready(function() {
 
+$(document).ready(function() {
+  var socket = io();
   var $public_post = $("#public_post")
       $public_message = $("#public_message")
       $userlist = $("#userlist")
-      $public_body = $("#public_body")    
+      $public_body = $("#public_body") 
+      $logout = $("#logout");   
   var load_time = Date.parse(new Date()) / 1000;
+  var href = window.location.href;
+  console.log(href);
+  var username = href.split('?')[1].split('=')[1];
+  console.log(username);
   var userList = {};//save up all the registered user
             //{username:"XXX", online_status: true or false}
 
@@ -29,11 +34,10 @@ $(document).ready(function() {
     //clear off userlist
     $userlist.empty();
     //re-add userlist
-    for(var i in userList){
-      if(userList[i].username === username){
-        userList[i].online_status = status; 
-      }
-      addUserList(userList[i].username,userList[i].online_status);
+    userList[username] = status;
+    console.log(userList);
+    for(var key in userList){
+      addUserList(key, userList[key]);
     }
     
   }
@@ -46,14 +50,16 @@ $(document).ready(function() {
     $public_body.animate({scrollTop: $public_body[0].scrollHeight}, 500);
   }
 
-  /*
+  
   //get all users from REST GET
   $.get("/users",
-  function(response,status){
-    if(status === 200){
+  function(response){
+    if(response.statusCode == 200){
       userList = response;
+      delete userList.statusCode;
+      console.log(userList);
       for(key in userList){
-        if(userList[key] === 1){
+        if(userList[key] == true){
           userList[key] = true;
           addUserList(key,true);
         }
@@ -72,9 +78,9 @@ $(document).ready(function() {
   $.get("/getPublicMessages",{
     start: load_time
   },
-  function(response,status){
-    if(status === 200){
-      response.forEach(function(value,index){
+  function(response){
+    if(response.statusCode === 200){
+      response.data.forEach(function(value,index){
         addPublicMessage({
           username: value.sender,
           message: value.message,
@@ -86,25 +92,24 @@ $(document).ready(function() {
       alert("bad database request.");
     }
   });
-*/
+
   //public chat
   $public_post.click(function(event) {
     event.preventDefault();
-    var username = "wdc";
+    
     var message = $public_message.val().trim();
-    var timestamp = "09:15am"
-    message = cleanInput(message);
-    //if there is non-empty message
-    if(message){      
-      addPublicMessage({
-        username:username,
-        message:message,
-        timestamp:timestamp
-      });
-    }
+    
+    // //if there is non-empty message
+    // if(message){      
+    //   addPublicMessage({
+    //     username:username,
+    //     message:message,
+    //     timestamp:timestamp
+    //   });
+    // }
     $public_message.val('');
-    addUserList(username,false);//for test
-    //socket.emit('new public message',{username:username,message:message});
+    // addUserList(username,false);//for test
+    socket.emit('new public message',{username:username,message:message});
   });
 
     
@@ -116,10 +121,15 @@ $(document).ready(function() {
     // Whenever the server emits 'user joined', log it in the chat body
     socket.on('user join', function (username) {
         console.log(username + ' joined');
-        if (userList.hasOwnProperty(username)){
+        // console.log(username in userList);
+        if (username in userList){
+          console.log("update user list");
           updateUserList(username,true);
         }
         else{
+          console.log("add user List");
+          userList[username] = true;
+          // console.log(userList);
           addUserList(username,true);
         }
     });

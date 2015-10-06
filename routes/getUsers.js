@@ -28,7 +28,7 @@ exports.getAllUsers = function(req, res, loggedInUsers) {
 				return false;
 			}
 
-			console.log(loggedInUsers);
+			// console.log(loggedInUsers);
 
 			if (row.username in loggedInUsers) {
 				usersDict[row.username] = 1;

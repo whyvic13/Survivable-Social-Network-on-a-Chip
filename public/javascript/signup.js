@@ -88,24 +88,36 @@ $(function() {
         else if(!password||password.length<4) alert("passWord cannot be less than 4 characters");  
         else if(password != passwordAgain) alert("passwords are not the same"); 
         else{
-            $.post("/user/signup",
-            function(response,status){
-                if(status == 201){
-                    username=response; 
+            $.post("/user/signup",{
+                username: username,
+                password: password
+            },
+            function(response){
+                console.log(response);
+                console.log(response.status);
+                if(response.statusCode === 201){
+
+                    username=response.username;
+                    alert(username);
+                    window.location.href = "./chat_public.html?username=" + username; 
                 }
-                if(status == 200){
+                if(response.statusCode === 200){
                     //user exist
+                    username=response.username;
+                    alert(username);
+                    window.location.href = "./chat_public.html?username=" + username; 
                 }
-                if(status == 401){
+                if(response.statusCode === 401){
                     //invalid username password
+                    alert("Unarthorized");
                 }
-                if(status == 500){
+                if(response.statusCode=== 500){
                     //network failure
+                    alert("Internal server error");
                 }
             });
-            alert("SignUp Success");
+            //alert("SignUp Success");
         }
-           //socket.emit('check login',{name:username,psw:password});*/
   });
     
     

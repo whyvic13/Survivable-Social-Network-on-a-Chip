@@ -5,19 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" href="css/chat_public.css">
-    
-    <script type="text/javascript">
-        // window.alert = function(){};
-        // var defaultCSS = document.getElementById('bootstrap-css');
-        // function changeCSS(css){
-        //     if(css) $('head > link').filter(':first').replaceWith('<link rel="stylesheet" href="'+ css +'" type="text/css" />'); 
-        //     else $('head > link').filter(':first').replaceWith(defaultCSS); 
-        // }
-        // $( document ).ready(function() {
-        //   var iframe_height = parseInt($('html').height()); 
-        //   window.parent.postMessage( iframe_height, 'http://bootsnipp.com');
-        // });
-    </script>
+
   </head>
   <body>
   <div class="container">
@@ -32,7 +20,7 @@
           <div class="col-lg-offset-1 col-lg-7">
               <div class="btn-panel btn-panel-msg">
 
-                  <a class="btn  col-lg-3  send-message-btn pull-right" role="button"><i class="fa fa-gears"></i> Settings</a>
+                  <a id="logout" class="btn  col-lg-3  send-message-btn pull-right" role="button" href="/user/logout"><i class="fa fa-gears"></i> Log Out</a>
               </div>
           </div>
       </div>
@@ -41,71 +29,8 @@
               <h3>Public Chat Room</h3>
           </div>
           <div id="userlist" class="conversation-wrap col-lg-3">
-              <div class="media conversation">
-                  <a class="pull-left" href="#">
-                      <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png">
-                  </a>
-                  <div class="media-body">
-                      <h5 class="media-heading">Naimish Sakhpara</h5>
-                      <span class="contact__status online"></span>
-                  </div>
-              </div>
-              <div class="media conversation">
-                  <a class="pull-left" href="#">
-                      <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png">
-                  </a>
-                  <div class="media-body">
-                      <h5 class="media-heading">Naimish Sakhpara</h5>
-                      <span class="contact__status online"></span>
-                  </div>
-              </div>
-              <div class="media conversation">
-                  <a class="pull-left" href="#">
-                      <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png">
-                  </a>
-                  <div class="media-body">
-                      <h5 class="media-heading">Naimish Sakhpara</h5>
-                      <span class="contact__status online"></span>
-                  </div>
-              </div>
-              <div class="media conversation">
-                  <a class="pull-left" href="#">
-                      <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png">
-                  </a>
-                  <div class="media-body">
-                      <h5 class="media-heading">Naimish Sakhpara</h5>
-                      <span class="contact__status online"></span>
-                  </div>
-              </div>
-              <div class="media conversation">
-                  <a class="pull-left" href="#">
-                      <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png">
-                  </a>
-                  <div class="media-body">
-                      <h5 class="media-heading">Naimish Sakhpara</h5>
-                      <span class="contact__status online"></span>
-                  </div>
-              </div>
-
-              <div class="media conversation">
-                  <a class="pull-left" href="#">
-                      <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png">
-                  </a>
-                  <div class="media-body">
-                      <h5 class="media-heading">Naimish Sakhpara</h5>
-                      <span class="contact__status online"></span>
-                  </div>
-              </div>
-
-              <div class="media conversation">
-                  <a class="pull-left" href="#">
-                      <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png">
-                  </a>
-                  <div class="media-body">
-                      <h5 class="media-heading">Naimish Sakhpara</h5>
-                      <span class="contact__status online"></span>
-                  </div>
-              </div>
+              
+              
           </div>
 
 
@@ -114,94 +39,7 @@
               <div id="public_body" class="msg-wrap">
 
 
-                  <div class="media msg ">
-                      <a class="pull-left" href="#">
-                          <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png">
-                      </a>
-                      <div class="media-body">
-                          <small class="pull-right time"><i class="fa fa-clock-o"></i> 12:10am</small>
-                          <h5 class="media-heading">Naimish Sakhpara</h5>
-                          <small class="col-lg-10">Location H-2, Ayojan Nagar, Near Gate-3, Near
-                              Shreyas Crossing Dharnidhar Derasar,
-                              Paldi, Ahmedabad 380007, Ahmedabad,
-                              India
-                              Phone 091 37 669307
-                              Email aapamdavad.district@gmail.com</small>
-                      </div>
-                  </div>
-                  <div class="alert alert-info msg-date"></div>
-                  <div class="media msg">
-                      <a class="pull-left" href="#">
-                          <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png">
-                      </a>
-                      <div class="media-body">
-                          <small class="pull-right time"><i class="fa fa-clock-o"></i> 12:10am</small>
-
-                          <h5 class="media-heading">Naimish Sakhpara</h5>
-                          <small class="col-lg-10">Arnab Goswami: "Some people close to Congress Party and close to the government had a #secret #meeting in a farmhouse in Maharashtra in which Anna Hazare send some representatives and they had a meeting in the discussed how to go about this all fast and how eventually this will end."</small>
-                      </div>
-                  </div>
-                  <div class="alert alert-info msg-date"></div>
-                  <div class="media msg">
-                      <a class="pull-left" href="#">
-                          <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png">
-                      </a>
-                      <div class="media-body">
-                          <small class="pull-right time"><i class="fa fa-clock-o"></i> 12:10am</small>
-
-                          <h5 class="media-heading">Naimish Sakhpara</h5>
-                          <small class="col-lg-10">Arnab Goswami: "Some people close to Congress Party and close to the government had a #secret #meeting in a farmhouse in Maharashtra in which Anna Hazare send some representatives and they had a meeting in the discussed how to go about this all fast and how eventually this will end."</small>
-                      </div>
-                  </div>
-                  <div class="alert alert-info msg-date"></div>
-                  <div class="media msg">
-                      <a class="pull-left" href="#">
-                          <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png">
-                      </a>
-                      <div class="media-body">
-                          <small class="pull-right time"><i class="fa fa-clock-o"></i> 12:10am</small>
-
-                          <h5 class="media-heading">Naimish Sakhpara</h5>
-                          <small class="col-lg-10">Arnab Goswami: "Some people close to Congress Party and close to the government had a #secret #meeting in a farmhouse in Maharashtra in which Anna Hazare send some representatives and they had a meeting in the discussed how to go about this all fast and how eventually this will end."</small>
-                      </div>
-                  </div>
-                  <div class="alert alert-info msg-date"></div>
-                  <div class="media msg">
-                      <a class="pull-left" href="#">
-                          <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png">
-                      </a>
-                      <div class="media-body">
-                          <small class="pull-right time"><i class="fa fa-clock-o"></i> 12:10am</small>
-
-                          <h5 class="media-heading">Naimish Sakhpara</h5>
-                          <small class="col-lg-10">Arnab Goswami: "Some people close to Congress Party and close to the government had a #secret #meeting in a farmhouse in Maharashtra in which Anna Hazare send some representatives and they had a meeting in the discussed how to go about this all fast and how eventually this will end."</small>
-                      </div>
-                  </div>
-                  <div class="alert alert-info msg-date"></div>
-                  <div class="media msg">
-                      <a class="pull-left" href="#">
-                          <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png">
-                      </a>
-                      <div class="media-body">
-                          <small class="pull-right time"><i class="fa fa-clock-o"></i> 12:10am</small>
-
-                          <h5 class="media-heading">Naimish Sakhpara</h5>
-                          <small class="col-lg-10">Arnab Goswami: "Some people close to Congress Party and close to the government had a #secret #meeting in a farmhouse in Maharashtra in which Anna Hazare send some representatives and they had a meeting in the discussed how to go about this all fast and how eventually this will end."</small>
-                      </div>
-                  </div>
-                  <div class="alert alert-info msg-date"></div>
-                  <div class="media msg">
-                      <a class="pull-left" href="#">
-                          <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png">
-                      </a>
-                      <div class="media-body">
-                          <small class="pull-right time"><i class="fa fa-clock-o"></i> 12:10am</small>
-
-                          <h5 class="media-heading">Naimish Sakhpara</h5>
-                          <small class="col-lg-10">Arnab Goswami: "Some people close to Congress Party and close to the government had a #secret #meeting in a farmhouse in Maharashtra in which Anna Hazare send some representatives and they had a meeting in the discussed how to go about this all fast and how eventually this will end."</small>
-                      </div>
-                  </div>
-                  <div class="alert alert-info msg-date"></div>
+                  
                   <div class="media msg">
                       <a class="pull-left" href="#">
                           <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png">
@@ -231,6 +69,7 @@
     </div>
     <script src="javascript/jquery.min.js"></script>
     <script src="javascript/bootstrap.min.js"></script>
+    <script src="../socket.io/socket.io.js"></script>
     <script type="text/javascript" src="javascript/chat_public.js"></script>
   </body>
 </html>

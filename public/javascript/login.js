@@ -81,24 +81,29 @@ $(function() {
         else if(position>=0) alert("Oops! Your name is reserved, change another one!");
         else if(!password||password.length<4) alert("passWord cannot be less than 4 characters");   
         else{
-            $.post("/user/login",
-            function(response,status){
-                if(status == 200){
-                    username=response;
+            $.post("/user/login",{
+                username: username,
+                password: password
+            },
+            function(response){
+                if(response.statusCode === 200){
+                    username=response.username;
+                    alert(username);
+                    window.location.href = "./chat_public.html?username=" + username; 
                 }
-                if(status == 401){
+                if(response.statusCode === 401){
                     //wrong password
+                    alert("wrong password");
                 }
-                if(status == 404){
+                if(response.statusCode === 404){
                     //user not found
+                    alert("user not found");
                 }
             });
-            alert("Login Success");
         }
-        window.location.href = "./chat_public.html";
+        
     });
 
-           //socket.emit('check login',{name:username,psw:password});*/
 
     
     
