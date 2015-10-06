@@ -27,7 +27,7 @@ $(document).ready(function() {
     '<a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png"></a>'+
     '<div class="media-body"><h5 class="media-heading">'+username+
     '</h5><span class="contact__status'+online_status+'"></span></div></div>';
-    $userlist.append(htmlDiv).animate({scrollTop: $userlist[0].scrollHeight}, 500);
+    $userlist.append(htmlDiv);
   }
 
   function updateUserList(username,status){
@@ -43,8 +43,10 @@ $(document).ready(function() {
   }
 
   function addPublicMessage(data){
+    var myDate = new Date(data.timestamp * 1000);
+    var time = (myDate.getMonth()+1)+'.'+myDate.getDate()+'  '+myDate.toLocaleTimeString();
     var htmlDiv = '<div class="media msg "><a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png"></a>'+
-    '<div class="media-body"><small class="pull-right time"><i class="fa fa-clock-o"></i> '+data.timestamp+
+    '<div class="media-body"><small class="pull-right time"><i class="fa fa-clock-o"></i> '+time+
     '</small><h5 class="media-heading">'+data.username+'</h5><small class="col-lg-10">'+data.message+'</small></div></div><div class="alert alert-info msg-date"></div>';
     $public_body.append(htmlDiv);
     $public_body.animate({scrollTop: $public_body[0].scrollHeight}, 500);
@@ -81,6 +83,7 @@ $(document).ready(function() {
   function(response){
     if(response.statusCode === 200){
       response.data.forEach(function(value,index){
+
         addPublicMessage({
           username: value.sender,
           message: value.message,
@@ -98,7 +101,13 @@ $(document).ready(function() {
     event.preventDefault();
     
     var message = $public_message.val().trim();
-    
+    if(message){
+      socket.emit('new public message',{username:username,message:message});
+    }
+    else{
+      alert("cannot input empty message");
+    }
+    $public_message.val('');
     // //if there is non-empty message
     // if(message){      
     //   addPublicMessage({
@@ -107,9 +116,9 @@ $(document).ready(function() {
     //     timestamp:timestamp
     //   });
     // }
-    $public_message.val('');
+    
     // addUserList(username,false);//for test
-    socket.emit('new public message',{username:username,message:message});
+    
   });
 
     

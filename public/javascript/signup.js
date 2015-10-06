@@ -98,27 +98,33 @@ $(function() {
                 if(response.statusCode === 201){
 
                     username=response.username;
-                    alert(username);
                     window.location.href = "./chat_public.html?username=" + username; 
                 }
                 if(response.statusCode === 200){
                     //user exist
                     username=response.username;
-                    alert(username);
                     window.location.href = "./chat_public.html?username=" + username; 
                 }
                 if(response.statusCode === 401){
                     //invalid username password
-                    alert("Unarthorized");
+                    alert("Unarthorized username");
+                    
                 }
                 if(response.statusCode=== 500){
-                    //network failure
+                    //network failure                    
                     alert("Internal server error");
                 }
             });
             //alert("SignUp Success");
         }
-  });
+
+        clearInput();
+    });
     
+    function clearInput(){
+        $('#form-username').val('');
+        $('#form-password').val('');
+        $('#form-password-again').val('');
+    }
     
 });

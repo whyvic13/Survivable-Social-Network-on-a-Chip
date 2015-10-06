@@ -88,21 +88,28 @@ $(function() {
             function(response){
                 if(response.statusCode === 200){
                     username=response.username;
-                    alert(username);
                     window.location.href = "./chat_public.html?username=" + username; 
                 }
                 if(response.statusCode === 401){
                     //wrong password
-                    alert("wrong password");
+                    alert("wrong username with password");
+                    
                 }
                 if(response.statusCode === 404){
-                    //user not found
+                    //user not found                   
                     alert("user not found");
+                    
                 }
             });
         }
+        clearInput();
         
     });
+    
+    function clearInput(){
+        $('#form-username').val('');
+        $('#form-password').val('');
+    }
 
 
     

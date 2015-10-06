@@ -85,6 +85,8 @@ app.get('/login', function(req, res) {
 });
 
 function loginProcess(req, res){
+  
+  //
   loggedInUsers[req.user.username] = true;
   console.log("login");
   console.log(loggedInUsers);
@@ -111,18 +113,18 @@ app.post('/user/login', function(req, res, next) {
     if (err) {
 			// return next(err);
 			console.log(err);
-			return res.status(401).json({"statusCode": 401, "message": "Unauthorized"});
+			return res.json({"statusCode": 401, "message": "Unauthorized"});
 		}
     if (!user) {
 			// return res.redirect('/login');
 			console.log("!user");
-			return res.status(401).json({"statusCode": 401, "message": "Unauthorized"});
+			return res.json({"statusCode": 401, "message": "Unauthorized"});
 		}
     req.logIn(user, function(err) {
       if (err) {
 				// return next(err);
 				console.log(err);
-				return res.status(401).json({"statusCode": 401, "message": "Unauthorized"});
+				return res.json({"statusCode": 401, "message": "Unauthorized"});
 			}
       // return res.redirect('/users/' + user.username);
 			console.log("Good");
@@ -149,7 +151,6 @@ app.get('/user/logout',
   });
 
 function userLeft (user) {
-  console.log(user);
   io.emit('user left', user);
 }
 
@@ -167,6 +168,7 @@ app.get('/users', function(req, res, next){
 });
 
 io.on("connection", function(socket) {
+  //receive client add message
 	socket.on("new public message", function(message) {
 		var timestamp = Math.floor(Date.now() / 1000);
 		var msg = {
@@ -181,6 +183,7 @@ io.on("connection", function(socket) {
 			chatHistoryDB.run(command, message.username, message.message, timestamp, "", "");
 		});
 	});
+
 });
 
 app.get('/getPublicMessages',  function(req, res, next){
