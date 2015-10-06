@@ -89,17 +89,16 @@ function loginProcess(req, res){
   console.log("login");
   console.log(loggedInUsers);
   io.on('connection', function(socket){
-    io.emit('user join', req.user.username);
+    socket.broadcast.emit('user join', req.user.username);
+    socket.emit('user join', req.user.username);
   });
-<<<<<<< HEAD
-  res.status(200).json({"success": true, "statusCode": 200});
-=======
+  // io.emit('user join', req.user.username);
 	if (req.statusCode && req.statusCode == 201) {
 		res.status(201).json({"statusCode": req.statusCode, "username": req.user.username});
 	}else {
 		res.status(200).json({"statusCode": 200, "username": req.user.username});
 	}
->>>>>>> master
+
 }
 
 // app.post('/user/login',
@@ -136,13 +135,23 @@ app.get('/user/logout',
   function(req, res){
   	console.log("logout: " + req.user.username);
   	delete loggedInUsers[req.user.username];
-    io.on('connection', function(socket){
-      io.emit('user left', req.user.username);
-    });
+    var user = req.user.username;
+    userLeft(user);
+    // io.on('connection', function(socket){
+    //   socket.broadcast.emit('user left', user);
+    //   socket.emit('user left', user);
+    //   console.log("dqwdqwdqwdqw");
+    // });
+    // io.emit('user left', user);
     req.logout();
     console.log(loggedInUsers);
     res.redirect('/');
   });
+
+function userLeft (user) {
+  console.log(user);
+  io.emit('user left', user);
+}
 
 app.post('/user/signup', signup.register, function(req, res, next){
   console.log(req.body.username);
@@ -165,7 +174,8 @@ io.on("connection", function(socket) {
       "message": message.message,
       "timestamp": timestamp
     };
-    io.emit("new public message", msg)
+    socket.broadcast.emit("new public message", msg);
+    socket.emit("new public message", msg);
 		chatHistoryDB.serialize(function() {
 			var command = "INSERT INTO publicChat (sender, message, timestamp, sentStatus, sentLocation) VALUES (?, ?, ?, ?, ?)";
 			chatHistoryDB.run(command, message.username, message.message, timestamp, "", "");

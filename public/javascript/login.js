@@ -87,14 +87,17 @@ $(function() {
             },
             function(response){
                 if(response.statusCode === 200){
-                    username=response;
-                    window.location.href = "./chat_public.html"; 
+                    username=response.username;
+                    alert(username);
+                    window.location.href = "./chat_public.html?username=" + username; 
                 }
                 if(response.statusCode === 401){
                     //wrong password
+                    alert("wrong password");
                 }
                 if(response.statusCode === 404){
                     //user not found
+                    alert("user not found");
                 }
             });
         }
