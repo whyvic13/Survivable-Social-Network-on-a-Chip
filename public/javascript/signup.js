@@ -1,6 +1,6 @@
 
 $(function() {
-	 
+	var socket = io();
     var $usernameInput = $('.form-username form-control'); // Input for username
     var $userPassword = $('#form-password');
     var $userPasswordAgain = $('#form-password-again');
@@ -98,12 +98,14 @@ $(function() {
                 if(response.statusCode === 201){
 
                     username=response.username;
-                    window.location.href = "./chat_public.html?username=" + username; 
+                    window.location.href = "./chat_public.html?username=" + username + "&1"; 
+                    socket.emit("user join", username);
                 }
                 if(response.statusCode === 200){
                     //user exist
                     username=response.username;
                     window.location.href = "./chat_public.html?username=" + username; 
+                    socket.emit("user join", username);
                 }
                 if(response.statusCode === 401){
                     //invalid username password

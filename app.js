@@ -74,124 +74,125 @@ app.use(passport.session());
 var server = app.listen(3000);
 var io = require('socket.io')(server);
 
-// Define routes.
-app.get('/',
-  function(req, res) {
-    res.sendFile(__dirname + '/public/index.html');
-  });
-
-app.get('/login', function(req, res) {
-  res.sendFile(__dirname + '/public/login.html');
-});
-
-function loginProcess(req, res){
-  
+function loginProcess(req, res){   
   //
   loggedInUsers[req.user.username] = true;
   console.log("login");
   console.log(loggedInUsers);
-  io.on('connection', function(socket){
-    socket.broadcast.emit('user join', req.user.username);
-    //socket.emit('user join', req.user.username);
-  });
-  // io.emit('user join', req.user.username);
-	if (req.statusCode && req.statusCode == 201) {
-		res.status(201).json({"statusCode": req.statusCode, "username": req.user.username});
-	}else {
-		res.status(200).json({"statusCode": 200, "username": req.user.username});
-	}
+  //socket.broadcast.emit('user join', req.user.username);
+  
+  if (req.statusCode && req.statusCode == 201) {
+    res.status(201).json({"statusCode": req.statusCode, "username": req.user.username});
+  }else {
+    res.status(200).json({"statusCode": 200, "username": req.user.username});
+  }
 
 }
 
-// app.post('/user/login',
-//   passport.authenticate('local', { failureRedirect: '/' }), loginProcess
-// );
+//RESTful API
+//Define routes.
+app.get('/',
+  function(req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
+app.get('/login', 
+  function(req, res) {
+    res.sendFile(__dirname + '/public/login.html');
+});
 
 app.post('/user/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
-		console.log("authenticate");
+    console.log("authenticate");
     if (err) {
-			// return next(err);
-			console.log(err);
-			return res.json({"statusCode": 401, "message": "Unauthorized"});
-		}
+      // return next(err);
+      console.log(err);
+      return res.json({"statusCode": 401, "message": "Unauthorized"});
+    }
     if (!user) {
-			// return res.redirect('/login');
-			console.log("!user");
-			return res.json({"statusCode": 401, "message": "Unauthorized"});
-		}
+      // return res.redirect('/login');
+      console.log("!user");
+      return res.json({"statusCode": 401, "message": "Unauthorized"});
+    }
     req.logIn(user, function(err) {
       if (err) {
-				// return next(err);
-				console.log(err);
-				return res.json({"statusCode": 401, "message": "Unauthorized"});
-			}
+        // return next(err);
+        console.log(err);
+        return res.json({"statusCode": 401, "message": "Unauthorized"});
+      }
       // return res.redirect('/users/' + user.username);
-			console.log("Good");
-			return next();
+      console.log("Good");
+      return next();
     });
   })(req, res, next)
 }, loginProcess);
 
-app.get('/user/logout',
-  function(req, res){
-  	console.log("logout: " + req.user.username);
-  	delete loggedInUsers[req.user.username];
-    var user = req.user.username;
-    userLeft(user);
-    // io.on('connection', function(socket){
-    //   socket.broadcast.emit('user left', user);
-    //   socket.emit('user left', user);
-    //   console.log("dqwdqwdqwdqw");
-    // });
-    // io.emit('user left', user);
-    req.logout();
-    console.log(loggedInUsers);
-    res.redirect('/');
-  });
+app.get('/getPublicMessages',  function(req, res, next){
+    login.checkLogin(req,res, next, loggedInUsers);
+  }, chatPublicly.getPublicMessages);
 
-function userLeft (user) {
-  io.emit('user left', user);
-}
-
-app.post('/user/signup', signup.register, function(req, res, next){
-  console.log(req.body.username);
-  loggedInUsers[req.body.username] = true;
-  next();
-}, passport.authenticate('local', { failureRedirect: '/' }),
-  loginProcess
-);
-app.get('/users', function(req, res, next){
-  login.checkLogin(req,res, next, loggedInUsers);
-}, function(req, res){
-  getUsers.getAllUsers(req, res, loggedInUsers);
+app.get('/user/isLogin',  function(req, res, next){
+    login.checkLogin(req,res, next, loggedInUsers);
+  }, function(req, res){
+      res.status(200).end("ok");
 });
 
-io.on("connection", function(socket) {
+app.get('/users', function(req, res, next){
+    login.checkLogin(req,res, next, loggedInUsers);
+  }, function(req, res){
+    getUsers.getAllUsers(req, res, loggedInUsers);
+});
+
+app.post('/user/signup', signup.register, function(req, res, next){
+    console.log(req.body.username);
+    loggedInUsers[req.body.username] = true;
+    next();
+  }, passport.authenticate('local', { failureRedirect: '/' }),
+    loginProcess
+);
+
+app.get('/user/logout',
+  function(req, res){
+    console.log(req.query);
+    console.log("logout: " + req.query.username);
+    delete loggedInUsers[req.query.username];
+    //var user = req.user.username;
+    //socket.broadcast.emit('user left', user);
+    //req.logout();
+    console.log(loggedInUsers);
+    res.status(200).end("ok");
+    //res.redirect('/');
+});
+
+//socket event
+io.on('connection', function(socket) {
+  
+  socket.on("user left",
+    function(data){
+      console.log("receive user left "+ data);
+      socket.broadcast.emit("user left", data);
+  });
+
+  socket.on("user join", 
+    function(data){
+      console.log("receive new user");
+      socket.broadcast.emit("user join", data);
+  });
+
   //receive client add message
-	socket.on("new public message", function(message) {
-		var timestamp = Math.floor(Date.now() / 1000);
-		var msg = {
+  socket.on("new public message", function(message) {
+    var timestamp = Math.floor(Date.now() / 1000);
+    var msg = {
       "username": message.username,
       "message": message.message,
       "timestamp": timestamp
     };
     socket.broadcast.emit("new public message", msg);
     socket.emit("new public message", msg);
-		chatHistoryDB.serialize(function() {
-			var command = "INSERT INTO publicChat (sender, message, timestamp, sentStatus, sentLocation) VALUES (?, ?, ?, ?, ?)";
-			chatHistoryDB.run(command, message.username, message.message, timestamp, "", "");
-		});
-	});
+    chatHistoryDB.serialize(function() {
+      var command = "INSERT INTO publicChat (sender, message, timestamp, sentStatus, sentLocation) VALUES (?, ?, ?, ?, ?)";
+      chatHistoryDB.run(command, message.username, message.message, timestamp, "", "");
+    });
+  });
 
-});
-
-app.get('/getPublicMessages',  function(req, res, next){
-  login.checkLogin(req,res, next, loggedInUsers);
-}, chatPublicly.getPublicMessages);
-
-app.get('/user/isLogin',  function(req, res, next){
-  login.checkLogin(req,res, next, loggedInUsers);
-}, function(req, res){
-  res.status(200).end("ok");
 });

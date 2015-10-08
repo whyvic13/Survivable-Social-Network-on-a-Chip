@@ -9,7 +9,9 @@ body {
   max-width: 970px;
 }
 
-
+#welcome_message {
+  display: none;
+}
 .userlist_head {
   border:2px solid #ddd;
   border-bottom: 0px;

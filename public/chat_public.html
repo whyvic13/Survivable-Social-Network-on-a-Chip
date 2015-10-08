@@ -5,10 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" href="css/chat_public.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-dialog.min.css">
 
   </head>
   <body>
   <div class="container">
+      <div class="row">
+        <div id="welcome_message" class="alert alert-success fade in">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          <strong>Welcome to SSNoC, here you can chat with all the users listed in the userList and post your message in the public chat box!<br> Enjoy yourself!</strong>
+        </div>
+      </div>
       <div class="row">
           <div class="col-lg-12">
               <div class="btn-panel btn-panel-conversation">
@@ -68,6 +75,7 @@
     <script src="javascript/jquery.min.js"></script>
     <script src="javascript/bootstrap.min.js"></script>
     <script src="../socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="javascript/bootstrap-dialog.min.js"></script>
     <script type="text/javascript" src="javascript/chat_public.js"></script>
   </body>
 </html>
