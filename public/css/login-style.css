@@ -13,6 +13,12 @@ body {
 	background-size: cover;
 }
 
+
+
+.nav .navbar-nav .page-scroll {
+	font-size: 14px;
+}
+
 .navbar-custom {
     margin-bottom: 0;
     border-bottom: 1px solid rgba(255,255,255,.3);
@@ -48,6 +54,7 @@ body {
     -webkit-transition: background .3s ease-in-out;
     -moz-transition: background .3s ease-in-out;
     transition: background .3s ease-in-out;
+    font-size: 14px;
 }
 
 .navbar-custom .nav li a:hover {

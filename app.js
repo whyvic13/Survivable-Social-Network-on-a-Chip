@@ -189,3 +189,9 @@ io.on("connection", function(socket) {
 app.get('/getPublicMessages',  function(req, res, next){
   login.checkLogin(req,res, next, loggedInUsers);
 }, chatPublicly.getPublicMessages);
+
+app.get('/user/isLogin',  function(req, res, next){
+  login.checkLogin(req,res, next, loggedInUsers);
+}, function(req, res){
+  res.status(200).end("ok");
+});

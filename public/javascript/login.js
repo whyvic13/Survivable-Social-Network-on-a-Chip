@@ -51,7 +51,7 @@ $(function() {
         return date.toLocaleTimeString();
     }
 
-    //$.backstretch("img/intro-bg.jpg");
+    $.backstretch("/public/img/intro-bg.jpg");
     
     /*
         Form validation
@@ -67,6 +67,13 @@ $(function() {
 
     $login.click(function(event) {
         event.preventDefault();
+        // $.get('/user/isLogin',function(response){
+        //     console.log(response);
+        //     if(response == "ok"){
+        //         console.log("ok");
+        //     }
+        // });
+        
         username=$('#form-username').val().trim();
         password=$('#form-password').val();
         //alert("Value: " + password);

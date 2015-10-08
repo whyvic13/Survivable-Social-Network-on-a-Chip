@@ -6,7 +6,7 @@ body {
   background-size: cover;
 }
 .container{
-  width: 970px;
+  max-width: 970px;
 }
 
 
@@ -17,7 +17,7 @@ body {
   text-align: center;
   padding: 5px;
   max-height: 400px;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(224, 217, 217, 0.24);
 }
 
 .userlist_head h3{
@@ -41,10 +41,11 @@ body {
 .conversation-wrap
 {
   box-shadow: -2px 0 3px #ddd;
-  padding:0;
+  padding-left: 10px;
+  margin-bottom: 30px;
   max-height: 400px;
   overflow: auto;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(224, 217, 217, 0.24);
 }
 .conversation
 {
@@ -57,7 +58,7 @@ body {
 {
   box-shadow: 0 0 3px #ddd;
   padding:0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(224, 217, 217, 0.24);
 }
 .msg
 {
@@ -107,7 +108,7 @@ body {
 }
 .btn-panel
 {
-  background: #f7f7f9;
+  /*background: #f7f7f9;*/
 }
 
 .btn-panel .btn
@@ -136,7 +137,7 @@ body {
 }
 .btn-panel-conversation .btn:first-child
 {
-  border-right: 1px solid #ddd;
+  /*border-right: 1px solid #ddd;*/
 }
 
 .msg-wrap .media-heading
