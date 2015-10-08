@@ -102,6 +102,9 @@ $(document).ready(function() {
         false);
       });
     }
+    else if(response.statusCode === 401){
+      alert(response.message);
+    }
     else{
       alert("bad database request.");
     }
@@ -192,7 +195,7 @@ $(document).ready(function() {
       // Whenever the server emits 'user left', log it in the chat body
     socket.on('user left', function (username) {
         console.log(username + ' left');
-        userList.username = false;
+        userList[username] = false;
         updateUserList(username,false);
     });
 

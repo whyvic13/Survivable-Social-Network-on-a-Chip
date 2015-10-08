@@ -92,7 +92,7 @@ function loginProcess(req, res){
   console.log(loggedInUsers);
   io.on('connection', function(socket){
     socket.broadcast.emit('user join', req.user.username);
-    socket.emit('user join', req.user.username);
+    //socket.emit('user join', req.user.username);
   });
   // io.emit('user join', req.user.username);
 	if (req.statusCode && req.statusCode == 201) {
