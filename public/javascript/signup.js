@@ -94,7 +94,6 @@ $(function() {
             },
             function(response){
                 console.log(response);
-                console.log(response.status);
                 if(response.statusCode === 201){
 
                     username=response.username;
