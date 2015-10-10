@@ -48,11 +48,12 @@ function response(req, res, statusCode, username, mess, next) {
 	res.set("Content-Type", "application/json");
 
 	var jsonData = JSON.stringify({
+		"statusCode": statusCode,
 		"username": username,
 		"statusMessage": mess,
 		"statusCode": statusCode
 	});
-	res.status(statusCode).send(jsonData);
+	res.status(200).send(jsonData);
 
 }
 
