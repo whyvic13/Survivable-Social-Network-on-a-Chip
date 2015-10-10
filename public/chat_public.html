@@ -2,10 +2,11 @@
   <head>
     <meta charset="utf-8">
     <title>SSNoC System created by SA4-1025</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+       <!-- <meta name="viewport" content="width=device-width, initial-scale=1">-->
     <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" href="css/chat_public.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap-dialog.min.css">
+    <link href="/public/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
 
   </head>
   <body>
@@ -20,7 +21,7 @@
           <div class="col-lg-12">
               <div class="btn-panel btn-panel-conversation">
                   <a class="btn  col-lg-1 " role="button"><i class="fa fa-search"></i> Search</a>
-                  <a id="logout" class="btn  col-lg-1  pull-right" role="button" href="/user/logout"><i class="fa fa-plus"></i> Log Out</a>
+                  <a id="logout" class="btn  ol-lg-1c  pull-right" role="button" href="/user/logout"><i class="fa fa-plus"></i> Log Out</a>
               </div>
           </div>
 
@@ -31,17 +32,27 @@
               </div>
           </div> -->
       </div>
-      <div class="row">
+           
+        <div class="row">
+          
           <div class="userlist_head">
-              <!-- <h3>Public Chat Room</h3> -->
+              <!-- <h3>Public Chat Room</h3>class="conversation-wrap col-lg-3" class="btn pull-left"-->
           </div>
-          <div id="userlist" class="conversation-wrap col-lg-3">
+
+          <nav class="navbar col-lg-2" role="navigation">
+          <button type="button" class="btn btn-link-1" data-toggle="collapse" data-target="#userlist">
+            <i class="fa fa-user"><strong>UserList</strong></i>
+          </button>
+
+           <br></br>
+
+          <div id="userlist"class="collapse in">
               
               
           </div>
+        </nav>
 
-
-
+        <div class="row">
           <div class="message-wrap col-lg-9">
               <div id="refresh-wrap" class="media msg " style="background-color: rgba(31, 27, 27, 0.21);">
                   <a id="refresh" class="btn  col-lg-1 pull-right" role="button" style="color: #fff;">
