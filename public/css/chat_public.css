@@ -26,10 +26,22 @@ body {
   margin-top: 5px;
   margin-bottom: 5px;
 }
-.contact__status.online {
-    border: 2px solid #00B570;
+
+.collapse.in {
+  overflow: auto;
+  max-height: 350px;
 }
-.contact__status {
+.glyphicon-user{
+  background-color: #EA1632;
+}
+
+.glyphicon-user.online{
+  background-color: #00B570;
+}
+/*.contact__status.online {
+    border: 2px solid #00B570;
+}*/
+/*.contact__status {
   position: absolute;
   margin-top: 10px;
   width: 8px;
@@ -39,7 +51,7 @@ body {
   opacity: 1;
   -webkit-transition: opacity 0.3s;
   transition: opacity 0.3s;
-}
+}*/
 .conversation-wrap
 {
   box-shadow: -2px 0 3px #ddd;
