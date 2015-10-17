@@ -22,6 +22,8 @@ $(document).ready(function() {
     }
     var userList = {};//save up all the registered user
               //{username:"XXX", online_status: true or false}
+    var online_user = [];
+    var offline_user = [];
 
 
     // Prevents input from having injected markup
@@ -32,9 +34,15 @@ $(document).ready(function() {
     function addUserList(username,status) {
       var online_status = status? " online" : "";
       var htmlDiv = '<div class="media conversation">'+
+<<<<<<< HEAD
       '<a class="pull-left" href="/public/chat_private.html"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
       '<div class="media-body"><h5 class="media-heading" href="/public/chat_private.html">'+username+
       '</h5><span class="contact__status'+online_status+'"></span></div></div>';
+=======
+      '<a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png"></a>'+
+      '<div class="media-body"><h5 class="media-heading">'+username+
+      '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span></div></div>';
+>>>>>>> 365886a7e9dafd39c63a253519de84b0aead4aa7
       $userlist.append(htmlDiv);
     }
 
@@ -42,11 +50,23 @@ $(document).ready(function() {
       //clear off userlist
       $userlist.empty();
       //re-add userlist
+<<<<<<< HEAD
       userList[username] = status;
       console.log(userList);
       for(var key in userList){
         addUserList(key, userList[key]);
       }
+=======
+      console.log("online: "+online_user);
+      console.log("offline: "+offline_user);
+      online_user.forEach(function (value,index) {
+        addUserList(value,true);
+      });
+      offline_user.forEach(function (value,index) {
+        addUserList(value,false);
+      });
+      
+>>>>>>> 365886a7e9dafd39c63a253519de84b0aead4aa7
     }
 
     function addPublicMessage(data,flag){
@@ -84,10 +104,19 @@ $(document).ready(function() {
         for(key in userList){
           if(userList[key] == true){
             userList[key] = true;
+            online_user.push(key);
             addUserList(key,true);
           }
           else{
+            offline_user.push(key);
             userList[key] = false;
+            //addUserList(key,false);
+          }
+        }
+        //add online user first
+        //then offline user
+        for(key in userList){
+          if(userList[key] == false){
             addUserList(key,false);
           }
         }
@@ -270,24 +299,47 @@ $(document).ready(function() {
     // Whenever the server emits 'user joined', log it in the chat body
     socket.on('user join', function (username) {
         console.log(username + ' joined');
-        // console.log(username in userList);
+        userList[username] = true;
         if (username in userList){
           console.log("update user list");
-          updateUserList(username,true);
+          //push username to online_user, 
+          online_user.push(username);
+          //case insensitive sort
+          online_user.sort(function (a, b) {
+              return a.toLowerCase().localeCompare(b.toLowerCase());
+          });
+          //delete from offline_user
+          var index = offline_user.indexOf(username);
+          offline_user.splice(index,1);
+          //update new user
+          updateUserList();
         }
         else{
           console.log("add user List");
-          userList[username] = true;
-          // console.log(userList);
-          addUserList(username,true);
+          //push username to online_user, 
+          online_user.push(username);
+          //case insensitive sort
+          online_user.sort(function (a, b) {
+              return a.toLowerCase().localeCompare(b.toLowerCase());
+          });
+          updateUserList();
         }
     });
 
       // Whenever the server emits 'user left', log it in the chat body
     socket.on('user left', function (username) {
         console.log(username + ' left');
-        userList[username] = false;
-        updateUserList(username,false);
+        //push username to online_user, 
+        offline_user.push(username);
+        //case insensitive sort
+        offline_user.sort(function (a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        });
+        //delete from offline_user
+        var index = online_user.indexOf(username);
+        online_user.splice(index,1);
+        //update new user
+        updateUserList();
     });
 
 });
