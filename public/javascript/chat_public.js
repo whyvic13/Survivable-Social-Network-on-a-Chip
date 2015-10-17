@@ -34,15 +34,9 @@ $(document).ready(function() {
     function addUserList(username,status) {
       var online_status = status? " online" : "";
       var htmlDiv = '<div class="media conversation">'+
-<<<<<<< HEAD
       '<a class="pull-left" href="/public/chat_private.html"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
       '<div class="media-body"><h5 class="media-heading" href="/public/chat_private.html">'+username+
-      '</h5><span class="contact__status'+online_status+'"></span></div></div>';
-=======
-      '<a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png"></a>'+
-      '<div class="media-body"><h5 class="media-heading">'+username+
       '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span></div></div>';
->>>>>>> 365886a7e9dafd39c63a253519de84b0aead4aa7
       $userlist.append(htmlDiv);
     }
 
@@ -50,13 +44,11 @@ $(document).ready(function() {
       //clear off userlist
       $userlist.empty();
       //re-add userlist
-<<<<<<< HEAD
-      userList[username] = status;
+      /*userList[username] = status;
       console.log(userList);
       for(var key in userList){
         addUserList(key, userList[key]);
-      }
-=======
+      }*/
       console.log("online: "+online_user);
       console.log("offline: "+offline_user);
       online_user.forEach(function (value,index) {
@@ -66,7 +58,6 @@ $(document).ready(function() {
         addUserList(value,false);
       });
       
->>>>>>> 365886a7e9dafd39c63a253519de84b0aead4aa7
     }
 
     function addPublicMessage(data,flag){
