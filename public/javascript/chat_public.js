@@ -253,7 +253,7 @@ $(document).ready(function() {
         $("#wrapper").toggleClass("toggled");
     });
 
-    /* Chat_box
+    /* Chat_box Not use for now
     var toggle = false;
     var user="jQuery404";
     var searchBoxText= "Type here...";
