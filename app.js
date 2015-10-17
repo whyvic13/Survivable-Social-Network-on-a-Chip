@@ -10,13 +10,14 @@ var passport = require('passport');
 var dbfile = "./routes/database.db";
 var sqlite3 = require('sqlite3').verbose();
 var announcements = require('./routes/announcement');
-// var chatPublicly = require('./routes/socketChatPublic');
+var chatPrivately = require('./routes/chatPrivately');
 var db = new sqlite3.Database(dbfile, function(err) {
 	if (!err) {
 		db.serialize(function() {
 			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT)");
 			db.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, sentStatus TEXT, sentLocation TEXT)");
 			db.run("CREATE TABLE IF NOT EXISTS announcements (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER)");
+			db.run("CREATE TABLE IF NOT EXISTS privateChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT, timestamp INTEGER, sentStatus TEXT, sentLocation TEXT)");
 		});
 		dbExisted = true;
 	}
@@ -174,6 +175,14 @@ app.get('/announcements',  function(req, res, next){
 app.post('/announcement',  function(req, res, next){
     login.checkLogin(req,res, next, loggedInUsers);
   }, announcements.postAnnouncement);
+
+app.get('/privateMessages',  function(req, res, next){
+    login.checkLogin(req,res, next, loggedInUsers);
+  }, chatPrivately.getPrivateMessagesBetween);
+
+app.post('/privateMessage',  function(req, res, next){
+    login.checkLogin(req,res, next, loggedInUsers);
+  }, chatPrivately.postAPrivateMessage);
 
 //socket event
 io.on('connection', function(socket) {
