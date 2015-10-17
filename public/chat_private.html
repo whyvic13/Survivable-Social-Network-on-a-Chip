@@ -26,6 +26,7 @@
                 </li>
             </ul>
         </div>
+        <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
@@ -45,10 +46,10 @@
                       <span class="caret"></span>
                     </a>
                        <ul class="dropdown-menu" role="menu">
-                        <li><a href="#" id="status-ok">OK</a></li>
-                        <li><a href="#" id="status-emergency">Emergency</a></li>
-                        <li><a href="#" id="status-help">Help</a></li>
-                        <li><a href="#" id="status-undefined">Undefined</a></li>
+                        <li><a href="#">OK</a></li>
+                        <li><a href="#">Emergency</a></li>
+                        <li><a href="#">Help</a></li>
+                        <li><a href="#">Undefined</a></li>
                       </ul>
                   <a class="btn  " id="menu-toggle" href="#menu-toggle" ><i class="fa fa-navicon"></i>Users</a> 
                   <a class="btn  " role="button"><i class="fa fa-search"></i> Search</a>  
@@ -57,6 +58,12 @@
               </div>
           </div>
 
+          <!-- <div class="col-lg-offset-1 col-lg-7">
+              <div class="btn-panel btn-panel-msg">
+
+                  <a id="logout" class="btn  col-lg-3  send-message-btn pull-right" role="button" href="/user/logout"><i class="fa fa-gears"></i> Log Out</a>
+              </div>
+          </div> -->
         </div>
            
         <div class="row">
@@ -75,12 +82,14 @@
             </nav>-->
 
        <!-- <div class="row">-->
-          <div class="message-wrap col-xs-7 ">
+          <div class="message-wrap col-xs-7 col-xs-offset-1">
               <div id="refresh-wrap" class="media msg " style="background-color: rgba(31, 27, 27, 0.21);">
                   <a id="refresh" class="btn col-xs-1 pull-right" role="button" style="color: #fff;">
                     <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
                   </a>
-                
+                  <!-- <button type="button" class="btn btn-default btn-lg pull-right">
+                    
+                  </button> -->
               </div>
               <div id="public_body" class="msg-wrap ">
                 
@@ -109,7 +118,7 @@
               </div>
           </div>
 
-          <div class="announcement-wrap col-xs-5">
+          <div class="announcement-wrap col-xs-4">
               <div id="refresh-wrap" class="media msg " style="background-color: rgba(31, 27, 27, 0.21);">
                 <strong>PostWall</strong>
               </div>
@@ -125,12 +134,13 @@
             <div id="action-container" data-expanded="false">
               <textarea id="action" class="form-control input-md" placeholder="..."></textarea>
         
+            <!--/*<div class="row" id="action-details" data-hidden="true">-->
                   <label><input id="action-pin-to-top" type="checkbox"> Pin top</label>
+                <!--</div>-->
 
-                <!--<div class="btn-panel pull-right" id="action-buttons">-->  
-                 <div class="btn-panel btn-panel-conversation pull-right">       
-                   <a class="btn  " id="save-action"><i class="fa fa-save" aria-hidden="true"></i></a>
-                   <a class="btn  " id="cancel-action"><i class="fa fa-times" aria-hidden="true"></i></a>
+                <div class="btn-panel pull-right" id="action-buttons">         
+                   <a type="button" class="btn-link-1" id="save-action"><i class="fa fa-save" aria-hidden="true"></i> </a>
+                   <a type="button" class="btn-link-1" id="cancel-action"><i class="fa fa-times" aria-hidden="true"> </i></a>
                   
                 </div>
             </div>
