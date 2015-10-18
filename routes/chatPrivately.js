@@ -3,25 +3,25 @@ var dbFile = path.join(__dirname, "./database.db");
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(dbFile);
 
-function inserMessageSql(sender, receiver, message, timestamp){
-  var sqlstm = "INSERT INTO privateChat (sender, receiver, message, timestamp) VALUES (?, ?, ?, ?)";
+function inserMessageSql(sender, receiver, message, senderStatus, timestamp){
+  var sqlstm = "INSERT INTO privateChat (sender, receiver, message, senderStatus, timestamp) VALUES (?, ?, ?, ?, ?)";
   console.log(sqlstm);
   if (!timestamp) {
     timestamp = Math.floor(Date.now() / 1000);
   }
   // var timestamp = Math.floor(Date.now() / 1000);
   db.serialize(function() {
-    db.run(sqlstm, sender, receiver, message, timestamp);
+    db.run(sqlstm, sender, receiver, message, senderStatus, timestamp);
   });
 }
 
 exports.postAPrivateMessage = function(req, res){
-  inserMessageSql(req.body.sender, req.body.receiver, req.body.message, req.body.timestamp);
+  inserMessageSql(req.body.sender, req.body.receiver, req.body.message, req.body.senderStatus,  req.body.timestamp);
   res.status(200).json({"statusCode": 200});
 }
 
-exports.insertMessage = function(sener, receiver, message, timestamp){
-  inserMessageSql(sender, receiver, message, timestamp);
+exports.insertMessage = function(sender, receiver, message, senderStatus, timestamp){
+  inserMessageSql(sender, receiver, message, senderStatus, timestamp);
 }
 
 exports.getPrivateMessagesBetween = function(req, res){

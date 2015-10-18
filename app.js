@@ -22,10 +22,10 @@ var chatPrivately = require('./routes/chatPrivately');
 var db = new sqlite3.Database(dbfile, function(err) {
 	if (!err) {
 		db.serialize(function() {
-			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT)");
-			db.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, sentStatus TEXT, sentLocation TEXT)");
+			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, userStatus TEXT)");
+			db.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
 			db.run("CREATE TABLE IF NOT EXISTS announcements (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER)");
-			db.run("CREATE TABLE IF NOT EXISTS privateChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT, timestamp INTEGER, sentStatus TEXT, sentLocation TEXT)");
+			db.run("CREATE TABLE IF NOT EXISTS privateChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
 
 		});
 		dbExisted = true;
@@ -184,7 +184,7 @@ app.post('/announcement',  function(req, res, next){
     login.checkLogin(req,res, next, loggedInUsers);
   }, announcements.postAnnouncement);
 
-app.get('/privateMessages',  function(req, res, next){
+app.get('/getPrivateMessages',  function(req, res, next){
     login.checkLogin(req,res, next, loggedInUsers);
   }, chatPrivately.getPrivateMessagesBetween);
 
@@ -212,13 +212,13 @@ io.on('connection', function(socket) {
     var emitData = {
       "username": data.username,
       "message": data.message,
-      "sentStatus": data.userStatus,
+      "senderStatus": data.userStatus,
       "timestamp": timestamp
     };
     socket.broadcast.emit("new public message", emitData);
     socket.emit("new public message", emitData);
     chatHistoryDB.serialize(function() {
-      var command = "INSERT INTO publicChat (sender, message, timestamp, sentStatus, sentLocation) VALUES (?, ?, ?, ?, ?)";
+      var command = "INSERT INTO publicChat (sender, message, timestamp, senderStatus, senderLocation) VALUES (?, ?, ?, ?, ?)";
       chatHistoryDB.run(command, data.username, data.message, timestamp, data.userStatus, "");
     });
   });
@@ -251,7 +251,7 @@ io.on('connection', function(socket) {
       "message": data.message,
       "timestamp": timestamp
     }
-
+		chatPrivately.insertMessage(emitData.sender, emitData.receiver, emitData.message, emitData.senderStatus, emitData.timestamp);
     var receiverId = loggedInUsers[data.receiver];
     console.log(data.receiver);
     //console.log(io.to(receiverId));
