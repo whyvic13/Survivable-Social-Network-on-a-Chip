@@ -212,7 +212,7 @@ io.on('connection', function(socket) {
     socket.emit("status update", emitData);
     db.serialize(function() {
       // (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, userStatus TEXT)"
-      db.run("UPDATE users SET userStatus = " + data.userStatus + " WHERE username = " + data.username);
+      db.run("UPDATE users SET userStatus = '" + data.userStatus + "' WHERE username = '" + data.username + "'");
     });
   });
 
