@@ -9,6 +9,7 @@ var Strategy = require('passport-local').Strategy;
 var passport = require('passport');
 var dbfile = "./routes/database.db";
 var sqlite3 = require('sqlite3').verbose();
+<<<<<<< HEAD
 var bodyParser = require('body-parser');
 
 app.use(bodyParser.json()); // support JSON-encoded bodies
@@ -21,20 +22,31 @@ var db = new sqlite3.Database(dbfile, function(err) {
 	if (!err) {
 		db.serialize(function() {
 			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, userStatus TEXT)");
+=======
+var announcements = require('./routes/announcement');
+var chatPrivately = require('./routes/chatPrivately');
+var db = new sqlite3.Database(dbfile, function(err) {
+	if (!err) {
+		db.serialize(function() {
+			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT)");
+			db.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, sentStatus TEXT, sentLocation TEXT)");
+			db.run("CREATE TABLE IF NOT EXISTS announcements (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER)");
+			db.run("CREATE TABLE IF NOT EXISTS privateChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT, timestamp INTEGER, sentStatus TEXT, sentLocation TEXT)");
+>>>>>>> thomas
 		});
 		dbExisted = true;
 	}
 });
 
-var chatHistoryDBFile = "./routes/publicChat.db"
-
-var chatHistoryDB = new sqlite3.Database(chatHistoryDBFile, function(err) {
-	if (!err) {
-		chatHistoryDB.serialize(function() {
-			chatHistoryDB.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, sentStatus TEXT, sentLocation TEXT)");
-		});
-	}
-});
+// var chatHistoryDBFile = "./routes/publicChat.db"
+//
+// var chatHistoryDB = new sqlite3.Database(chatHistoryDBFile, function(err) {
+// 	if (!err) {
+// 		chatHistoryDB.serialize(function() {
+// 			chatHistoryDB.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, sentStatus TEXT, sentLocation TEXT)");
+// 		});
+// 	}
+// });
 
 var loggedInUsers = {}
 
@@ -81,13 +93,13 @@ app.use(passport.session());
 var server = app.listen(3000);
 var io = require('socket.io')(server);
 
-function loginProcess(req, res){   
+function loginProcess(req, res){
   //
   loggedInUsers[req.user.username] = true;
   console.log("login");
   console.log(loggedInUsers);
   //socket.broadcast.emit('user join', req.user.username);
-  
+
   if (req.statusCode && req.statusCode == 201) {
     res.status(201).json({"statusCode": req.statusCode, "username": req.user.username});
   }else {
@@ -103,7 +115,7 @@ app.get('/',
     res.sendFile(__dirname + '/public/index.html');
 });
 
-app.get('/login', 
+app.get('/login',
   function(req, res) {
     res.sendFile(__dirname + '/public/login.html');
 });
@@ -170,8 +182,25 @@ app.get('/user/logout',
     //res.redirect('/');
 });
 
+app.get('/announcements',  function(req, res, next){
+    login.checkLogin(req,res, next, loggedInUsers);
+  }, announcements.getAnnouncements);
+
+app.post('/announcement',  function(req, res, next){
+    login.checkLogin(req,res, next, loggedInUsers);
+  }, announcements.postAnnouncement);
+
+app.get('/privateMessages',  function(req, res, next){
+    login.checkLogin(req,res, next, loggedInUsers);
+  }, chatPrivately.getPrivateMessagesBetween);
+
+app.post('/privateMessage',  function(req, res, next){
+    login.checkLogin(req,res, next, loggedInUsers);
+  }, chatPrivately.postAPrivateMessage);
+
 //socket event
 io.on('connection', function(socket) {
+<<<<<<< HEAD
   socket.on("user left", function(data){
     console.log("receive user left "+ data);
     socket.broadcast.emit("user left", data);
@@ -181,6 +210,19 @@ io.on('connection', function(socket) {
     console.log("receive new user");
     loggedInUsers[data] = socket.id;
     socket.broadcast.emit("user join", data);
+=======
+
+  socket.on("user left",
+    function(data){
+      console.log("receive user left "+ data);
+      socket.broadcast.emit("user left", data);
+  });
+
+  socket.on("user join",
+    function(data){
+      console.log("receive new user");
+      socket.broadcast.emit("user join", data);
+>>>>>>> thomas
   });
 
   //receive client add message
@@ -216,6 +258,7 @@ io.on('connection', function(socket) {
     });
   });
 
+<<<<<<< HEAD
 
   // chat private
   socket.on("new private message", function(data) {
@@ -233,6 +276,20 @@ io.on('connection', function(socket) {
     //console.log(io.to(receiverId));
     io.to(receiverId).emit('new private message', emitData);
   });
+=======
+	socket.on("new announcement", function(message) {
+    var timestamp = Math.floor(Date.now() / 1000);
+    var msg = {
+      "sender": message.username,
+      "message": message.message,
+      "timestamp": timestamp
+    };
+    socket.broadcast.emit("new announcement", msg);
+    socket.emit("new announcement", msg);
+    announcements.insertAnnoucement(msg.message, msg.sender, msg.timestamp);
+  });
+
+>>>>>>> thomas
 });
 
 module.exports = app;
