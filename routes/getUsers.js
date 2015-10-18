@@ -15,25 +15,24 @@ var db = new sqlite3.Database(dbfile, function(err) {
 	}
 });
 
-// Returns a list of all users and their online status
-// 0: offline, 1: online
+// Returns a dictionary of {username: {online: 0 or 1, status: string}}
 // If error occurs in database, return code 500
 
 exports.getAllUsers = function(req, res, loggedInUsers) {
 	if (dbExisted) {
 		var usersDict = {};
-		db.each("SELECT username FROM users ORDER BY username COLLATE NOCASE", function(err, row) {
+		db.each("SELECT username, userStatus FROM users ORDER BY username COLLATE NOCASE", function(err, row) {
 			if (err) {
 				res.status(500).json({"statusCode": 500, "message": "Internal server error"});
 				return false;
 			}
 
-			// console.log(loggedInUsers);
+			usersDict[row.username]['userStatus'] = row.userStatus;
 
 			if (row.username in loggedInUsers) {
-				usersDict[row.username] = 1;
+				usersDict[row.username]['online'] = 1;
 			} else {
-				usersDict[row.username] = 0;
+				usersDict[row.username]['online'] = 0;
 			}
 		}, function() { // called after db.each is completed
 			res.set("Content-Type", "application/json");

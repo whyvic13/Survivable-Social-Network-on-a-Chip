@@ -7,7 +7,7 @@ var path = require('path');
 var dbfile = path.join(__dirname, "./database.db");
 // var dbExisted = false;
 
-var bodyParser = require('body-parser');
+//var bodyParser = require('body-parser');
 var db = new sqlite3.Database(dbfile);
 // var db = new sqlite3.Database(dbfile, function(err) {
 // 	if (!err) {
@@ -20,11 +20,6 @@ var db = new sqlite3.Database(dbfile);
 
 var bannedUsersDict = {}; // a dictionary of banned users
 parseBannedUsers();
-
-// app.use(bodyParser.json()); // support JSON-encoded bodies
-// app.use(bodyParser.urlencoded( { // support URL-encoded bodies
-// 	extended: true,
-// }));
 
 
 // Gets info from signup page

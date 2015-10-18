@@ -9,11 +9,18 @@ var Strategy = require('passport-local').Strategy;
 var passport = require('passport');
 var dbfile = "./routes/database.db";
 var sqlite3 = require('sqlite3').verbose();
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.json()); // support JSON-encoded bodies
+app.use(bodyParser.urlencoded( { // support URL-encoded bodies
+  extended: true,
+}));
+
 // var chatPublicly = require('./routes/socketChatPublic');
 var db = new sqlite3.Database(dbfile, function(err) {
 	if (!err) {
 		db.serialize(function() {
-			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT)");
+			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, userStatus TEXT)");
 		});
 		dbExisted = true;
 	}
@@ -143,8 +150,7 @@ app.get('/users', function(req, res, next){
     getUsers.getAllUsers(req, res, loggedInUsers);
 });
 
-app.post('/user/signup', signup.register, function(req, res, next){
-    console.log(req.body.username);
+app.post('/user/signup', signup.register, function(req, res, next) {
     loggedInUsers[req.body.username] = true;
     next();
   }, passport.authenticate('local', { failureRedirect: '/' }),
@@ -166,33 +172,67 @@ app.get('/user/logout',
 
 //socket event
 io.on('connection', function(socket) {
-  
-  socket.on("user left",
-    function(data){
-      console.log("receive user left "+ data);
-      socket.broadcast.emit("user left", data);
+  socket.on("user left", function(data){
+    console.log("receive user left "+ data);
+    socket.broadcast.emit("user left", data);
   });
 
-  socket.on("user join", 
-    function(data){
-      console.log("receive new user");
-      socket.broadcast.emit("user join", data);
+  socket.on("user join", function(data){
+    console.log("receive new user");
+    loggedInUsers[data] = socket.id;
+    socket.broadcast.emit("user join", data);
   });
 
   //receive client add message
-  socket.on("new public message", function(message) {
+  socket.on("new public message", function(data) {
     var timestamp = Math.floor(Date.now() / 1000);
-    var msg = {
-      "username": message.username,
-      "message": message.message,
+    var emitData = {
+      "username": data.username,
+      "message": data.message,
+      "sentStatus": data.userStatus,
       "timestamp": timestamp
     };
-    socket.broadcast.emit("new public message", msg);
-    socket.emit("new public message", msg);
+    socket.broadcast.emit("new public message", emitData);
+    socket.emit("new public message", emitData);
     chatHistoryDB.serialize(function() {
       var command = "INSERT INTO publicChat (sender, message, timestamp, sentStatus, sentLocation) VALUES (?, ?, ?, ?, ?)";
-      chatHistoryDB.run(command, message.username, message.message, timestamp, "", "");
+      chatHistoryDB.run(command, data.username, data.message, timestamp, data.userStatus, "");
     });
   });
 
+  // share status
+  socket.on("share status", function(data) {
+    var timestamp = Math.floor(Date.now() / 1000);
+    var emitData = {
+      "username": data.username,
+      "userStatus": data.userStatus,
+      "timestamp": timestamp
+    }
+    socket.broadcast.emit("status update", emitData);
+    socket.emit("status update", emitData);
+    db.serialize(function() {
+      // (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, userStatus TEXT)"
+      db.run("UPDATE users SET userStatus = " + data.userStatus + " WHERE username = " + data.username);
+    });
+  });
+
+
+  // chat private
+  socket.on("new private message", function(data) {
+    var timestamp = Math.floor(Date.now() / 1000);
+    var emitData = {
+      "sender": data.sender,
+      "senderStatus": data.senderStatus,
+      "receiver": data.receiver,
+      "message": data.message,
+      "timestamp": timestamp
+    }
+
+    var receiverId = loggedInUsers[data.receiver];
+    console.log(data.receiver);
+    //console.log(io.to(receiverId));
+    io.to(receiverId).emit('new private message', emitData);
+  });
 });
+
+module.exports = app;
