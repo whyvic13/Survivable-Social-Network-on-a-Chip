@@ -20,7 +20,7 @@ exports.postAPrivateMessage = function(req, res){
   res.status(200).json({"statusCode": 200});
 }
 
-exports.insertMessage(sener, receiver, message, timestamp){
+exports.insertMessage = function(sener, receiver, message, timestamp){
   inserMessageSql(sender, receiver, message, timestamp);
 }
 
