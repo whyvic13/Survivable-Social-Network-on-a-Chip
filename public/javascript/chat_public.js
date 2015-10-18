@@ -4,7 +4,8 @@ $(document).ready(function() {
     var socket = io();
     var $public_post = $("#public_post")
         $public_message = $("#public_message")
-        $userlist = $("#userlist")
+        //$userlist = $("#userlist")
+        $userlist=$(".sidebar-nav")
         $public_body = $("#public_body") 
         $logout = $("#logout")   
         $userlist_head = $(".userlist_head")
@@ -33,8 +34,8 @@ $(document).ready(function() {
     function addUserList(username,status) {
       var online_status = status? " online" : "";
       var htmlDiv = '<div class="media conversation">'+
-      '<a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 50px; height: 50px;" src="img/user-icon.png"></a>'+
-      '<div class="media-body"><h5 class="media-heading">'+username+
+      '<a class="pull-left" href="/public/chat_private.html"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
+      '<div class="media-body"><h5 class="media-heading" href="/public/chat_private.html">'+username+
       '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span></div></div>';
       $userlist.append(htmlDiv);
     }
@@ -43,6 +44,11 @@ $(document).ready(function() {
       //clear off userlist
       $userlist.empty();
       //re-add userlist
+      /*userList[username] = status;
+      console.log(userList);
+      for(var key in userList){
+        addUserList(key, userList[key]);
+      }*/
       console.log("online: "+online_user);
       console.log("offline: "+offline_user);
       online_user.forEach(function (value,index) {
@@ -63,6 +69,18 @@ $(document).ready(function() {
       $public_body.append(htmlDiv);
       if(flag){
         $public_body.animate({scrollTop: $public_body[0].scrollHeight}, 500);
+      }
+    }
+
+    function addAnouncementMessage(data,flag){
+      var myDate = new Date(data.timestamp * 1000);
+      var time = (myDate.getMonth()+1)+'.'+myDate.getDate()+'  '+myDate.toLocaleTimeString();
+      var htmlDiv = '<div class="media msg "><a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png"></a>'+
+      '<div class="media-body"><small class="pull-right time"><i class="fa fa-clock-o"></i> '+time+
+      '</small><h5 class="media-heading">'+data.username+'</h5><small class="col-lg-10">'+data.message+'</small></div></div><div class="alert alert-info msg-date"></div>';
+      $announcement_body.append(htmlDiv);
+      if(flag){
+        $announcement_body.animate({scrollTop: $public_body[0].scrollHeight}, 500);
       }
     }
 
@@ -220,6 +238,50 @@ $(document).ready(function() {
         }
       );
     });
+    //click to toggle side_menu
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+
+    /* Chat_box Not use for now
+    var toggle = false;
+    var user="jQuery404";
+    var searchBoxText= "Type here...";
+    var fixIntv;
+    var fixedBoxsize = $('#fixed').outerHeight()+'px';
+    var Parent = $("#fixed"); // cache parent div
+    var Header = $(".fixedHeader"); // cache header div
+    var Chatbox = $(".userinput"); // cache header div
+    Parent.css('height', '30px');
+
+    Header.click(function(){           
+    toggle = (!toggle) ? true : false;
+    if(toggle)
+    {
+        Parent.animate({'height' : fixedBoxsize}, 300);                    
+    }
+    else
+    {
+        Parent.animate({'height' : '30px'}, 300); 
+    }
+    });
+
+    Chatbox.focus(function(){
+    $(this).val(($(this).val()==searchBoxText)? '' : $(this).val());
+      }).blur(function(){
+    $(this).val(($(this).val()=='')? searchBoxText : $(this).val());
+      }).keyup(function(e){
+    var code = (e.keyCode ? e.keyCode : e.which);       
+    if(code==13){
+        $('.fixedContent').append("<div class='userwrap'><span class='user'>"+user+"</span><span class='messages'>"+$(this).val()+"</span></div>");
+        event.preventDefault();
+     
+        $(".fixedContent").scrollTop($(".fixedContent").height());
+        $(this).val('');
+      }    
+    });*/
+
     //socket event
     // Whenever the server emits 'new message', update the chat body
     socket.on('new public message', function (data) {//data{username:,timestamp:,message:}

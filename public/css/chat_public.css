@@ -43,7 +43,7 @@ body {
 }*/
 /*.contact__status {
   position: absolute;
-  margin-top: 10px;
+  margin-top: 0px;
   width: 8px;
   height: 8px;
   border: 2px solid #EA1632;
@@ -179,7 +179,6 @@ body::-webkit-scrollbar {
 }
 
 
-/* Let's get this party started */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -224,14 +223,14 @@ body::-webkit-scrollbar {
   margin: 8px;
   padding: 5px 5px 5px 5px;
   background: #de615e;
-    color: #fff;
-    -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;
+  color: #fff;
+  -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;
 }
 /*.btn-link-1:hover .btn-link-1:active .btn-link-1:active .btn-link-1:after { outline: 0; opacity: 0.8;color: #fff}*/
 /*
 .btn-link-1.btn-link-1-facebook { background: #4862a3; }
 .btn-link-1.btn-link-1-twitter { background: #55acee; }
-.btn-link-1.btn-link-1-google-plus { background: #dd4b39; }*/
+.btn-link-1.btn-link-1-google-plus { background: #dd4b39; }
 
 .btn-link-1 i {
   padding-right: 5px;
@@ -239,4 +238,195 @@ body::-webkit-scrollbar {
   font-size: 16px;
   line-height: 18px;
   color: #fff;
+}*/
+
+/* Toggle Styles */
+
+#wrapper {
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
 }
+
+#wrapper.toggled {
+    padding-left: 250px;
+}
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    left: 250px;
+    width: 0;
+    height: 100%;
+    margin-left: -250px;
+    overflow-y: auto;
+    background: #000;
+    opacity: 0.7;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 250px;
+}
+
+#page-content-wrapper {
+    max-width: 970px;
+    /*width: 100%;*/
+    position: absolute;
+    padding: 15px;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    position: absolute;
+    margin-right: -250px;
+}
+
+/* Sidebar Styles */
+
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: 250px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    text-indent: 20px;
+    line-height: 40px;
+}
+
+.sidebar-nav li a {
+    display: block;
+    text-decoration: none;
+    color: #999999;
+}
+
+.sidebar-nav li a:hover {
+    text-decoration: none;
+    color: #fff;
+    background: rgba(255,255,255,0.2);
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+    text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+    height: 65px;
+    font-size: 18px;
+    line-height: 60px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+    color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+    color: #fff;
+    background: none;
+}
+
+@media(min-width:768px) {
+    #wrapper {
+        padding-left: 250px;
+    }
+
+    #wrapper.toggled {
+        padding-left: 0;
+    }
+
+    #sidebar-wrapper {
+        width: 250px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        width: 0;
+    }
+
+    #page-content-wrapper {
+        padding: 20px;
+        position: relative;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
+    }
+}
+/**Below are styles for pop up chatbox*****/
+/*#fixed {
+    bottom: 5%;
+    left: 100%;
+    margin-left: -250px;
+    overflow: hidden;
+    padding: 0 5px;
+    position: fixed;
+    width: 280px;
+    z-index: 1001;
+}
+
+.fixedHeader {
+    background: none repeat scroll 0 0 #de615e;
+    border-radius:2px;
+    border: 1px solid #3d5a99;
+    border-bottom: none;
+    color: #fff;
+    height: 30px;
+    margin: 0 auto;
+    padding: 5px;
+    width: 300px;   
+    font-weight:700;
+    font-size:15px;
+    opacity: 0.8;
+}
+
+.fixedContent {
+    background: none repeat scroll 0 0 #ffffff;
+    border-left: 1px solid #b2b2b2;
+    border-right: 1px solid #b2b2b2;
+    margin: 0 auto;   
+    width: 400px;
+    height:300px;
+    overflow: auto;
+    opacity:0.8;
+}
+
+.userinput{
+    width: 300px;
+    height:30px;
+    outline:none;
+    display:block;
+    resize:none;
+    padding:3px;
+    opacity:0.8;    
+}
+
+.messages{
+    color: #333;
+    line-height: 1.28;
+    padding:5px;
+    margin-left:70px;
+    font-size: 20px;
+    display: block;
+}
+
+.userwrap{
+    position:relative;
+}
+
+.user{
+    padding: 5px ;
+    font-size:12px;
+    color:#888;
+    font-weight:700;
+    position:absolute;
+    left:0; top:0;
+}******************************/
