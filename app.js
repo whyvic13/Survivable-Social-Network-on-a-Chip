@@ -176,7 +176,7 @@ app.get('/user/logout',
     //res.redirect('/');
 });
 
-app.get('/announcements',  function(req, res, next){
+app.get('/getAnnoucements',  function(req, res, next){
     login.checkLogin(req,res, next, loggedInUsers);
   }, announcements.getAnnouncements);
 
@@ -217,9 +217,9 @@ io.on('connection', function(socket) {
     };
     socket.broadcast.emit("new public message", emitData);
     socket.emit("new public message", emitData);
-    chatHistoryDB.serialize(function() {
+    db.serialize(function() {
       var command = "INSERT INTO publicChat (sender, message, timestamp, senderStatus, senderLocation) VALUES (?, ?, ?, ?, ?)";
-      chatHistoryDB.run(command, data.username, data.message, timestamp, data.userStatus, "");
+      db.run(command, data.username, data.message, timestamp, data.userStatus, "");
     });
   });
 

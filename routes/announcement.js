@@ -22,7 +22,7 @@ exports.postAnnouncement = function(req, res) {
   res.status(200).json({"statusCode": 200});
 }
 
-exports.insertAnnoucement = function(message, sender){
+exports.insertAnnoucement = function(message, sender, timestamp){
   insertAnnoucementSql(message, sender, timestamp);
 }
 
