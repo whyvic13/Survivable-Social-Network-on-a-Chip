@@ -1,6 +1,6 @@
 
 $(function() {
-	var socket = io();
+	//var socket = io();
     var $usernameInput = $('.form-username form-control'); // Input for username
     var $userPassword = $('#form-password');
     var $login = $('#login');
@@ -96,8 +96,8 @@ $(function() {
                 if(response.statusCode === 200){
                     username=response.username;
                     window.location.href = "./chat_public.html?username=" + username;
-                    console.log("new user"); 
-                    socket.emit("user join", username);
+                    //console.log("new user");
+                    //socket.emit("user join", username);
                 }
                 if(response.statusCode === 401){
                     //wrong password
