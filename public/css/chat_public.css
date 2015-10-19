@@ -9,6 +9,8 @@ body {
   max-width: 970px;
 }
 
+
+
 #welcome_message {
   display: none;
 }
@@ -154,10 +156,18 @@ body {
   /*border-right: 1px solid #ddd;*/
 }
 
+.media.conversation .media-body {
+  margin-top: 5px;
+}
+
+.media.conversation .media-body .media-heading {
+  color: #fff;
+}
+
 .msg-wrap .media-heading
 {
-  color:#003bb3;
-  font-weight: 700;
+  color:#fff;
+  font-weight: 500;
 }
 
 
@@ -360,6 +370,9 @@ body::-webkit-scrollbar {
         position: relative;
         margin-right: 0;
     }
+}
+.fa.fa-plus{
+  color：red;
 }
 /**Below are styles for pop up chatbox*****/
 /*#fixed {
