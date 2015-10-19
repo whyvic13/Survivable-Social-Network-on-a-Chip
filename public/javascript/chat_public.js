@@ -1,7 +1,8 @@
 
 
 $(document).ready(function() {
-    var socket = io();
+    var socket = io.connect("http://localhost:3000");
+    console.log("######################client socket: ", socket);
     var $public_post = $("#public_post")
         $public_message = $("#public_message")
         //$userlist = $("#userlist")
@@ -10,7 +11,11 @@ $(document).ready(function() {
         $logout = $("#logout")   
         $userlist_head = $(".userlist_head")
         $refresh = $("#refresh");
+    var chat_flag = true;// true for public_post, false for private_post
+    var receiver = "";
     var load_time = Date.parse(new Date()) / 1000;
+    var initial_loadtime = load_time;
+    console.log(initial_loadtime);
     var newID = 99999999;
     var href = window.location.href;
     var parameters = href.split('?')[1].split('=')[1];
@@ -31,13 +36,51 @@ $(document).ready(function() {
       return $('<div/>').text(input).text();
     }
 
-    function addUserList(username,status) {
+    function addUserList(user,status) {
       var online_status = status? " online" : "";
-      var htmlDiv = '<div class="media conversation">'+
-      '<a class="pull-left" href="/public/chat_private.html"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
-      '<div class="media-body"><h5 class="media-heading" href="/public/chat_private.html">'+username+
-      '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span></div></div>';
-      $userlist.append(htmlDiv);
+      var $htmlDiv = $('<div class="media conversation">'+
+      '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
+      '<div class="media-body"><h5 class="media-heading">'+user+
+      '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span></div></div>');
+      $userlist.append($htmlDiv);
+
+      //click function
+      $htmlDiv.children(".btn.pull-left").click(function(event){
+        event.preventDefault();
+        receiver = $(this).siblings(".media-body").text();
+        chat_flag = false;// post method turn to private chat
+        $public_body.empty();
+        $refresh.css("visibility","hidden");
+
+        socket.emit("new room", {"sender": username, "receiver": receiver});
+        //get private histroy message
+        
+        //test
+        // data = [{sender: "user1", receiver: receiver, message: "***", timestamp: 1444444444}];
+        // data.forEach(function(value, index){
+        //       addPublicMessage({username: value.receiver, message: value.message, timestamp: value.timestamp},false);
+        //     });
+        console.log("sender: ",username);
+        console.log("receiver: ",receiver);
+        $.get("/getPrivateMessages",{
+          sender: username,
+          receiver: receiver
+        },
+        function(response){
+          console.log(response);
+          if(response.statusCode == 200){
+            response.data.forEach(function (value, index){
+              addPublicMessage({username: value.sender, message: value.message, timestamp: value.timestamp},false);
+            });
+          }
+          else{
+            BootstrapDialog.show({
+              title: 'Alert Message',
+              message: "bad database request."
+            });
+          }
+        });
+      });
     }
 
     function updateUserList(username,status){
@@ -63,7 +106,7 @@ $(document).ready(function() {
     function addPublicMessage(data,flag){
       var myDate = new Date(data.timestamp * 1000);
       var time = (myDate.getMonth()+1)+'.'+myDate.getDate()+'  '+myDate.toLocaleTimeString();
-      var htmlDiv = '<div class="media msg "><a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png"></a>'+
+      var htmlDiv = '<div class="media msg "><a class="pull-left"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png"></a>'+
       '<div class="media-body"><small class="pull-right time"><i class="fa fa-clock-o"></i> '+time+
       '</small><h5 class="media-heading">'+data.username+'</h5><small class="col-lg-10">'+data.message+'</small></div></div><div class="alert alert-info msg-date"></div>';
       $public_body.append(htmlDiv);
@@ -91,23 +134,23 @@ $(document).ready(function() {
       if(response.statusCode == 200){
         userList = response;
         delete userList.statusCode;
-        console.log(userList);
         for(key in userList){
-          if(userList[key] == true){
-            userList[key] = true;
+          if(userList[key].online == 1){
+            userList[key].online = true;
             online_user.push(key);
+            //add online user first
             addUserList(key,true);
           }
           else{
             offline_user.push(key);
-            userList[key] = false;
+            userList[key].online = false;
             //addUserList(key,false);
           }
         }
-        //add online user first
+        console.log(userList);
         //then offline user
         for(key in userList){
-          if(userList[key] == false){
+          if(userList[key].online == false){
             addUserList(key,false);
           }
         }
@@ -119,6 +162,7 @@ $(document).ready(function() {
         });
         //alert("bad database request.");
       }
+
     });
 
     //get all public messages
@@ -127,12 +171,12 @@ $(document).ready(function() {
       ID: newID
     },
     function(response){
+      console.log(response);
       if(response.statusCode === 200){
         load_time = response.newtime;
         newID = response.newID;
-        //
-        console.log("newtime: "+load_time);
-        console.log("newID: "+newID);
+
+        console.log("load_time: ",load_time);
         response.data.forEach(function(value,index){
 
           addPublicMessage({
@@ -159,13 +203,64 @@ $(document).ready(function() {
       }
     });
 
-    //public chat
+
+    //public_button
+    $(".public_button").click(function(event){
+      event.preventDefault();
+      chat_flag = true;// post method turn to private chat
+      $public_body.empty();
+      $refresh.css("visibility","visible");
+      //re-initial
+      load_time = initial_loadtime;
+      newID = 9999999;
+      //get all public messages
+      $.get("/getPublicMessages",{
+        start: load_time,
+        ID: newID
+      },
+      function(response){
+        if(response.statusCode === 200){
+          load_time = response.newtime;
+          newID = response.newID;
+          response.data.forEach(function(value,index){
+
+            addPublicMessage({
+              username: value.sender,
+              message: value.message,
+              timestamp: value.timestamp
+            },
+            false);
+          });
+        }
+        else if(response.statusCode === 401){
+          BootstrapDialog.show({
+              title: 'Alert Message',
+              message: response.message
+            });
+          //alert(response.message);
+        }
+        else{
+          BootstrapDialog.show({
+              title: 'Alert Message',
+              message: response.message
+          });
+          //alert("bad database request.");
+        }
+      });
+    });
+
+    //chat post button
     $public_post.click(function(event) {
       event.preventDefault();
       
       var message = $public_message.val().trim();
-      if(message){
-        socket.emit('new public message',{username:username,message:message});
+      if(message && chat_flag){
+        socket.emit('new public message',{username:username,message:message,userStatus:"ok"});
+      }
+      else if(message && !chat_flag){
+        console.log("r: ",receiver);
+        console.log("s: ",username);
+        socket.emit('new private message',{sender: username, receiver: receiver, senderStatus:"ok", message:message});
       }
       else{
         BootstrapDialog.show({
@@ -238,6 +333,8 @@ $(document).ready(function() {
         }
       );
     });
+
+    
     //click to toggle side_menu
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
@@ -284,6 +381,15 @@ $(document).ready(function() {
 
     //socket event
     // Whenever the server emits 'new message', update the chat body
+    socket.on('new private message', function (data) {
+      console.log("private: ", data);
+      addPublicMessage({username: data.sender, timestamp: data.timestamp, message: data.message}, true);
+    });
+
+    socket.on('test', function(data) {
+      console.log("################################test passed");
+    });
+
     socket.on('new public message', function (data) {//data{username:,timestamp:,message:}
         addPublicMessage(data,true);
     });

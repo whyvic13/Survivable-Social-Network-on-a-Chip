@@ -21,12 +21,15 @@ exports.postAPrivateMessage = function(req, res){
 }
 
 exports.insertMessage = function(sender, receiver, message, senderStatus, timestamp){
+  console.log("s: ",sender);
+  console.log("r: ",receiver);
   inserMessageSql(sender, receiver, message, senderStatus, timestamp);
 }
 
 exports.getPrivateMessagesBetween = function(req, res){
   var sender = req.query.sender;
   var receiver = req.query.receiver;
+  console.log(req.query);
   var sqlstm = "SELECT * FROM privateChat AS msg WHERE (msg.sender='" + sender + "' AND msg.receiver='" + receiver + "') OR (msg.sender='" + receiver + "' AND msg.receiver='" + sender +"')";
   console.log(sqlstm);
   db.all(sqlstm, function(err, row){
