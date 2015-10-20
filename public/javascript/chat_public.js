@@ -32,7 +32,7 @@ $(document).ready(function() {
               //{username:"XXX", online_status: true or false}
     var online_user = [];
     var offline_user = [];
-    var safety_status='Undefined';
+    // var safety_status='Undefined';
 
     //var announcement = {};//save all announcement
 
@@ -48,25 +48,24 @@ $(document).ready(function() {
       //
       var online_status = status? " online" : "";
       var safety = safety_status;
-      console.log('safety:'+ safety);
       if(safety == 'OK') { 
         // green 'Ok'
         var $htmlDiv = $('<div class="media conversation">'+
         '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
         '<div class="media-body"><h5 class="media-heading">'+user+
-        '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span><a class="btn btn-success pull-right" href="#"><i class="fa fa-check-square"></i></a></div></div>');}
+        '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span><a class="btn btn-success pull-right" ><i class="fa fa-check-square"></i></a></div></div>');}
       else if(safety == 'Emergency'){
         //yellow 'Emergency'
         var $htmlDiv = $('<div class="media conversation">'+
         '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
         '<div class="media-body"><h5 class="media-heading">'+user+
-        '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span><a class="btn btn-warning pull-right" href="#"><i class="fa fa-check-square"></i></a></div></div>');}
+        '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span><a class="btn btn-warning pull-right" ><i class="fa fa-check-square"></i></a></div></div>');}
       else if(safety == 'Help'){
         //red 'Help'
         var $htmlDiv = $('<div class="media conversation">'+
         '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
         '<div class="media-body"><h5 class="media-heading">'+user+
-        '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span><a class="btn btn-danger pull-right" href="#"><i class="fa fa-check-square"></i></a></div></div>');}
+        '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span><a class="btn btn-danger pull-right" ><i class="fa fa-check-square"></i></a></div></div>');}
       else{
         var $htmlDiv = $('<div class="media conversation">'+
         '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
@@ -82,16 +81,7 @@ $(document).ready(function() {
         $public_body.empty();
         $refresh.css("visibility","hidden");
 
-        //socket.emit("new room", {"sender": username, "receiver": receiver});
-        //get private histroy message
         
-        //test
-        // data = [{sender: "user1", receiver: receiver, message: "***", timestamp: 1444444444}];
-        // data.forEach(function(value, index){
-        //       addPublicMessage({username: value.receiver, message: value.message, timestamp: value.timestamp},false);
-        //     });
-        //console.log("sender: ",username);
-        //console.log("receiver: ",receiver);
         $.get("/getPrivateMessages",{
           sender: username,
           receiver: receiver
@@ -112,7 +102,7 @@ $(document).ready(function() {
         });
       });
     }
-     function updateUserList(username,status,safety_status){
+     function updateUserList(){
       //clear off userlist
       $userlist.children(".media.conversation").remove();
       //re-add userlist
@@ -121,24 +111,19 @@ $(document).ready(function() {
       for(var key in userList){
         addUserList(key, userList[key]);
       }*/
-      var safety=safety_status;
-      $userlist.append('<li class="sidebar-brand"><a class="public_button" role="button">SSNoC-SA-4</a></li>');
+      // var safety=safety_status;
+      
       //console.log('in update'+ safety_status+username);
-      //console.log("online: "+online_user);
-      //console.log("offline: "+offline_user);
+      console.log("online: "+online_user);
+      console.log("offline: "+offline_user);
+      console.log("userList: ",userList);
       online_user.forEach(function (value,index) {
-        console.log('userlist'+value);
-        if(value==username)
-         {
-
-          addUserList(value,true,safety);}
-        else addUserList(value,true,'Undefined');
+        // console.log('userlist'+value);
+        
+        addUserList(value,true,userList[value].userStatus);
       });
       offline_user.forEach(function (value,index) {
-        if(value==username)
-         {
-          addUserList(value,false,safety);}
-        else addUserList(value,false,'Undefined');
+        addUserList(value,false,userList[value].userStatus);
       });
       
     }
@@ -159,7 +144,7 @@ $(document).ready(function() {
     function addAnnouncementMessage(data,flag){
       var myDate = new Date(data.timestamp * 1000);
       var time = (myDate.getMonth()+1)+'.'+myDate.getDate()+'  '+myDate.toLocaleTimeString();
-      var htmlDiv = '<div class="media msg "><a class="pull-left" href="#"></a>'+
+      var htmlDiv = '<div class="media msg "><a class="pull-left" ></a>'+
       '<div class="media-body">'+time+
       '</small><h5 class="media-heading">'+data.sender+'</h5><small class="col-lg-10">'+data.message+'</small></div></div><div class="alert alert-info msg-date"></div>';
       $announcement_body.append(htmlDiv);
@@ -178,10 +163,10 @@ $(document).ready(function() {
         for(key in userList){
           if(userList[key].online == 1){
             userList[key].online = true;
-            //userList[key].userStatus = userList.userStatus;
+            // userList[key].userStatus = userList.userStatus;
             online_user.push(key);
             //add online user first
-            addUserList(key,true,'Undefined');
+            addUserList(key,true,userList[key].userStatus);
           }
           else{
             offline_user.push(key);
@@ -192,7 +177,7 @@ $(document).ready(function() {
         //then offline user
         for(key in userList){
           if(userList[key].online == false){
-            addUserList(key,false,'Undefined');
+            addUserList(key,false,userList[key].userStatus);
           }
         }
       }
@@ -436,32 +421,49 @@ $(document).ready(function() {
       /* Act on the event */
       event.preventDefault();
       console.log('in ok');
-      safety_status='OK';
-      updateUserList(username,status,safety_status);
-      //socket.emit('share status',{username:username,userStatus:username.safety_status});
+      // safety_status='OK';
+      userList[username].userStatus = 'OK';
+      updateUserList();
+      socket.emit('share status',{username:username,userStatus:'OK'});
     });
 
      $("#status-emergency").click(function(event) {
       /* Act on the event */
       event.preventDefault();
       console.log('in Emergency');
-      safety_status='Emergency';
-      updateUserList(username,status,safety_status);
+      // safety_status='Emergency';
+      userList[username].userStatus = 'Emergency';
+      updateUserList();
+      socket.emit('share status',{username:username,userStatus:'Emergency'});
     });
 
       $("#status-help").click(function(event) {
       /* Act on the event */
       event.preventDefault();
       console.log('in help');
-      safety_status='Help';
-      updateUserList(username,status,safety_status);
+      // safety_status='Help';
+      userList[username].userStatus = 'Help';
+      updateUserList();
+      socket.emit('share status',{username:username,userStatus:'Help'});
     });
 
     //socket event
     // Whenever the server emits 'new message', update the chat body
     socket.on('new private message', function (data) {
       console.log("private: ", data);
-      addPublicMessage({username: data.sender, timestamp: data.timestamp, message: data.message}, true);
+      console.log("flag: ",chat_flag);
+      if(chat_flag) {
+        BootstrapDialog.show({
+            title: 'Alert Message',
+            message: data.sender
+          });
+        
+      }
+      else{
+        
+        addPublicMessage({username: data.sender, timestamp: data.timestamp, message: data.message}, true);
+      }
+      
     });
 
     socket.on('new public message', function (data) {//data{username:,timestamp:,message:}
@@ -471,7 +473,9 @@ $(document).ready(function() {
         addAnnouncementMessage(data,true);
     });
 
-    socket.on('share status', function(data) {
+    socket.on('status update', function(data) {
+      console.log("status update: ",data);
+      userList[data.username].userStatus = data.userStatus;
       updateUserList();
     });
     // Whenever the server emits 'user joined', log it in the chat body
@@ -492,6 +496,7 @@ $(document).ready(function() {
               offline_user.splice(index,1);
               
           }  
+          userList[username] = {online:true, userStatus:null};
           //update new user
           updateUserList();      
           
@@ -506,9 +511,10 @@ $(document).ready(function() {
                 return a.toLowerCase().localeCompare(b.toLowerCase());
             });
           }
+          userList[username] = {online:true, userStatus:null};
           updateUserList();
         }
-        userList[username] = true;
+        
         
     });
 
