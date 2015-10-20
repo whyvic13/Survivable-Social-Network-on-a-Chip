@@ -371,6 +371,9 @@ body::-webkit-scrollbar {
         margin-right: 0;
     }
 }
+.fa.fa-plus{
+  color：red;
+}
 /**Below are styles for pop up chatbox*****/
 /*#fixed {
     bottom: 5%;

@@ -177,7 +177,7 @@ app.get('/user/logout',
     //res.redirect('/');
 });
 
-app.get('/announcements',  function(req, res, next){
+app.get('/getAnnoucements',  function(req, res, next){
     login.checkLogin(req,res, next, loggedInUsers);
   }, announcements.getAnnouncements);
 

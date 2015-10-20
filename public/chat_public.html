@@ -45,10 +45,9 @@
                       <span class="caret"></span>
                     </a>
                        <ul class="dropdown-menu" role="menu">
-                        <li><a id="status-ok">OK</a></li>
-                        <li><a id="status-emergency">Emergency</a></li>
-                        <li><a id="status-help">Help</a></li>
-                        <li><a id="status-undefined">Undefined</a></li>
+                        <li><a href="#" id="status-ok">OK</a></li>
+                        <li><a href="#" id="status-emergency">Emergency</a></li>
+                        <li><a href="#" id="status-help">Help</a></li>
                       </ul>
                   <a class="btn  " id="menu-toggle" href="#menu-toggle" ><i class="fa fa-navicon"></i>Users</a> 
                   <a class="btn  " role="button"><i class="fa fa-search"></i> Search</a>  
@@ -131,7 +130,7 @@
               <div class="announcement-wrap col-xs-4">
               <div id="refresh-wrap" class="media msg " style="background-color: rgba(31, 27, 27, 0.21);">
                 <strong>PostWall</strong>
-              </div>
+                </div>
 
                <div id="announcement_body" class="msg-wrap ">
                 
@@ -141,18 +140,18 @@
                   
                </div>
             
-            <div id="action-container" data-expanded="false">
-              <textarea id="action" class="form-control input-md" placeholder="..."></textarea>
+              <div id="action-container" data-expanded="false">
+               <textarea id="announcement_message" class="form-control input-md" placeholder="..."></textarea>
         
                   <label><input id="action-pin-to-top" type="checkbox"> Pin top</label>
 
                 <!--<div class="btn-panel pull-right" id="action-buttons">-->  
                  <div class="btn-panel btn-panel-conversation pull-right">       
-                   <a class="btn  " id="save-action"><i class="fa fa-save" aria-hidden="true"></i></a>
-                   <a class="btn  " id="cancel-action"><i class="fa fa-times" aria-hidden="true"></i></a>
+                   <a class="btn " id="save_action" role="button"><i class="fa fa-save" aria-hidden="true"></i></a>
+                   <a class="btn " id="cancel_action" role="button"><i class="fa fa-times" aria-hidden="true"></i></a>
                   
                 </div>
-            </div>
+              </div>
           </div>
 
           <!--<div id="fixed">

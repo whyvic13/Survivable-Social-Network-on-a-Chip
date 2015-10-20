@@ -40,6 +40,7 @@ exports.getAllUsers = function(req, res, loggedInUsers) {
 		}, function() { // called after db.each is completed
 			res.set("Content-Type", "application/json");
 			usersDict["statusCode"] = 200;
+			console.log("usersDict:  ",usersDict);
 			var jsonData = JSON.stringify(usersDict);
 			res.status(200).send(jsonData);
 		});
