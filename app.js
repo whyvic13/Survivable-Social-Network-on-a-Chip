@@ -246,7 +246,7 @@ io.on('connection', function(socket) {
 
 
   // chat private
-  socket.on("new room", function(data) {
+  /*socket.on("new room", function(data) {
     var sender = data.sender;
     var receiver = data.receiver;
     var roomname = "";
@@ -256,7 +256,7 @@ io.on('connection', function(socket) {
       roomname = receiver + sender;
     }
     socket.join(roomname);
-  });
+  });*/
 
   socket.on("new private message", function(data) {
     var timestamp = Math.floor(Date.now() / 1000);
@@ -268,26 +268,18 @@ io.on('connection', function(socket) {
       "timestamp": timestamp
     }
 
-    var roomname = "";
+    /*var roomname = "";
     if (data.sender < data.receiver) {
       roomname = data.sender + data.receiver;
     } else {
       roomname = data.receiver + data.sender;
-    }
+    }*/
     //console.log("emitdata: ",emitData);
 		chatPrivately.insertMessage(emitData.sender, emitData.receiver, emitData.message, emitData.senderStatus, emitData.timestamp);
-    //var receiverId = loggedInUsers[data.receiver];
-    console.log(data.receiver);
-    // /console.log("socket id:", receiverId);
-    console.log(loggedInUsers);
-    //console.log(emitData);
-    //console.log(data);
-    io.to(roomname).emit('new private message', emitData);
-    //io.to(receiverId).emit('test', 'test');
-    // socket.broadcast.to(id).emit('new private message', emitData);
-    // socket.broadcast.to(loggedInUsers[emitData.sender]).emit('new private message', emitData);
-    // socket.broadcast.emit("new private message", emitData);
-    // socket.emit("new private message", emitData);
+    var receiverId = loggedInUsers[data.receiver];
+    var senderId = loggedInUsers[data.sender];
+    io.to(receiverId).emit('new private message', emitData);
+    io.to(senderId).emit('new private message', emitData);
   });
 
 	socket.on("new announcement", function(message) {
