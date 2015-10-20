@@ -86,7 +86,7 @@ $(document).ready(function() {
 
     function updateUserList(username,status){
       //clear off userlist
-      $userlist.empty();
+      $userlist.children(".media.conversation").remove();
       //re-add userlist
       /*userList[username] = status;
       console.log(userList);
@@ -392,31 +392,39 @@ $(document).ready(function() {
     // Whenever the server emits 'user joined', log it in the chat body
     socket.on('user join', function (username) {
         console.log(username + ' joined');
-        userList[username] = true;
+        
         if (username in userList){
-          console.log("update user list");
-          //push username to online_user, 
-          online_user.push(username);
-          //case insensitive sort
-          online_user.sort(function (a, b) {
-              return a.toLowerCase().localeCompare(b.toLowerCase());
-          });
-          //delete from offline_user
-          var index = offline_user.indexOf(username);
-          offline_user.splice(index,1);
+            console.log("update user list");
+            //push username to online_user, 
+            if(online_user.indexOf(username) == -1){
+              online_user.push(username);
+              //case insensitive sort
+              online_user.sort(function (a, b) {
+                  return a.toLowerCase().localeCompare(b.toLowerCase());
+              });
+              //delete from offline_user
+              var index = offline_user.indexOf(username);
+              offline_user.splice(index,1);
+              
+          }  
           //update new user
-          updateUserList();
+          updateUserList();      
+          
         }
         else{
           console.log("add user List");
-          //push username to online_user, 
-          online_user.push(username);
-          //case insensitive sort
-          online_user.sort(function (a, b) {
-              return a.toLowerCase().localeCompare(b.toLowerCase());
-          });
+          if(online_user.indexOf(username) == -1){
+            //push username to online_user, 
+            online_user.push(username);
+            //case insensitive sort
+            online_user.sort(function (a, b) {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+            });
+          }
           updateUserList();
         }
+        userList[username] = true;
+        
     });
 
       // Whenever the server emits 'user left', log it in the chat body
