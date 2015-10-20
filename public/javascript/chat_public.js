@@ -23,6 +23,7 @@ $(document).ready(function() {
     var href = window.location.href;
     var parameters = href.split('?')[1].split('=')[1];
     var username = parameters.split('&')[0];
+    //    username.safety_status='Undefined';
     var isNewUser = parameters.split('&')[1];
     $userlist_head.append("<h3>Welcome "+username+" !");
     if(isNewUser == "1"){
@@ -32,6 +33,7 @@ $(document).ready(function() {
               //{username:"XXX", online_status: true or false}
     var online_user = [];
     var offline_user = [];
+    var safety_status='Undefined';
 
     //var announcement = {};//save all announcement
 
@@ -41,21 +43,34 @@ $(document).ready(function() {
       return $('<div/>').text(input).text();
     }
 
-    function addUserList(user,status) {
-      //,safety_status
+    function addUserList(user,status,safety_status) {
+      //
       var online_status = status? " online" : "";
-      //var safety_status = safety_status;
-      //if(safety_status == 'OK') { 
-      var $htmlDiv = $('<div class="media conversation">'+
-      '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
-      '<div class="media-body"><h5 class="media-heading">'+user+
-      '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span><a class="btn btn-danger pull-right" href="#"><i class="fa fa-check-square"></i></a></div></div>');
-      /*else{
-      var $htmlDiv = $('<div class="media conversation">'+
-      '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
-      '<div class="media-body"><h5 class="media-heading">'+user+
-      '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span></div></div>');
-      }*/
+      var safety = safety_status;
+      console.log('safety:'+ safety);
+      if(safety == 'OK') { 
+        // green 'Ok'
+        var $htmlDiv = $('<div class="media conversation">'+
+        '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
+        '<div class="media-body"><h5 class="media-heading">'+user+
+        '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span><a class="btn btn-success pull-right" href="#"><i class="fa fa-check-square"></i></a></div></div>');}
+      else if(safety == 'Emergency'){
+        //yellow 'Emergency'
+        var $htmlDiv = $('<div class="media conversation">'+
+        '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
+        '<div class="media-body"><h5 class="media-heading">'+user+
+        '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span><a class="btn btn-warning pull-right" href="#"><i class="fa fa-check-square"></i></a></div></div>');}
+      else if(safety == 'Help'){
+        //red 'Help'
+        var $htmlDiv = $('<div class="media conversation">'+
+        '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
+        '<div class="media-body"><h5 class="media-heading">'+user+
+        '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span><a class="btn btn-danger pull-right" href="#"><i class="fa fa-check-square"></i></a></div></div>');}
+      else{
+        var $htmlDiv = $('<div class="media conversation">'+
+        '<a class="btn pull-left" role="button"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 30px; height: 30px;" src="img/user-icon.png"></a>'+
+        '<div class="media-body"><h5 class="media-heading">'+user+
+        '</h5><span class="glyphicon glyphicon-user'+online_status+'"></span></div></div>');}
       $userlist.append($htmlDiv);
 
       //click function
@@ -96,7 +111,7 @@ $(document).ready(function() {
         });
       });
     }
-     function updateUserList(username,status){
+     function updateUserList(username,status,safety_status){
       //clear off userlist
       $userlist.empty();
       //re-add userlist
@@ -105,14 +120,24 @@ $(document).ready(function() {
       for(var key in userList){
         addUserList(key, userList[key]);
       }*/
+      var safety=safety_status;
       $userlist.append('<li class="sidebar-brand"><a class="public_button" role="button">SSNoC-SA-4</a></li>');
-      console.log("online: "+online_user);
-      console.log("offline: "+offline_user);
+      //console.log('in update'+ safety_status+username);
+      //console.log("online: "+online_user);
+      //console.log("offline: "+offline_user);
       online_user.forEach(function (value,index) {
-        addUserList(value,true);
+        console.log('userlist'+value);
+        if(value==username)
+         {
+
+          addUserList(value,true,safety);}
+        else addUserList(value,true,'Undefined');
       });
       offline_user.forEach(function (value,index) {
-        addUserList(value,false);
+        if(value==username)
+         {
+          addUserList(value,false,safety);}
+        else addUserList(value,false,'Undefined');
       });
       
     }
@@ -152,9 +177,10 @@ $(document).ready(function() {
         for(key in userList){
           if(userList[key].online == 1){
             userList[key].online = true;
+            //userList[key].userStatus = userList.userStatus;
             online_user.push(key);
             //add online user first
-            addUserList(key,true);
+            addUserList(key,true,'Undefined');
           }
           else{
             offline_user.push(key);
@@ -166,7 +192,7 @@ $(document).ready(function() {
         //then offline user
         for(key in userList){
           if(userList[key].online == false){
-            addUserList(key,false);
+            addUserList(key,false,'Undefined');
           }
         }
       }
@@ -406,13 +432,31 @@ $(document).ready(function() {
         $("#wrapper").toggleClass("toggled");
     });
 
-    /*$("#status-ok").click(function(event) {
+    $("#status-ok").click(function(event) {
       /* Act on the event */
-    //  event.preventDefault();
-    //  updateUserList(username,)
+      event.preventDefault();
+      console.log('in ok');
+      safety_status='OK';
+      updateUserList(username,status,safety_status);
+      //socket.emit('share status',{username:username,userStatus:username.safety_status});
+    });
 
+     $("#status-emergency").click(function(event) {
+      /* Act on the event */
+      event.preventDefault();
+      console.log('in Emergency');
+      safety_status='Emergency';
+      updateUserList(username,status,safety_status);
+    });
 
-    //});
+      $("#status-help").click(function(event) {
+      /* Act on the event */
+      event.preventDefault();
+      console.log('in help');
+      safety_status='Help';
+      updateUserList(username,status,safety_status);
+    });
+
     //socket event
     // Whenever the server emits 'new message', update the chat body
     socket.on('new private message', function (data) {
@@ -429,6 +473,10 @@ $(document).ready(function() {
     });
     socket.on('new announcement', function (data) {//data{username:,timestamp:,message:}
         addAnnouncementMessage(data,true);
+    });
+
+    socket.on('share status', function(data) {
+      updateUserList();
     });
     // Whenever the server emits 'user joined', log it in the chat body
     socket.on('user join', function (username) {
