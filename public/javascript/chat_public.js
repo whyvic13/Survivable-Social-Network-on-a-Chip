@@ -135,6 +135,7 @@ $(document).ready(function() {
       if(response.statusCode == 200){
         userList = response;
         delete userList.statusCode;
+        console.log("userList: ",userList);
         for(key in userList){
           if(userList[key].online == 1){
             userList[key].online = true;
@@ -423,8 +424,8 @@ $(document).ready(function() {
           }
           updateUserList();
         }
-        userList[username] = true;
-        
+        userList[username] = {online:true, userStatus: null};
+        console.log("new userList: ",userList);
     });
 
       // Whenever the server emits 'user left', log it in the chat body
