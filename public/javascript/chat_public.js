@@ -1,7 +1,7 @@
 
 
 $(document).ready(function() {
-    var socket = io.connect("http://localhost:3000");
+    var socket = io.connect();
     var $public_post = $("#public_post")
         $public_message = $("#public_message")
         //$userlist = $("#userlist")
@@ -14,6 +14,7 @@ $(document).ready(function() {
         $announcement_message = $("#announcement_message")
         $announcement_body = $("#announcement_body");
     var chat_flag = true;// true for public_post, false for private_post
+    var chat_target = "";
     var receiver = "";
     var load_time = Date.parse(new Date()) / 1000;
     var initial_loadtime = load_time;
@@ -79,6 +80,8 @@ $(document).ready(function() {
         receiver = $(this).siblings(".media-body").text();
         chat_flag = false;// post method turn to private chat
         $public_body.empty();
+        $('#refresh-wrap').empty();
+        $("#refresh-wrap").append('<a id="refresh" class="col-xs-3 pull-left"><h4>'+receiver+'</h4></a>');
         $refresh.css("visibility","hidden");
 
         
@@ -87,10 +90,15 @@ $(document).ready(function() {
           receiver: receiver
         },
         function(response){
-          console.log(response);
+          // console.log(response);
           if(response.statusCode == 200){
             response.data.forEach(function (value, index){
-              addPublicMessage({username: value.sender, message: value.message, timestamp: value.timestamp},false);
+              addPublicMessage({
+                username: value.sender, 
+                message: value.message, 
+                timestamp: value.timestamp,
+                userStatus: value.senderStatus
+              },false);
             });
           }
           else{
@@ -133,7 +141,7 @@ $(document).ready(function() {
       var myDate = new Date(data.timestamp * 1000);
       var time = (myDate.getMonth()+1)+'.'+myDate.getDate()+'  '+myDate.toLocaleTimeString();
       var htmlDiv = '<div class="media msg "><a class="pull-left"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png"></a>'+
-      '<div class="media-body"><small class="pull-right time"><i class="fa fa-clock-o"></i> '+time+
+      '<div class="media-body"><small class="pull-right time">'+data.userStatus +' <i class="fa fa-clock-o"></i> '+   time+
       '</small><h5 class="media-heading">'+data.username+'</h5><small class="col-lg-10">'+data.message+'</small></div></div><div class="alert alert-info msg-date"></div>';
       $public_body.append(htmlDiv);
       if(flag){
@@ -209,7 +217,8 @@ $(document).ready(function() {
           addPublicMessage({
             username: value.sender,
             message: value.message,
-            timestamp: value.timestamp
+            timestamp: value.timestamp,
+            userStatus: value.senderStatus
           },
           false);
         });
@@ -268,8 +277,11 @@ $(document).ready(function() {
     $(".public_button").click(function(event){
       event.preventDefault();
       chat_flag = true;// post method turn to private chat
+      
+      $('#refresh-wrap').empty();
+      $('#refresh-wrap').append('<a id="refresh" class="btn col-xs-1 pull-right" role="button" style="color: #fff;"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>');
       $public_body.empty();
-      $refresh.css("visibility","visible");
+      // $refresh.css("visibility","visible");
       //re-initial
       load_time = initial_loadtime;
       newID = 9999999;
@@ -287,7 +299,8 @@ $(document).ready(function() {
             addPublicMessage({
               username: value.sender,
               message: value.message,
-              timestamp: value.timestamp
+              timestamp: value.timestamp,
+              userStatus: value.senderStatus
             },
             false);
           });
@@ -315,12 +328,12 @@ $(document).ready(function() {
       event.preventDefault();
       var message = $public_message.val().trim();
       if(message && chat_flag){
-        socket.emit('new public message',{username:username,message:message,userStatus:"ok"});
+        socket.emit('new public message',{username: username,message: message,userStatus: userList[username].userStatus});
       }
       else if(message && !chat_flag){
         console.log("r: ",receiver);
         console.log("s: ",username);
-        socket.emit('new private message',{sender: username, receiver: receiver, senderStatus:"ok", message:message});
+        socket.emit('new private message',{sender: username, receiver: receiver, senderStatus: userList[username].userStatus, message:message});
       }
       else{
         BootstrapDialog.show({
@@ -453,22 +466,46 @@ $(document).ready(function() {
     socket.on('new private message', function (data) {
       console.log("private: ", data);
       console.log("flag: ",chat_flag);
-      if(chat_flag) {
-        BootstrapDialog.show({
+      if(data.sender == username){
+        addPublicMessage({
+          username: data.sender, 
+          timestamp: data.timestamp, 
+          message: data.message,
+          userStatus: data.senderStatus
+        }, true);;
+      }
+      else if(data.sender == receiver){
+        if(!chat_flag){
+          addPublicMessage({
+            username: data.sender, 
+            timestamp: data.timestamp, 
+            message: data.message,
+            userStatus: data.senderStatus
+          }, true);
+        }
+        else{
+          BootstrapDialog.show({
             title: 'Alert Message',
-            message: data.sender
+            message: "message from : "+data.sender,
           });
-        
+        }
       }
       else{
-        
-        addPublicMessage({username: data.sender, timestamp: data.timestamp, message: data.message}, true);
-      }
+        BootstrapDialog.show({
+          title: 'Alert Message',
+          message: "message from : "+data.sender,
+        });
+      }    
       
     });
 
     socket.on('new public message', function (data) {//data{username:,timestamp:,message:}
-        addPublicMessage(data,true);
+        addPublicMessage({
+          username: data.username,
+          timestamp: data.timestamp,
+          message: data.message,
+          userStatus: data.senderStatus
+        },true);
     });
     socket.on('new announcement', function (data) {//data{username:,timestamp:,message:}
         addAnnouncementMessage(data,true);
@@ -497,7 +534,7 @@ $(document).ready(function() {
               offline_user.splice(index,1);
               
           }  
-          userList[username] = {online:true, userStatus:null};
+          userList[username].online = true;
           //update new user
           updateUserList();      
           
