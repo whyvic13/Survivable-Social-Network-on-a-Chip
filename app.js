@@ -281,7 +281,7 @@ io.on('connection', function(socket) {
     io.to(receiverId).emit('new private message', emitData);
     io.to(senderId).emit('new private message', emitData);
   });
-
+  //test
 	socket.on("new announcement", function(message) {
     var timestamp = Math.floor(Date.now() / 1000);
     var msg = {
