@@ -275,7 +275,12 @@ io.on('connection', function(socket) {
       roomname = data.receiver + data.sender;
     }*/
     //console.log("emitdata: ",emitData);
-		chatPrivately.insertMessage(emitData.sender, emitData.receiver, emitData.message, emitData.senderStatus, emitData.timestamp);
+		chatPrivately.insertMessage(
+      emitData.sender, 
+      emitData.receiver,
+      emitData.message,
+      emitData.senderStatus, 
+      emitData.timestamp);
     var receiverId = loggedInUsers[data.receiver];
     var senderId = loggedInUsers[data.sender];
     io.to(receiverId).emit('new private message', emitData);
