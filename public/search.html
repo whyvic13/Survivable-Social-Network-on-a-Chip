@@ -1,0 +1,49 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>SSNoC System created by SA4-1025</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <!-- <link rel="stylesheet" href="css/chat_public.css">  -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-dialog.min.css">
+    <!-- <link href="/public/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"> -->
+    <link rel="stylesheet" href="css/search.css"> 
+  </head>
+  
+<body>
+  <div class="container">
+    <div class="row">    
+        <div class="col-xs-6 ">
+        <div class="input-group">
+                <div class="input-group-btn search-panel">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                      <span id="search_concept">Filter by</span> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="#">userList</a></li>
+                      <li><a href="#">userStatus</a></li>
+                      <li class="divider"></li>
+                      <li><a href="#all">Anything</a></li>
+                    </ul>
+                </div>
+                <input type="hidden" name="search_param" value="all" id="search_param">         
+                <input type="text" class="form-control" name="x" placeholder="Search term...">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+            </div>
+        </div>
+  
+        <div class="search2">
+          <input type="text" class="form-control input-sm" maxlength="64" placeholder="Search" />
+          <button type="submit" class="btn btn-primary btn-sm" ><span class="glyphicon glyphicon-search"></span> Search</button>
+        </div>
+    </div>
+</div>  
+
+  <script src="javascript/jquery.min.js"></script>
+  <script src="javascript/bootstrap.min.js"></script>
+  <script type="text/javascript" src="javascript/bootstrap-dialog.min.js"></script>
+</body>
+</html>
+
