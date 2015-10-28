@@ -237,6 +237,7 @@ io.on('connection', function(socket) {
     announcements.insertAnnoucement(msg.message, msg.sender, msg.timestamp);
   });
 
+  console.log("test");
 
 });
 
