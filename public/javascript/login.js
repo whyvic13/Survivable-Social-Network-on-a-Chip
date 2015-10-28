@@ -1,13 +1,9 @@
-
 $(function() {
-	//var socket = io();
     var $usernameInput = $('.form-username form-control'); // Input for username
     var $userPassword = $('#form-password');
     var $login = $('#login');
     var $signup = $('#signup');
-    // Variables for Username invalidation
 
-    //var socket = io();
     var username;
     var password;
     var nameFirstChar;
@@ -46,33 +42,27 @@ $(function() {
     /*
         Fullscreen background
     */
-    var getTime=function(){
+    var getTime=function() {
         var date = new Date();
         return date.toLocaleTimeString();
     }
 
-    $.backstretch("/public/img/intro-bg.jpg");
+    $.backstretch("/public/img/intro-bg.jpg"); // responsive background
     
     /*
         Form validation
     */
-    $usernameInput.click(function () {
+    /*$usernameInput.click(function () {
         $usernameInput.focus();
     });
     // Focus input when clicking anywhere on login page
     $userPassword.click(function () {
         $userPassword.focus();
-    });
+    });*/
 
 
     $login.click(function(event) {
         event.preventDefault();
-        // $.get('/user/isLogin',function(response){
-        //     console.log(response);
-        //     if(response == "ok"){
-        //         console.log("ok");
-        //     }
-        // });
         
         username=$('#form-username').val().trim();
         password=$('#form-password').val();

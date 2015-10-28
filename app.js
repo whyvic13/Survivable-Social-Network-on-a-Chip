@@ -37,7 +37,6 @@ var loggedInUsers = {}
 
 passport.use(new Strategy(
   function(username, password, cb) {
-		// console.log("Strategy");
     if (loggedInUsers[username]) {
       var dic ={}
       dic["username"] = username;
@@ -110,7 +109,6 @@ app.post('/user/login', function(req, res, next) {
     }
     req.logIn(user, function(err) {
       if (err) {
-        console.log(err);
         return res.json({"statusCode": 401, "message": "Unauthorized"});
       }
       
@@ -171,10 +169,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on("user join", function(data){
-    console.log("receive new user");
     loggedInUsers[data] = socket.id;
-    console.log("join: ", data);
-    console.log("socketId: ", socket.id);
     socket.broadcast.emit("user join", data);
 
   });
