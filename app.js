@@ -32,18 +32,8 @@ var db = new sqlite3.Database(dbfile, function(err) {
 	}
 });
 
-// var chatHistoryDBFile = "./routes/publicChat.db"
-//
-// var chatHistoryDB = new sqlite3.Database(chatHistoryDBFile, function(err) {
-// 	if (!err) {
-// 		chatHistoryDB.serialize(function() {
-// 			chatHistoryDB.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, sentStatus TEXT, sentLocation TEXT)");
-// 		});
-// 	}
-// });
 
 var loggedInUsers = {}
-// var loggedInUsersSocketID = {}
 
 passport.use(new Strategy(
   function(username, password, cb) {
@@ -51,11 +41,9 @@ passport.use(new Strategy(
     if (loggedInUsers[username]) {
       var dic ={}
       dic["username"] = username;
-      // console.log("This way");
       return cb(null, dic);
     }
     login.findByUsername(username, function(err, user) {
-      // console.log("ASD");
       if (err) { return cb(err); }
       if (!user) { return cb(null, false); }
       if (user.password != password) { return cb(null, false); }
@@ -68,7 +56,6 @@ passport.serializeUser(function(user, cb) {
 });
 
 passport.deserializeUser(function(id, cb) {
-	//console.log("deserializer: " + id);
   login.findByUsername(id, function (err, user) {
     if (err) { return cb(err); }
     cb(null, user);
@@ -89,11 +76,7 @@ var server = app.listen(3000);
 var io = require('socket.io')(server);
 
 function loginProcess(req, res){
-  //
   loggedInUsers[req.user.username] = true;
-  //console.log("login");
-  //console.log(loggedInUsers);
-  //socket.broadcast.emit('user join', req.user.username);
 
   if (req.statusCode && req.statusCode == 201) {
     res.status(201).json({"statusCode": req.statusCode, "username": req.user.username});
@@ -117,25 +100,20 @@ app.get('/login',
 
 app.post('/user/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
-    //console.log("authenticate");
     if (err) {
-      // return next(err);
       console.log(err);
       return res.json({"statusCode": 401, "message": "Unauthorized"});
     }
     if (!user) {
-      // return res.redirect('/login');
       console.log("!user");
       return res.json({"statusCode": 401, "message": "Unauthorized"});
     }
     req.logIn(user, function(err) {
       if (err) {
-        // return next(err);
         console.log(err);
         return res.json({"statusCode": 401, "message": "Unauthorized"});
       }
-      // return res.redirect('/users/' + user.username);
-      //console.log("Good");
+      
       return next();
     });
   })(req, res, next)
@@ -166,18 +144,11 @@ app.post('/user/signup', signup.register, function(req, res, next) {
 
 app.get('/user/logout',
   function(req, res){
-    //console.log(req.query);
-    //console.log("logout: " + req.query.username);
     delete loggedInUsers[req.query.username];
-    //var user = req.user.username;
-    //socket.broadcast.emit('user left', user);
-    //req.logout();
-    //console.log(loggedInUsers);
     res.status(200).end("ok");
-    //res.redirect('/');
 });
 
-app.get('/announcements',  function(req, res, next){
+app.get('/getAnnoucements',  function(req, res, next){
     login.checkLogin(req,res, next, loggedInUsers);
   }, announcements.getAnnouncements);
 
@@ -196,7 +167,6 @@ app.post('/privateMessage',  function(req, res, next){
 //socket event
 io.on('connection', function(socket) {
   socket.on("user left", function(data){
-    //console.log("receive user left "+ data);
     socket.broadcast.emit("user left", data);
   });
 
@@ -205,7 +175,6 @@ io.on('connection', function(socket) {
     loggedInUsers[data] = socket.id;
     console.log("join: ", data);
     console.log("socketId: ", socket.id);
-    //console.log(loggedInUsers);
     socket.broadcast.emit("user join", data);
 
   });
@@ -244,20 +213,6 @@ io.on('connection', function(socket) {
   });
 
 
-
-  // chat private
-  /*socket.on("new room", function(data) {
-    var sender = data.sender;
-    var receiver = data.receiver;
-    var roomname = "";
-    if (sender < receiver) {
-      roomname = sender + receiver;
-    }else{
-      roomname = receiver + sender;
-    }
-    socket.join(roomname);
-  });*/
-
   socket.on("new private message", function(data) {
     var timestamp = Math.floor(Date.now() / 1000);
     var emitData = {
@@ -268,20 +223,13 @@ io.on('connection', function(socket) {
       "timestamp": timestamp
     }
 
-    /*var roomname = "";
-    if (data.sender < data.receiver) {
-      roomname = data.sender + data.receiver;
-    } else {
-      roomname = data.receiver + data.sender;
-    }*/
-    //console.log("emitdata: ",emitData);
 		chatPrivately.insertMessage(emitData.sender, emitData.receiver, emitData.message, emitData.senderStatus, emitData.timestamp);
     var receiverId = loggedInUsers[data.receiver];
     var senderId = loggedInUsers[data.sender];
     io.to(receiverId).emit('new private message', emitData);
     io.to(senderId).emit('new private message', emitData);
   });
-  //test
+
 	socket.on("new announcement", function(message) {
     var timestamp = Math.floor(Date.now() / 1000);
     var msg = {

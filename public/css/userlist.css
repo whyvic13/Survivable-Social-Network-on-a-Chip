@@ -1,0 +1,113 @@
+body{
+    background:#eee;    
+}
+
+.round.online {
+    background-color: #42A129;
+}
+.round.offline {
+    background-color: #999999;
+}
+/*.round.red {
+    background-color: #EF140D;
+}*/
+.round.round-lg {
+    height: 40px;
+    width: 40px;
+    line-height: 40px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+    font-size: 1.5em;
+    position: relative;
+    max-width: 50px;
+    float: left;
+    margin-right: 15px;
+}
+.round {
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    background-color: #222;
+    color: #FFF;
+    text-align: center;
+}
+.glyphicon {
+    font-size: 21px;
+    top: 6px;
+}
+.glyphicon.glyphicon-chevron-down {
+    top: 0px;
+}
+.glyphicon.glyphicon-comment {
+    top: 0px;
+}
+/*.main-box.no-header {
+    padding-top: 20px;
+}*/
+.main-box {
+    background: #FFFFFF;
+    -webkit-box-shadow: 1px 1px 2px 0 #CCCCCC;
+    -moz-box-shadow: 1px 1px 2px 0 #CCCCCC;
+    -o-box-shadow: 1px 1px 2px 0 #CCCCCC;
+    -ms-box-shadow: 1px 1px 2px 0 #CCCCCC;
+    box-shadow: 1px 1px 2px 0 #CCCCCC;
+    margin-bottom: 16px;
+    -webikt-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.table a.table-link.danger {
+    color: #e74c3c;
+}
+.label {
+    border-radius: 3px;
+    font-size: 0.875em;
+    font-weight: 600;
+}
+
+.user-list tbody {
+    max-height: 100px;
+}
+
+.user-list tbody td .user-subhead {
+    font-size: 0.875em;
+    font-style: italic;
+}
+.user-list tbody td .user-link {
+    display: block;
+    font-size: 1.25em;
+    padding-top: 3px;
+    margin-left: 60px;
+}
+a {
+    color: #3498db;
+    outline: none!important;
+}
+.user-list tbody td>img {
+    position: relative;
+    max-width: 50px;
+    float: left;
+    margin-right: 15px;
+}
+
+.table thead tr th {
+    text-transform: uppercase;
+    font-size: 0.875em;
+}
+.table thead tr th {
+    border-bottom: 2px solid #e7ebee;
+}
+.table tbody tr td:first-child {
+    font-size: 1.125em;
+    font-weight: 300;
+}
+.table tbody tr td {
+    min-width: 200px;
+    font-size: 0.875em;
+    vertical-align: middle;
+    border-top: 1px solid #e7ebee;
+    padding: 12px 8px;
+}
