@@ -79,10 +79,12 @@ $(document).ready(function() {
         event.preventDefault();
         receiver = $(this).siblings(".media-body").text();
         chat_flag = false;// post method turn to private chat
+  
         $public_body.empty();
         $('#refresh-wrap').empty();
-        $("#refresh-wrap").append('<a id="refresh" class="col-xs-3 pull-left"><h4>'+receiver+'</h4></a>');
-        $refresh.css("visibility","hidden");
+        $("#refresh-wrap").append('<label class="pull-right"><h4>'+receiver+'</h4></label>');
+        // $("#refresh-wrap").append('<a id="public_button" class="navbar-custom btn  pull-left" role="button" ><i class="fa fa-play-circle"></i> Back</a>');
+        // $refresh.css("visibility","hidden");
 
         
         $.get("/getPrivateMessages",{
@@ -142,7 +144,7 @@ $(document).ready(function() {
       var time = (myDate.getMonth()+1)+'.'+myDate.getDate()+'  '+myDate.toLocaleTimeString();
       var htmlDiv = '<div class="media msg "><a class="pull-left"><img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="img/user-icon.png"></a>'+
       '<div class="media-body"><small class="pull-right time">'+data.userStatus +' <i class="fa fa-clock-o"></i> '+   time+
-      '</small><h5 class="media-heading">'+data.username+'</h5><small class="col-lg-10">'+data.message+'</small></div></div><div class="alert alert-info msg-date"></div>';
+      '</small><h5 class="media-heading">'+data.username+'</h5><h5 class="col-lg-10">'+data.message+'</h5></div></div><br>';
       $public_body.append(htmlDiv);
       if(flag){
         $public_body.animate({scrollTop: $public_body[0].scrollHeight}, 500);
@@ -153,15 +155,13 @@ $(document).ready(function() {
       var myDate = new Date(data.timestamp * 1000);
       var time = (myDate.getMonth()+1)+'.'+myDate.getDate()+'  '+myDate.toLocaleTimeString();
       var htmlDiv = '<div class="media msg "><a class="pull-left" ></a>'+
-      '<div class="media-body">'+time+
-      '</small><h5 class="media-heading">'+data.sender+'</h5><small class="col-lg-10">'+data.message+'</small></div></div><div class="alert alert-info msg-date"></div>';
+      '<h5 div class="media-body">'+time+'</h5><h5 class="media-heading">'+data.sender+'</h5><h4 class="col-lg-10">'
+      +data.message+'</h4></div></div><br>';
       $announcement_body.append(htmlDiv);
       /*if(flag){
         $announcement_body.animate({scrollTop: $announcement_body[0].scrollHeight}, 500);
       }*/
     }
-
-    
     //get all users from REST GET
     $.get("/users",
     function(response){
@@ -274,10 +274,10 @@ $(document).ready(function() {
     //public chat
 
     //public_button
-    $(".public_button").click(function(event){
+    $("#public_button").click(function(event){
       event.preventDefault();
       chat_flag = true;// post method turn to private chat
-      
+      console.log("chat_flag : "+chat_flag);
       $('#refresh-wrap').empty();
       $('#refresh-wrap').append('<a id="refresh" class="btn col-xs-1 pull-right" role="button" style="color: #fff;"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>');
       $public_body.empty();
@@ -323,7 +323,6 @@ $(document).ready(function() {
     });
 
     //chat post button
-
     $public_post.click(function(event) {
       event.preventDefault();
       var message = $public_message.val().trim();
@@ -342,11 +341,10 @@ $(document).ready(function() {
         });
         //alert("cannot input empty message");
       }
-      $public_message.val('');
-      
-      
+      $public_message.val('');           
     });
       
+
     $("#save_action").click(function(event) {
       event.preventDefault();
       //console.log('save action in');
@@ -441,7 +439,7 @@ $(document).ready(function() {
       socket.emit('share status',{username:username,userStatus:'OK'});
     });
 
-     $("#status-emergency").click(function(event) {
+    $("#status-emergency").click(function(event) {
       /* Act on the event */
       event.preventDefault();
       console.log('in Emergency');
@@ -451,7 +449,7 @@ $(document).ready(function() {
       socket.emit('share status',{username:username,userStatus:'Emergency'});
     });
 
-      $("#status-help").click(function(event) {
+    $("#status-help").click(function(event) {
       /* Act on the event */
       event.preventDefault();
       console.log('in help');
