@@ -111,27 +111,43 @@ app.post('/user/login', function(req, res, next) {
       if (err) {
         return res.json({"statusCode": 401, "message": "Unauthorized"});
       }
-      
+
       return next();
     });
   })(req, res, next)
 }, loginProcess);
 
 app.get('/getPublicMessages',  function(req, res, next){
-    login.checkLogin(req,res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers);
   }, chatPublicly.getPublicMessages);
 
+app.get('/searchPublicMessages',  function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers);
+  }, chatPublicly.searchPublicMessages);
+
 app.get('/user/isLogin',  function(req, res, next){
-    login.checkLogin(req,res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers);
   }, function(req, res){
       res.status(200).end("ok");
 });
 
 app.get('/users', function(req, res, next){
-    login.checkLogin(req,res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers);
   }, function(req, res){
     getUsers.getAllUsers(req, res, loggedInUsers);
 });
+
+app.get('/users/name',  function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers);
+  }, function(req, res){
+     getUsers.searchUsers(req, res, loggedInUsers)
+  });
+
+app.get('/users/status',  function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers);
+  }, function(req, res){
+    getUsers.showUsersByStatus(req, res, loggedInUsers)
+  });
 
 app.post('/user/signup', signup.register, function(req, res, next) {
     loggedInUsers[req.body.username] = true;
@@ -147,19 +163,27 @@ app.get('/user/logout',
 });
 
 app.get('/getAnnoucements',  function(req, res, next){
-    login.checkLogin(req,res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers);
   }, announcements.getAnnouncements);
 
+app.get('/searchAnnouncements',  function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers);
+  }, announcements.searchAnnouncements);
+
 app.post('/announcement',  function(req, res, next){
-    login.checkLogin(req,res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers);
   }, announcements.postAnnouncement);
 
 app.get('/getPrivateMessages',  function(req, res, next){
-    login.checkLogin(req,res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers);
   }, chatPrivately.getPrivateMessagesBetween);
 
+app.get('/searchPrivateMessages',  function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers);
+  }, chatPrivately.searchPrivateMessages);
+
 app.post('/privateMessage',  function(req, res, next){
-    login.checkLogin(req,res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers);
   }, chatPrivately.postAPrivateMessage);
 
 //socket event
