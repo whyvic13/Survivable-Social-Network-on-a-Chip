@@ -263,11 +263,7 @@ $(document).ready(function() {
     getPublicMessages();
   });
 
-  // Send message button
-  // TODO: rename public_post into post_message button
-  // TODO: rename public_message into message_box
-  $public_post.click(function (event) {
-    event.preventDefault();
+  function postMessage() {
     var message = $public_message.val().trim();
 
     if (!message) {
@@ -291,6 +287,23 @@ $(document).ready(function() {
     }
 
     $public_message.val('');
+  }
+
+  // Send message button
+  // TODO: rename public_post into post_message button
+  $public_post.click(function (event) {
+    event.preventDefault();
+    postMessage();
+  });
+
+
+  // TODO: rename public_message into message_box
+  $public_message.keydown(function (event) {
+    // When 'Return' key is pressed, post the message
+    if (event.which === 13) {
+      event.preventDefault();
+      postMessage();
+    }
   });
 
 
