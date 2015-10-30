@@ -216,7 +216,7 @@ a:focus {
 
 .navbar-custom .nav li a:hover {
     outline: 0;
-    color: rgba(255,255,255,.8);
+    color: #111;
     background-color: transparent;
 }
 
@@ -230,12 +230,9 @@ a:focus {
     outline: 0;
 }
 
-.navbar-custom .nav li.active a {
-    background-color: rgba(255,255,255,.3);
-}
 
 .navbar-custom .nav li.active a:hover {
-    color: #fff;
+    color: #111;
 }
 
 @media(min-width:768px) {
@@ -263,8 +260,9 @@ a:focus {
 #sidebar-wrapper {
     left: 10%;
     right: 10%;
-    height: auto;
-    background: #000;
+    
+    
+
     opacity: 0.8;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
@@ -272,8 +270,11 @@ a:focus {
     transition: all 0.5s ease;
 }
 .collapse.in {
-  overflow: auto;
-  max-height: 560px;
+  /*overflow: auto;
+  max-height: 560px;*/
+}
+.navbar-collapse.navbar-right.navbar-main-collapse.collapse.in {
+  overflow: visible;
 }
 /*.glyphicon-user{
   background-color: #EA1632;

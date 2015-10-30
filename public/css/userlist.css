@@ -2,6 +2,31 @@ body{
     background:#eee;    
 }
 
+
+.search2 {
+    padding: 5px 0;
+    height: 60px;
+    position: relative;
+    line-height: 22px;
+}
+
+.search2 input {
+    position: absolute;
+    width: 80%;
+    float: Left;
+    opacity:0.8;
+    -webkit-transition: all 0.7s ease-in-out;
+    -moz-transition: all 0.7s ease-in-out;
+}  
+.search2 button {
+    height: 35px;
+    width:10%;
+    top: 5px;
+    border-radius:3px;
+}
+
+
+
 .round.online {
     background-color: #42A129;
 }
@@ -12,14 +37,14 @@ body{
     background-color: #EF140D;
 }*/
 .round.round-lg {
-    height: 40px;
-    width: 40px;
-    line-height: 40px;
-    -moz-border-radius: 20px;
-    border-radius: 20px;
-    font-size: 1.5em;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    font-size: 0.7em;
     position: relative;
-    max-width: 50px;
+    /*max-width: 50px;*/
     float: left;
     margin-right: 15px;
 }
@@ -34,21 +59,19 @@ body{
     color: #FFF;
     text-align: center;
 }
+.glyphicon.glyphicon-user{
+    
+    top: 4px;
+}
 .glyphicon {
-    font-size: 21px;
-    top: 6px;
+    font-size: 10px;
 }
-.glyphicon.glyphicon-chevron-down {
-    top: 0px;
-}
-.glyphicon.glyphicon-comment {
-    top: 0px;
-}
-/*.main-box.no-header {
-    padding-top: 20px;
-}*/
+
+
 .main-box {
     background: #FFFFFF;
+    overflow-y: scroll;
+    max-height: 300px;
     -webkit-box-shadow: 1px 1px 2px 0 #CCCCCC;
     -moz-box-shadow: 1px 1px 2px 0 #CCCCCC;
     -o-box-shadow: 1px 1px 2px 0 #CCCCCC;
@@ -80,7 +103,7 @@ body{
     display: block;
     font-size: 1.25em;
     padding-top: 3px;
-    margin-left: 60px;
+    margin-left: 30px;
 }
 a {
     color: #3498db;
@@ -101,11 +124,11 @@ a {
     border-bottom: 2px solid #e7ebee;
 }
 .table tbody tr td:first-child {
-    font-size: 1.125em;
+    /*font-size: 1.125em;*/
     font-weight: 300;
 }
 .table tbody tr td {
-    min-width: 200px;
+    min-width: 100px;
     font-size: 0.875em;
     vertical-align: middle;
     border-top: 1px solid #e7ebee;

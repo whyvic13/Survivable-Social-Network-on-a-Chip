@@ -49,21 +49,21 @@ $(document).ready(function() {
       if(safety == 'OK') { 
         // green 'Ok'
         var $htmlDiv = $('<tr><td><div class="round round-lg'+online_status+'"><span class="glyphicon glyphicon-user"></span></div>'+
-                         '<a href="#" class="user-link">'+user+'</a></td><td class="text-center">'+
+                         '<a class="user-link">'+user+'</a></td><td class="text-center">'+
                          '<span class="label label-success">OK</span></td>');}
       else if(safety == 'Emergency'){
         //yellow 'Emergency'
         var $htmlDiv = $('<tr><td><div class="round round-lg'+online_status+'"><span class="glyphicon glyphicon-user"></span></div>'+
-                         '<a href="#" class="user-link">'+user+'</a></td><td class="text-center">'+
+                         '<a class="user-link">'+user+'</a></td><td class="text-center">'+
                          '<span class="label label-warning">EMERGENCY</span></td>');}
       else if(safety == 'Help'){
         //red 'Help'
         var $htmlDiv = $('<tr><td><div class="round round-lg'+online_status+'"><span class="glyphicon glyphicon-user"></span></div>'+
-                         '<a href="#" class="user-link">'+user+'</a></td><td class="text-center">'+
+                         '<a class="user-link">'+user+'</a></td><td class="text-center">'+
                          '<span class="label label-danger">HELP</span></td>');}
       else{
         var $htmlDiv = $('<tr><td><div class="round round-lg'+online_status+'"><span class="glyphicon glyphicon-user"></span></div>'+
-                         '<a href="#" class="user-link">'+user+'</a></td><td class="text-center">'+
+                         '<a class="user-link">'+user+'</a></td><td class="text-center">'+
                          '<span class="label label-default">NONE</span></td>');}
       $userlist.append($htmlDiv);
 
@@ -123,10 +123,12 @@ $(document).ready(function() {
       var myDate = new Date(data.timestamp * 1000);
       var time = (myDate.getMonth()+1)+'.'+myDate.getDate()+'  '+myDate.toLocaleTimeString();
       var safety = data.userStatus;
+      var firstCharacter = data.username[0].toLowerCase();
+      console.log("first: "+firstCharacter);
       if(safety == 'OK') { 
         // green 'Ok'
         var htmlDiv = '<li class="left clearfix"><span class="chat-img pull-left">'+
-                    '<img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />'+
+                    '<img src="./img/'+firstCharacter+'.png" alt="User Avatar" class="img-circle" />'+
                     '</span><div class="chat-body clearfix">' +
                     '<div class="header"><strong class="primary-font">'+data.username+
                     '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label label-success">OK</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
@@ -136,7 +138,7 @@ $(document).ready(function() {
       else if(safety == 'Emergency'){
         //yellow 'Emergency'
         var htmlDiv = '<li class="left clearfix"><span class="chat-img pull-left">'+
-                    '<img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />'+
+                    '<img src="./img/'+firstCharacter+'.png" alt="User Avatar" class="img-circle" />'+
                     '</span><div class="chat-body clearfix">' +
                     '<div class="header"><strong class="primary-font">'+data.username+
                     '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label label-warning">EMERGENCY</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
@@ -146,7 +148,7 @@ $(document).ready(function() {
       else if(safety == 'Help'){
         //red 'Help'
         var htmlDiv = '<li class="left clearfix"><span class="chat-img pull-left">'+
-                    '<img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />'+
+                    '<img src="./img/'+firstCharacter+'.png" alt="User Avatar" class="img-circle" />'+
                     '</span><div class="chat-body clearfix">' +
                     '<div class="header"><strong class="primary-font">'+data.username+
                     '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label label-danger">HELP</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
@@ -155,7 +157,7 @@ $(document).ready(function() {
       }
       else{
         var htmlDiv = '<li class="left clearfix"><span class="chat-img pull-left">'+
-                    '<img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />'+
+                    '<img src="./img/'+firstCharacter+'.png" alt="User Avatar" class="img-circle" />'+
                     '</span><div class="chat-body clearfix">' +
                     '<div class="header"><strong class="primary-font">'+data.username+
                     '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label label-default">NONE</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
@@ -174,24 +176,66 @@ $(document).ready(function() {
       // flag true for own, false for other
       var myDate = new Date(data.timestamp * 1000);
       var time = (myDate.getMonth()+1)+'.'+myDate.getDate()+'  '+myDate.toLocaleTimeString();
-      if(flag) {
-         var htmlDiv = '<li class="right clearfix"><span class="chat-img pull-right">'+
-                      '<img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />'+
-                      '</span><div class="chat-body clearfix"><div class="header">'+
-                      '<small class=" text-muted"><span class="glyphicon glyphicon-time">'+
-                      '</span>'+time+'</small><strong class="pull-right primary-font">'+data.username+
-                      '</strong></div><p>'+data.message+'</p></div></li> ';
-      }
-      else {
+      var firstCharacter = data.username[0].toLowerCase();
+      var png = flag ? "me" : firstCharacter;
+      var safety = data.userStatus;
+      
+      if(safety == 'OK') { 
+        // green 'Ok'
         var htmlDiv = '<li class="left clearfix"><span class="chat-img pull-left">'+
-                    '<img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />'+
+                    '<img src="./img/'+png+'.png" alt="User Avatar" class="img-circle" />'+
                     '</span><div class="chat-body clearfix">' +
                     '<div class="header"><strong class="primary-font">'+data.username+
-                    '</strong><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
+                    '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label label-success">OK</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
                     '</span>'+time+'</small></div>'+
                     '<p>'+data.message+'</p></div></li>';
-        
       }
+      else if(safety == 'Emergency'){
+        //yellow 'Emergency'
+        var htmlDiv = '<li class="left clearfix"><span class="chat-img pull-left">'+
+                    '<img src="./img/'+png+'.png" alt="User Avatar" class="img-circle" />'+
+                    '</span><div class="chat-body clearfix">' +
+                    '<div class="header"><strong class="primary-font">'+data.username+
+                    '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label label-warning">EMERGENCY</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
+                    '</span>'+time+'</small></div>'+
+                    '<p>'+data.message+'</p></div></li>';
+      }
+      else if(safety == 'Help'){
+        //red 'Help'
+        var htmlDiv = '<li class="left clearfix"><span class="chat-img pull-left">'+
+                    '<img src="./img/'+png+'.png" alt="User Avatar" class="img-circle" />'+
+                    '</span><div class="chat-body clearfix">' +
+                    '<div class="header"><strong class="primary-font">'+data.username+
+                    '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label label-danger">HELP</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
+                    '</span>'+time+'</small></div>'+
+                    '<p>'+data.message+'</p></div></li>';
+      }
+      else{
+        var htmlDiv = '<li class="left clearfix"><span class="chat-img pull-left">'+
+                    '<img src="./img/'+png+'.png" alt="User Avatar" class="img-circle" />'+
+                    '</span><div class="chat-body clearfix">' +
+                    '<div class="header"><strong class="primary-font">'+data.username+
+                    '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label label-default">NONE</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
+                    '</span>'+time+'</small></div>'+
+                    '<p>'+data.message+'</p></div></li>';
+      }
+      //    var htmlDiv = '<li class="right clearfix"><span class="chat-img pull-right">'+
+      //                 '<img src="./img/me.png" alt="User Avatar" class="img-circle" />'+
+      //                 '</span><div class="chat-body clearfix"><div class="header">'+
+      //                 '<small class=" text-muted"><span class="glyphicon glyphicon-time">'+
+      //                 '</span>'+time+'</small><strong class="pull-right primary-font">'+data.username+
+      //                 '</strong></div><p>'+data.message+'</p></div></li> ';
+      // }
+      // else {
+      //   var htmlDiv = '<li class="left clearfix"><span class="chat-img pull-left">'+
+      //               '<img src="./img/'+firstCharacter+'.png" alt="User Avatar" class="img-circle" />'+
+      //               '</span><div class="chat-body clearfix">' +
+      //               '<div class="header"><strong class="primary-font">'+data.username+
+      //               '</strong><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
+      //               '</span>'+time+'</small></div>'+
+      //               '<p>'+data.message+'</p></div></li>';
+        
+      // }
       $private_body.append(htmlDiv);
       
     }
@@ -215,7 +259,7 @@ $(document).ready(function() {
         receiver = $(this).text();
         console.log("receiver: "+receiver);
         // set chat name
-        $('.glyphicon.glyphicon-comment').empty().append('   '+receiver);
+        $('#private-head').empty().append('   '+receiver);
 
         // get private history message
         $private_body.empty();
@@ -390,15 +434,24 @@ $(document).ready(function() {
     $private_post.click(function(event) {
       event.preventDefault();
       var message = $private_message.val().trim();
-      if(message){
-        socket.emit('new private message',{sender: username, receiver: receiver, senderStatus: userList[username].userStatus, message:message});
-      }
-      else{
+      if(receiver == "") {
         BootstrapDialog.show({
             title: 'Alert Message',
-            message: 'Cannot input empty message!'
+            message: 'Please select the chat person first!'
         });
       }
+      else{
+        if(message){
+          socket.emit('new private message',{sender: username, receiver: receiver, senderStatus: userList[username].userStatus, message:message});
+        }
+        else{
+          BootstrapDialog.show({
+              title: 'Alert Message',
+              message: 'Cannot input empty message!'
+          });
+        }
+      }
+      
       $private_message.val('');
       
       
@@ -508,6 +561,7 @@ $(document).ready(function() {
       /* Act on the event */
       event.preventDefault();
       console.log('in ok');
+      $('#status-toggle').empty().append('Status: <span class="label label-success">OK</span><span class="caret"></span>');
       // safety_status='OK';
       userList[username].userStatus = 'OK';
       updateUserList();
@@ -518,6 +572,7 @@ $(document).ready(function() {
       /* Act on the event */
       event.preventDefault();
       console.log('in Emergency');
+      $('#status-toggle').empty().append('Status: <span class="label label-warning">EMERGENCY</span><span class="caret"></span>');
       // safety_status='Emergency';
       userList[username].userStatus = 'Emergency';
       updateUserList();
@@ -528,6 +583,7 @@ $(document).ready(function() {
       /* Act on the event */
       event.preventDefault();
       console.log('in help');
+      $('#status-toggle').empty().append('Status: <span class="label label-danger">HELP</span><span class="caret"></span>');
       // safety_status='Help';
       userList[username].userStatus = 'Help';
       updateUserList();
