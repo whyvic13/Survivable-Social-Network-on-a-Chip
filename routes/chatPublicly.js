@@ -68,7 +68,7 @@ exports.searchPublicMessages = function(req, res) {
     wordsToSql += ") ";
   }
 
-  sqlstm = sqlstm + wordsToSql + "COLLATE NOCASE ORDER BY id DESC"
+  sqlstm = sqlstm + wordsToSql + "COLLATE NOCASE ORDER BY id DESC "
 
   console.log(sqlstm);
 
@@ -79,9 +79,9 @@ exports.searchPublicMessages = function(req, res) {
       return;
     }else{
       if(row.length !== 0){
-        row.reverse();
+        //row.reverse();
         console.log(row);
-        console.log(row[0].timestamp);
+        //console.log(row[0].timestamp);
         res.status(200).json({"statusCode": 200, "data": row});
       }
       else{

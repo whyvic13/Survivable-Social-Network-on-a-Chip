@@ -65,7 +65,7 @@ exports.searchPrivateMessages = function(req, res) {
     return;
   }
 
-  var sqlstm = "SELECT * FROM privateChat WHERE ";
+  var sqlstm = "SELECT * FROM privateChat WHERE (";
   var fields = ['sender', 'receiver', 'message', 'timestamp', 'senderStatus', 'senderLocation'];
   wordsToSql = "";
   for (var i = 0; i < fields.length; i++) {
@@ -82,7 +82,7 @@ exports.searchPrivateMessages = function(req, res) {
     wordsToSql += ") ";
   }
 
-  sqlstm = sqlstm + wordsToSql + " AND sender='" + req.query.sender + "' AND receiver='" + req.query.receiver + "' COLLATE NOCASE ORDER BY id DESC"
+  sqlstm = sqlstm + wordsToSql + ") AND ((sender='" + req.query.sender + "' AND receiver='" + req.query.receiver + "') OR (sender ='" + req.query.receiver + "' AND receiver='" + req.query.sender + "')) COLLATE NOCASE ORDER BY id DESC"
 
   console.log(sqlstm);
 
@@ -93,9 +93,9 @@ exports.searchPrivateMessages = function(req, res) {
       return;
     }else{
       if(row.length !== 0){
-        row.reverse();
+        //row.reverse();
         console.log(row);
-        console.log(row[0].timestamp);
+        //console.log(row[0].timestamp);
         res.status(200).json({"statusCode": 200, "data": row});
       }
       else{
