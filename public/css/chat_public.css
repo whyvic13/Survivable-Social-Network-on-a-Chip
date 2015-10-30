@@ -394,7 +394,7 @@ body::-webkit-scrollbar {
 }  
 .search2 button {
     height: 35px;
-    width:20%;
+    width:10%;
     top: 5px;
     border-radius:3px;
 }
