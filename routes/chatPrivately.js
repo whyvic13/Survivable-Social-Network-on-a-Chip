@@ -82,7 +82,7 @@ exports.searchPrivateMessages = function(req, res) {
     wordsToSql += ") ";
   }
 
-  sqlstm = sqlstm + wordsToSql + ") AND ((sender='" + req.query.sender + "' AND receiver='" + req.query.receiver + "') OR (sender ='" + req.query.receiver + "' AND receiver='" + req.query.sender + "')) COLLATE NOCASE ORDER BY id DESC"
+  sqlstm = sqlstm + wordsToSql + ") AND ((sender='" + req.query.sender + "' AND receiver='" + req.query.receiver + "') OR (sender ='" + req.query.receiver + "' AND receiver='" + req.query.sender + "')) AND id < " + req.query.id + " COLLATE NOCASE ORDER BY id DESC LIMIT 10"
 
   console.log(sqlstm);
 

@@ -51,7 +51,7 @@ exports.searchPublicMessages = function(req, res) {
     return;
   }
 
-  var sqlstm = "SELECT * FROM publicChat WHERE ";
+  var sqlstm = "SELECT * FROM publicChat WHERE (";
   var fields = ['sender', 'message', 'timestamp', 'senderStatus', 'senderLocation'];
   wordsToSql = "";
   for (var i = 0; i < fields.length; i++) {
@@ -68,7 +68,7 @@ exports.searchPublicMessages = function(req, res) {
     wordsToSql += ") ";
   }
 
-  sqlstm = sqlstm + wordsToSql + "COLLATE NOCASE ORDER BY id DESC "
+  sqlstm = sqlstm + wordsToSql + ") AND id < " + req.query.id + " COLLATE NOCASE ORDER BY id DESC LIMIT 10"
 
   console.log(sqlstm);
 
