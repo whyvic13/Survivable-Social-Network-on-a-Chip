@@ -18,6 +18,8 @@ $(document).ready(function() {
   var parameters = href.split('?')[1].split('=')[1];
   var username = parameters.split('&')[0];
   var isNewUser = parameters.split('&')[1];
+  var chatLog = undefined;
+
   $userlist_head.append("<h3>Welcome " + username + " !</h3>");
   if (isNewUser == "1") {
     $('#welcome_message').show();
@@ -94,13 +96,17 @@ $(document).ready(function() {
     });
   }
 
-  function updateUserList() {
+  function updateUserList(query) {
     // Clear off userlist
     $userlist.children(".media.conversation").remove();
 
     var onlineUsers = [];
     var offlineUsers = [];
     for (name in userList) {
+      if (query !== undefined && name.indexOf(query) === -1) {
+        continue;
+      }
+
       if (userList[name].online) {
         onlineUsers.push(name);
       } else {
@@ -221,7 +227,7 @@ $(document).ready(function() {
       }
     });
   }
-  
+
   getPublicMessages();
 
   // Get Announcement messages
@@ -324,38 +330,56 @@ $(document).ready(function() {
     $announcement_message.val('');
   });
 
-  // Get another 20 messages
+  // Get another 20 messages if in mode get message history
+  // Get another 10 search results if in mode search chat messages
   $refresh.click(function (event) {
     event.preventDefault();
-    $.get("/getPublicMessages", {
-        start: load_time,
+
+    var query = $("#search-chat").val();
+    if (query) { // Search mode
+      /*$get("/searchPrivateMessages", {
+        username: username,
+        query: query,
         ID: newID
       }, function (response) {
-        if (response.statusCode === 200) {
-          load_time = response.newtime;
-          newID = response.newID;
-
-          for (var i = response.data.length - 1; i >= 0; i--) {
-            var data = response.data[i];
-            var htmlDiv = getMessageDiv(data.sender, data.senderStatus, data.timestamp, data.message);
-            $public_body.prepend(htmlDiv);
-          }
-
-          $public_body.animate({
-            scrollTop: 0
-          }, 500);
-        } else if (response.statusCode === 401) {
-          BootstrapDialog.show({
-            title: 'Alert Message',
-            message: response.message
-          });
-        } else {
-          BootstrapDialog.show({
-            title: 'Alert Message',
-            message: response.message
-          });
+        for (var i = 0; i < response.data.length; i++) {
+          var data = response.data[i];
+          var htmlDiv = getMessageDiv(data.sender, data.senderStatus, data.timestamp, data.message);
+          $public_body.prepend(htmlDiv);
         }
-      });
+        newID = response.newID;
+      });*/
+    } else { // Chat mode
+      $.get("/getPublicMessages", {
+          start: load_time,
+          ID: newID
+        }, function (response) {
+          if (response.statusCode === 200) {
+            load_time = response.newtime;
+            newID = response.newID;
+
+            for (var i = response.data.length - 1; i >= 0; i--) {
+              var data = response.data[i];
+              var htmlDiv = getMessageDiv(data.sender, data.senderStatus, data.timestamp, data.message);
+              $public_body.prepend(htmlDiv);
+            }
+
+            $public_body.animate({
+              scrollTop: 0
+            }, 500);
+          } else if (response.statusCode === 401) {
+            BootstrapDialog.show({
+              title: 'Alert Message',
+              message: response.message
+            });
+          } else {
+            BootstrapDialog.show({
+              title: 'Alert Message',
+              message: response.message
+            });
+          }
+        });
+    }
   });
 
   // Logout
@@ -401,6 +425,54 @@ $(document).ready(function() {
     event.preventDefault();
     updateStatus('Help');
   });
+
+
+  $("#search-username").keydown(function (event) {
+    // When 'Return' key is pressed, post the message
+    if (event.which === 13) {
+      event.preventDefault();
+    }
+  });
+
+  // Allows instant search
+  $("#search-username").keyup(function (event) {
+    var query = $(this).val();
+    updateUserList(query);
+  });
+
+
+  $("#search-chat").keydown(function (event) {
+    // When 'Return' key is pressed, post the message
+    if (event.which === 13) {
+      event.preventDefault();
+    }
+
+    if (!($("#search-chat").val())) {
+      chatLog = #public_body.html();
+    }
+  });
+
+  // Allows instant search
+  $("#search-chat").keyup(function (event) {
+    var query = $(this).val();
+
+    if (!query) {
+      $public_body.html(chatLog);
+    } else {
+      $public_body.html("");  // Clean up space for diplaying results
+
+      $.get("/searchPrivateMessages", {
+        username: username,
+        query: query
+      }, function (response) {
+        for (var data in response) {
+          var htmlDiv = getMessageDiv(data.sender, data.senderStatus, data.timestamp, data.message);
+          $public_body.prepend(htmlDiv);
+        }
+      });
+    }
+  });
+
 
   // Whenever the server emits new message, update the chat body
   socket.on('new private message', function (data) {
