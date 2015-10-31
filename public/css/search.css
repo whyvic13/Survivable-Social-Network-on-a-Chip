@@ -1,0 +1,41 @@
+body{
+    margin-top:20px;
+    }
+#search {
+    float: right;
+    margin-top: 9px;
+    width: 250px;
+}
+
+.search2 {
+    padding: 5px 0;
+    width: 230px;
+    height: 30px;
+    position: relative;
+    left: 10px;
+    float: left;
+    line-height: 22px;
+}
+
+.search2 input {
+        position: absolute;
+        width: 0px;
+        float: Left;
+        margin-left: 250px;
+        -webkit-transition: all 0.7s ease-in-out;
+        -moz-transition: all 0.7s ease-in-out;
+}
+       
+.search2 button {
+    height: 30px;
+    position: absolute;
+    left:250px;
+    top: 5px;
+    float：Left;
+    border-radius:1px;
+}
+
+.search2:hover input , .search2 input :focus{
+    width: 250px;
+    margin-left: 0px;
+}

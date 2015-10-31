@@ -52,7 +52,7 @@ $(function() {
         return date.toLocaleTimeString();
     }
 
-    $.backstretch("/public/img/intro-bg.jpg");
+    $.backstretch("/public/img/intro-bg2.jpg");
     
     /*
         Form validation

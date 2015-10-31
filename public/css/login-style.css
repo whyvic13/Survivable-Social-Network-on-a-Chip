@@ -6,14 +6,21 @@ body {
     color: #888;
     line-height: 30px;
     text-align: center;
-    background: url(../img/intro-bg.jpg) no-repeat center center fixed;
+    background: url(../img/intro-bg2.jpg) no-repeat center center fixed;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
 }
 
-
+h1,h2,h3{
+    margin: 0 0 35px;
+    text-transform: uppercase;
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color：#000;
+}
 
 .nav .navbar-nav .page-scroll {
 	font-size: 14px;

@@ -21,7 +21,7 @@ var db = new sqlite3.Database(dbfile, function(err) {
 exports.getAllUsers = function(req, res, loggedInUsers) {
 	if (dbExisted) {
 		var usersDict = {};
-
+		
 		db.each("SELECT username, userStatus FROM users ORDER BY username COLLATE NOCASE", function(err, row) {
 			if (err) {
 				res.status(500).json({"statusCode": 500, "message": "Internal server error"});
