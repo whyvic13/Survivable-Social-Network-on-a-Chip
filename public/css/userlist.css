@@ -37,11 +37,10 @@ body{
     background-color: #EF140D;
 }*/
 .round.round-lg {
-    height: 20px;
-    width: 20px;
-    line-height: 20px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    border-radius: 15px;
     font-size: 0.7em;
     position: relative;
     /*max-width: 50px;*/
@@ -60,8 +59,8 @@ body{
     text-align: center;
 }
 .glyphicon.glyphicon-user{
-    
-    top: 4px;
+    top: 9px;
+    font-size: 13px;
 }
 .glyphicon {
     font-size: 10px;
