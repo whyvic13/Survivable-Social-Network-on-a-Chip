@@ -1,115 +1,115 @@
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>SSNoC System created by SA4-1025</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <link rel="stylesheet" href="css/chat_public.css">
-    <link rel="stylesheet" href="css/userlist.css">
-    <link rel="stylesheet" href="css/publicchat.css">
-    <link rel="stylesheet" type="text/css" href="css/bootstrap-dialog.min.css">
-    <link href="/public/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
-    <!-- <link rel="stylesheet" href="/public/css/form-elements.css"> -->
+<head>
+  <meta charset="utf-8">
+  <title>SSNoC System created by SA4-1025</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <link rel="stylesheet" href="css/chat_public.css">
+  <link rel="stylesheet" href="css/userlist.css">
+  <link rel="stylesheet" href="css/publicchat.css">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap-dialog.min.css">
+  <link href="/public/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+  <!-- <link rel="stylesheet" href="/public/css/form-elements.css"> -->
 
-  </head>
-  <body id="page-top"data-spy="scroll" data-target=".navbar">
- 
-    <div id="welcome_message" class="alert alert-success fade in">
-          <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-          <strong>Welcome to SSNoC! In case of a disastrous event, you can use SSNoC to communicate with each other, share status to let others know if you are OK, need help or in emergency. Your status and location will be visible to everybody in the community!</strong>
-    </div>
-    <div class="text-center" id="head_title">          
-      
-    </div>
-    <nav class="navbar navbar-custom " role="navigation">
+</head>
+<body id="page-top"data-spy="scroll" data-target=".navbar">
 
-        <div class="container" id="navbar">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-main-collapse">
-                    <i class="fa fa-bars"></i>
-                </button>
+  <div id="welcome_message" class="alert alert-success fade in">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong>Welcome to SSNoC! In case of a disastrous event, you can use SSNoC to communicate with each other, share status to let others know if you are OK, need help or in emergency. Your status and location will be visible to everybody in the community!</strong>
+  </div>
+  <div class="text-center" id="head_title">          
 
-                  <a id="logout" class="btn " role="button" href="/user/logout"><i class="fa fa-play-circle"></i> Log Out</a>
-                   
-            </div>
+  </div>
+  <nav class="navbar navbar-custom " role="navigation">
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a href="#sidebar-wrapper" data-toggle="tab">Users</a></li>
-                    <li><a href="#tab2" data-toggle="tab">Public</a></li>
-                    <li><a href="#tab3" data-toggle="tab">Private</a></li>
-                    <li><a href="#tab4" data-toggle="tab">Announcement</a></li>
-                    <li class="dropdown">
-                      <a href="#" data-toggle="dropdown" id="status-toggle">Status<span class="caret"></span></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#" id="status-ok" data-toggle="tab">OK</a></li>
-                        <li><a href="#" id="status-help" data-toggle="tab">Help</a></li>
-                        <li><a href="#" id="status-emergency" data-toggle="tab">Emergency</a></li>
-                      </ul>
-                    </li> 
-              </ul>
-            </div>
-            <!-- /.navbar-collapse -->
+    <div class="container" id="navbar">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-main-collapse">
+          <i class="fa fa-bars"></i>
+        </button>
+
+        <a id="logout" class="btn " role="button" href="/user/logout"><i class="fa fa-play-circle"></i> Log Out</a>
+
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#sidebar-wrapper" data-toggle="tab">Users</a></li>
+          <li><a href="#tab2" data-toggle="tab">Public</a></li>
+          <li><a href="#tab3" data-toggle="tab">Private</a></li>
+          <li><a href="#tab4" data-toggle="tab">Announcement</a></li>
+          <li class="dropdown">
+            <a href="#" data-toggle="dropdown" id="status-toggle">Status<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#" id="status-ok" data-toggle="tab">OK</a></li>
+              <li><a href="#" id="status-help" data-toggle="tab">Help</a></li>
+              <li><a href="#" id="status-emergency" data-toggle="tab">Emergency</a></li>
+            </ul>
+          </li> 
+        </ul>
+      </div>
+      <!-- /.navbar-collapse -->
     </nav>
     <div class="panel-body">
 
-            <div class="tab-content col-xs-12 col-xs-offset-0">
-                <div class="tab-pane fade in active" id="sidebar-wrapper">
-                      
-                        <div class="search2">
-                          <input type="text" class="form-control input" maxlength="64" placeholder="Search">
-                          <button type="submit" class="btn btn-danger pull-right" >
-                            <span class="glyphicon glyphicon-remove"></span>
-                          </buton>
-                          <button type="submit" class="btn btn-primary  pull-right" >
-                            <span class="glyphicon glyphicon-search"></span> 
-                          </buton>
-                        </div>
-                   
-                      <div class="main-box no-header">
-                          <div class="main-box-body">
-                              <div class="table-responsive">
-                                  <table class="table user-list">
-                                      
-                                      <tbody id="userlist">
-                                          
-                                      </tbody>
-                                  </table>
-                              </div>
-                          </div>
-                      </div>
-                               
-                 
-                </div>
-                <div class="tab-pane fade" id="tab2">
-                          <div class="search2">
-                            <input type="text" class="form-control input" maxlength="64" placeholder="Search">
-                            <button type="submit" class="btn btn-danger pull-right" >
-                              <span class="glyphicon glyphicon-remove"></span>
-                            </buton>
-                            <button type="submit" class="btn btn-primary  pull-right" >
-                              <span class="glyphicon glyphicon-search"></span> 
-                            </buton>
-                          </div>
-                         
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <span class="glyphicon glyphicon-comment">  Public-Chat-Room</span> 
-                                    <div class="btn-group pull-right">
-                                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                            <span class="glyphicon glyphicon-chevron-down"></span>
-                                        </button>
-                                        <ul class="dropdown-menu slidedown">
-                                            <li><a href="" id="refresh"><span class="glyphicon glyphicon-refresh">
-                                            </span>Refresh</a></li>
-                                            
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="chat panel-body">
-                                    <ul class="chat" id="public_body">
-                                        
+      <div class="tab-content col-xs-12 col-xs-offset-0">
+        <div class="tab-pane fade in active" id="sidebar-wrapper">
+
+          <div class="search2">
+          <input id="search-username" type="text" class="form-control input" maxlength="64" placeholder="Search">
+            <button id="search-username-cancel" type="submit" class="btn btn-danger pull-right" >
+              <span class="glyphicon glyphicon-remove"></span>
+            </buton>
+            <button id="search-username-button" type="submit" class="btn btn-primary  pull-right" >
+              <span class="glyphicon glyphicon-search"></span> 
+            </buton>
+          </div>
+
+          <div class="main-box no-header">
+            <div class="main-box-body">
+              <div class="table-responsive">
+                <table class="table user-list">
+
+                  <tbody id="userlist">
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="tab-pane fade" id="tab2">
+          <div class="search2">
+            <input id="search-public" type="text" class="form-control input" maxlength="64" placeholder="Search">
+            <button type="submit" class="btn btn-danger pull-right" >
+              <span class="glyphicon glyphicon-remove"></span>
+            </buton>
+            <button type="submit" class="btn btn-primary  pull-right" >
+              <span class="glyphicon glyphicon-search"></span> 
+            </buton>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-comment">  Public-Chat-Room</span> 
+              <div class="btn-group pull-right">
+                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                  <span class="glyphicon glyphicon-chevron-down"></span>
+                </button>
+                <ul class="dropdown-menu slidedown">
+                  <li><a href="" id="refresh"><span class="glyphicon glyphicon-refresh">
+                  </span>Refresh</a></li>
+
+                </ul>
+              </div>
+            </div>
+            <div class="chat panel-body">
+              <ul class="chat" id="public_body">
+
                                         <!-- <li class="right clearfix"><span class="chat-img pull-right">
                                             <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
                                         </span>
@@ -151,51 +151,51 @@
                                                     dolor, quis ullamcorper ligula sodales.
                                                 </p>
                                             </div>
-                                        </li> -->
-                                    </ul>
-                                </div>
-                                <div class="panel-footer">
-                                    <div class="input-group">
-                                        <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
-                                        <span class="input-group-btn">
+                                          </li> -->
+                                        </ul>
+                                      </div>
+                                      <div class="panel-footer">
+                                        <div class="input-group">
+                                          <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                                          <span class="input-group-btn">
                                             <button class="btn btn-warning btn-sm" id="btn-chat">
-                                                Send</button>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                      
-                </div>
-             
-                <div class="tab-pane fade" id="tab3">
+                                              Send</button>
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
 
-                        <div class="search2">
-                          <input type="text" class="form-control input" maxlength="64" placeholder="Search">
-                          <button type="submit" class="btn btn-danger pull-right" >
-                            <span class="glyphicon glyphicon-remove"></span>
-                          </buton>
-                          <button type="submit" class="btn btn-primary  pull-right" >
-                            <span class="glyphicon glyphicon-search"></span> 
-                          </buton>
-                        </div>
-                  <div class="panel panel-primary">
-                      <div class="panel-heading">
-                          <span id="private-head" class="glyphicon glyphicon-comment"></span> 
-                          <div class="btn-group pull-right">
-                              <button type="button" id="userlist-dropdown" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                  <span class="glyphicon glyphicon-chevron-down"></span>
-                              </button>
-                              <ul id="userlist-dropdown-append"class="dropdown-menu slidedown">
+                                    </div>
+
+                                    <div class="tab-pane fade" id="tab3">
+
+                                      <div class="search2">
+                                        <input id="search-private" type="text" class="form-control input" maxlength="64" placeholder="Search">
+                                        <button type="submit" class="btn btn-danger pull-right" >
+                                          <span class="glyphicon glyphicon-remove"></span>
+                                        </buton>
+                                        <button type="submit" class="btn btn-primary  pull-right" >
+                                          <span class="glyphicon glyphicon-search"></span> 
+                                        </buton>
+                                      </div>
+                                      <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                          <span id="private-head" class="glyphicon glyphicon-comment"></span> 
+                                          <div class="btn-group pull-right">
+                                            <button type="button" id="userlist-dropdown" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                              <span class="glyphicon glyphicon-chevron-down"></span>
+                                            </button>
+                                            <ul id="userlist-dropdown-append"class="dropdown-menu slidedown">
                                   <!-- <li><a href="" id="refresh"><span class="glyphicon glyphicon-refresh">
-                                  </span>Refresh</a></li> -->
-                                  
+                                </span>Refresh</a></li> -->
+
                               </ul>
+                            </div>
                           </div>
-                      </div>
-                      <div class="chat panel-body">
-                          <ul class="chat" id="private_body">
-                              
-                              
+                          <div class="chat panel-body">
+                            <ul class="chat" id="private_body">
+
+
                               <!-- <li class="left clearfix"><span class="chat-img pull-left">
                                   <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
                               </span>
@@ -223,58 +223,58 @@
                                           dolor, quis ullamcorper ligula sodales.
                                       </p>
                                   </div>
-                              </li>  -->
-                          </ul>
-                      </div>
-                      <div class="panel-footer">
-                          <div class="input-group">
-                              <input id="private-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
-                              <span class="input-group-btn">
+                                </li>  -->
+                              </ul>
+                            </div>
+                            <div class="panel-footer">
+                              <div class="input-group">
+                                <input id="private-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                                <span class="input-group-btn">
                                   <button class="btn btn-warning btn-sm" id="private-chat">
-                                      Send</button>
-                              </span>
+                                    Send</button>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                      </div>
-                  </div>
-                </div>
 
-                <div class="tab-pane fade" id="tab4">
-                        <div class="search2">
-                          <input type="text" class="form-control input" maxlength="64" placeholder="Search">
-                          <button type="submit" class="btn btn-danger pull-right" >
-                            <span class="glyphicon glyphicon-remove"></span>
-                          </buton>
-                          <button type="submit" class="btn btn-primary  pull-right" >
-                            <span class="glyphicon glyphicon-search"></span> 
-                          </buton>
+                          <div class="tab-pane fade" id="tab4">
+                            <div class="search2">
+                              <input id="search-announcement" type="text" class="form-control input" maxlength="64" placeholder="Search">
+                              <button id="search-announcement-cancel" type="submit" class="btn btn-danger pull-right" >
+                                <span class="glyphicon glyphicon-remove"></span>
+                              </buton>
+                              <button id="search-announcement-button" type="submit" class="btn btn-primary  pull-right" >
+                                <span class="glyphicon glyphicon-search"></span> 
+                              </buton>
+                            </div>
+                            <div id="announcement_body" class="msg-wrap ">
+
+
+                            </div>
+
+                            <div id="action-container" data-expanded="false">
+                              <textarea id="announcement_message" class="form-control input-md" placeholder="..."></textarea>
+
+                              <div class="btn-panel btn-panel-conversation pull-right">       
+                                <a class="btn " id="save_action" role="button"><i class="fa fa-save" aria-hidden="true"></i></a>
+                                <a class="btn " id="cancel_action" role="button"><i class="fa fa-times" aria-hidden="true"></i></a>
+
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="tab-pane fade" id="tab5">
+                          </div>
+
                         </div>
-                  <div id="announcement_body" class="msg-wrap ">
-         
-                  
-                  </div>
-            
-                  <div id="action-container" data-expanded="false">
-                  <textarea id="announcement_message" class="form-control input-md" placeholder="..."></textarea>
-        
-                    <div class="btn-panel btn-panel-conversation pull-right">       
-                    <a class="btn " id="save_action" role="button"><i class="fa fa-save" aria-hidden="true"></i></a>
-                    <a class="btn " id="cancel_action" role="button"><i class="fa fa-times" aria-hidden="true"></i></a>
-                  
-                    </div>
-                   </div>
-                </div>
+                      </div>
 
-                <div class="tab-pane fade" id="tab5">
-                </div>
-                
-              </div>
-        </div>
-        
-   
-    <script src="javascript/jquery.min.js"></script>
-    <script src="javascript/bootstrap.min.js"></script>
-    <script src="../socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="javascript/bootstrap-dialog.min.js"></script>
-    <script type="text/javascript" src="javascript/chat_public.js"></script>
-  </body>
-</html>
+
+                      <script src="javascript/jquery.min.js"></script>
+                      <script src="javascript/bootstrap.min.js"></script>
+                      <script src="../socket.io/socket.io.js"></script>
+                      <script type="text/javascript" src="javascript/bootstrap-dialog.min.js"></script>
+                      <script type="text/javascript" src="javascript/chat_public.js"></script>
+                    </body>
+                    </html>
