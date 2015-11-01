@@ -5,275 +5,272 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" href="css/chat_public.css">
+    <link rel="stylesheet" href="css/userlist.css">
+    <link rel="stylesheet" href="css/publicchat.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap-dialog.min.css">
     <link href="/public/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
-    
+    <!-- <link rel="stylesheet" href="/public/css/form-elements.css"> -->
+
   </head>
   <body id="page-top"data-spy="scroll" data-target=".navbar">
-     
-     <!-- NavBar -->
-    <nav class="navbar navbar-custom " role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-main-collapse">
-          <i class="fa fa-bars"></i>
-          </button>
-
-          <a id="public_button" class="btn " role="button" ><i class="fa fa-play-circle"></i>Public Chat</a>
-          <a id="logout" class="btn " role="button" href="/user/logout"><i class="fa fa-play-circle"></i> Log Out</a>
-        </div>
-<!--<<<<<<< HEAD -->
-        <!--Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
-          <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab">Users</a></li>
-            <li><a href="#tab2" data-toggle="tab">Chats</a></li>
-            <li><a href="#tab4" data-toggle="tab">Post</a></li>
-          </ul>
-        </div>
-        <!-- /.navbar-collapse 
-        <div class="container "> -->
-    </nav>
-
-    <!-- welcome message -->
+ 
     <div id="welcome_message" class="alert alert-success fade in">
-      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        Welcome to SSNoC! In case of a disastrous event, you can use SSNoC to communicate with each other, share status to let others know if you are OK, need help or in emergency. Your status and location will be visible to everybody in the community!
-    </div>
-    
-    <!-- UserName -->
-    <div class="userlist_head"> 
-    </div>
-
-    <!--tab body  -->
-    <div class="panel-body">
-      <div class="tab-content col-xs-9 ">
-              
-        <div class="tab-pane fade in active" id="tab1" > 
-          <div class="search2">
-            <input type="text" class="form-control input" maxlength="64" placeholder="Search">
-            <button type="submit" class="btn btn-primary  pull-right" ><span class="glyphicon glyphicon-remove"></span> </buton>
-            <button type="submit" class="btn btn-primary  pull-right" ><span class="glyphicon glyphicon-search"></span> </buton>
-            </div>
-
-         <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
-                
-            </ul>
-          </div>
-        </div>
-<!-- ======= -->
-        <!-- Page Content 
-        <div id="page-content-wrapper">
-        <div class="container-fluid">
-
-       <div class="container ">
-        <div id="welcome_message" class="alert alert-success fade in">
           <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
           <strong>Welcome to SSNoC! In case of a disastrous event, you can use SSNoC to communicate with each other, share status to let others know if you are OK, need help or in emergency. Your status and location will be visible to everybody in the community!</strong>
-        </div>
-        </div>
+    </div>
+    <div class="text-center" id="head_title">          
+      
+    </div>
+    <nav class="navbar navbar-custom " role="navigation">
 
-        <div class="row">
-          <div class="col-lg-12">
-              <div class="btn-panel btn-panel-conversation">
-                  <a class="btn  " id="menu-toggle" href="#menu-toggle" ><i class="fa fa-navicon"></i>Users</a>
-                  <a class="btn dropdown-toggle"data-toggle="dropdown">Status
-                    <span class="caret"></span>
-                  </a>
-                   <ul class="dropdown-menu" role="menu">
-                    <li><a href="#" id="status-ok">OK</a></li>
-                    <li><a href="#" id="status-emergency">Emergency</a></li>
-                    <li><a href="#" id="status-help">Help</a></li>
-                  </ul>
+        <div class="container" id="navbar">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
 
-                  <!-- <a class="btn  " role="button"><i class="fa fa-search"></i> Search</a>   -->
-          <!--        <a id="logout" class="btn   pull-right" role="button" href="/user/logout"><i class="fa fa-plus"></i>
-                    Log Out</a>
-              </div>
->>>>>>> e3b1cc604fc8b1217b8c6f1750441855ebefa24f-->
-          
-<!-- <<<<<<< HEAD -->
-
-        <div class="tab-pane fade" id="tab2">
-          <div class="search2">
-            <input type="text" class="form-control input" maxlength="64" placeholder="Search">
-            <button type="submit" class="btn btn-primary pull-right" ><span class="glyphicon glyphicon-search"></span></button>
-          </div>
-          
-          <div class="message-wrap ">
-            <div id="refresh-wrap" class="media msg ">
-              <a id="refresh" class="btn col-xs-1 pull-right" role="button" style="color: #fff;">
-                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-              </a>
-            
+                  <a id="logout" class="btn " role="button" href="/user/logout"><i class="fa fa-play-circle"></i> Log Out</a>
+                   
             </div>
-                    
-            <div id="public_body" class="msg-wrap ">
-                  
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#sidebar-wrapper" data-toggle="tab">Users</a></li>
+                    <li><a href="#tab2" data-toggle="tab">Public</a></li>
+                    <li><a href="#tab3" data-toggle="tab">Private</a></li>
+                    <li><a href="#tab4" data-toggle="tab">Announcement</a></li>
+                    <li><a href="#tab5" data-toggle="tab">Perform</a></li>
+                    <li class="dropdown">
+                      <a href="#" data-toggle="dropdown" id="status-toggle">Status<span class="caret"></span></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" id="status-ok" data-toggle="tab">OK</a></li>
+                        <li><a href="#" id="status-emergency" data-toggle="tab">Emergency</a></li>
+                        <li><a href="#" id="status-help" data-toggle="tab">Help</a></li>
+                      </ul>
+                    </li> 
+              </ul>
             </div>
-            
-            <div class="send-wrap ">
-<!-- ======= -->
+            <!-- /.navbar-collapse -->
+    </nav>
+    <div class="panel-body">
 
-              <div class="row">
-                <div class="userlist_head">
-              <!-- <h3>Public Chat Room</h3>class="conversation-wrap col-lg-3" class="btn pull-left"-->
+            <div class="tab-content col-xs-12 col-xs-offset-0">
+                <div class="tab-pane fade in active" id="sidebar-wrapper">
+                      
+                  <div class="input-group">
 
+                      <div class="input-group-btn">
+                       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><strong>Filter 
+                        </strong><span class="caret"></span></button>
+                          <ul class="dropdown-menu">
+                          <li><a href="#">UserName</a></li>
+                          <li><a href="#">UserStatus</a></li>
+                         </ul>
+                        </div>
+
+                        <input type="text" class="form-control" id="search2" maxlength="64" placeholder="Search">
+
+                        <div class=" input-group-btn ">
+                          <button type="submit" class="btn-lg btn-danger " >
+                            <span class="glyphicon glyphicon-remove"></span></button>
+                            <button type="submit" class="btn-lg btn-primary " >
+                            <span class="glyphicon glyphicon-search"></span> </button>
+                        </div>
+
+                  </div>   
+
+                  </br> 
+                      
+                      
+                
+                     <div class="main-box no-header">
+                          <div class="main-box-body">
+                              <div class="table-responsive">
+                                  <table class="table user-list">
+                                      
+                                      <tbody id="userlist">
+                                          
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                      </div> 
+                               
+                 
                 </div>
-            <!--<nav class="navbar col-xs-2" role="navigation">
-              <button type="button" class="btn-link-1" data-toggle="collapse" data-target="#userlist">
-                 <i class="fa fa-user">UserList</i>
-              </button>
+                <div class="tab-pane fade" id="tab2">
+                          <div class="search2">
+                            <input type="text" class="form-control input" maxlength="64" placeholder="Search">
+                            <button type="submit" class="btn btn-danger pull-right" >
+                              <span class="glyphicon glyphicon-remove"></span>
+                            </buton>
+                            <button type="submit" class="btn btn-primary  pull-right" >
+                              <span class="glyphicon glyphicon-search"></span> 
+                            </buton>
+                          </div>
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <span class="glyphicon glyphicon-comment">  Public-Chat-Room</span> 
+                                    <div class="btn-group pull-right">
+                                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                            <span class="glyphicon glyphicon-chevron-down"></span>
+                                        </button>
+                                        <ul class="dropdown-menu slidedown">
+                                            <li><a href="" id="refresh"><span class="glyphicon glyphicon-refresh">
+                                            </span>Refresh</a></li>
+                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="chat panel-body">
+                                    <ul class="chat" id="public_body">
+                                        
+                                        <!-- <li class="right clearfix"><span class="chat-img pull-right">
+                                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                                        </span>
+                                            <div class="chat-body clearfix">
+                                                <div class="header">
+                                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small>
+                                                    <strong class="pull-right primary-font">Bhaumik Patel</strong>
+                                                </div>
+                                                <p>
+                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                                    dolor, quis ullamcorper ligula sodales.
+                                                </p>
+                                            </div>
+                                        </li>
+                                        <li class="left clearfix"><span class="chat-img pull-left">
+                                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                                        </span>
+                                            <div class="chat-body clearfix">
+                                                <div class="header">
+                                                    <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted">
+                                                        <span class="glyphicon glyphicon-time"></span>14 mins ago</small>
+                                                </div>
+                                                <p>
+                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                                    dolor, quis ullamcorper ligula sodales.
+                                                </p>
+                                            </div>
+                                        </li>
+                                        <li class="right clearfix"><span class="chat-img pull-right">
+                                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                                        </span>
+                                            <div class="chat-body clearfix">
+                                                <div class="header">
+                                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>15 mins ago</small>
+                                                    <strong class="pull-right primary-font">Bhaumik Patel</strong>
+                                                </div>
+                                                <p>
+                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                                    dolor, quis ullamcorper ligula sodales.
+                                                </p>
+                                            </div>
+                                        </li> -->
+                                    </ul>
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="input-group">
+                                        <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-warning btn-sm" id="btn-chat">
+                                                Send</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                </div>
+                <div class="tab-pane fade" id="tab3">
 
-               <br></br>
+                        <div class="search2">
+                          <input type="text" class="form-control input" maxlength="64" placeholder="Search">
+                          <button type="submit" class="btn btn-danger pull-right" >
+                            <span class="glyphicon glyphicon-remove"></span>
+                          </buton>
+                          <button type="submit" class="btn btn-primary  pull-right" >
+                            <span class="glyphicon glyphicon-search"></span> 
+                          </buton>
+                        </div>
+                  <div class="panel panel-primary">
+                      <div class="panel-heading">
+                          <span id="private-head" class="glyphicon glyphicon-comment"></span> 
+                          <div class="btn-group pull-right">
+                              <button type="button" id="userlist-dropdown" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                  <span class="glyphicon glyphicon-chevron-down"></span>
+                              </button>
+                              <ul id="userlist-dropdown-append"class="dropdown-menu slidedown">
+                                  <!-- <li><a href="" id="refresh"><span class="glyphicon glyphicon-refresh">
+                                  </span>Refresh</a></li> -->
+                                  
+                              </ul>
+                          </div>
+                      </div>
+                      <div class="chat panel-body">
+                          <ul class="chat" id="private_body">
+                                                           
+                          </ul>
+                      </div>
+                      <div class="panel-footer">
+                          <div class="input-group">
+                              <input id="private-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                              <span class="input-group-btn">
+                                  <button class="btn btn-warning btn-sm" id="private-chat">
+                                      Send</button>
+                              </span>
+                          </div>
+                      </div>
+                  </div>
+                </div>
 
-              <div id="userlist"class="collapse in">
-              </div>
-            </nav>-->
-
-       <!-- <div class="row">
-          <div class="message-wrap col-xs-7 ">
-
-          </div>-->
-          <!--<nav class="navbar col-lg-3" role="navigation">
-            <button type="button" class="btn btn-link-1" data-toggle="collapse" data-target="#userlist">
-              <i class="fa fa-user"><strong>UserList</strong></i>
-            </button>
-
-            <br></br>
-
-            <div id="userlist"class="collapse">
-
-
-            </div>
-          </nav>-->
-
-        <!--<div class="col-lg-12">-->
-          <!-- <div class="message-wrap col-xs-8">
-
-              <div id="refresh-wrap" class="media msg " style="background-color: rgba(31, 27, 27, 0.21);">
-                  <a id="refresh" class="btn col-xs-1 pull-right" role="button" style="color: #fff;">
-                    <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-                  </a>
-
-              </div>
-              <div id="public_body" class="msg-wrap ">
-
-
-
-
-
-              </div> -->
-              <!--<div id="announcement_body" class="msg-wrap col-lg-3">
-                <h1>test</h1>
-
-
-
-
-              </div>-->
-
-              <div class="send-wrap ">
-
-              <!-- <textarea id="public_message" class="form-control send-message" rows="3" placeholder="Write a reply..."></textarea>
->>>>>>> e3b1cc604fc8b1217b8c6f1750441855ebefa24f
- -->
-              <textarea id="public_message" class="form-control send-message" rows="3" placeholder="Write..."></textarea>
-            
-              </div>
-
-<!-- <<<<<<< HEAD
-            <div class="btn-panel">
-              <a id="public_post" class=" btn col-lg-3 text-right send-message-btn pull-right" role="button"><i class="fa fa-plus"></i> Send</a>
-            </div>
-            
-======= -->
-            </div>
-              <div class="btn-panel">
-                  <!-- <a class=" col-lg-3 btn  send-message-btn " role="button"><i class="fa fa-cloud-upload"></i> Add</a> -->
-                  <a id="public_post" class=" btn col-lg-3 text-right send-message-btn pull-right" role="button"><i class="fa fa-plus"></i> Send</a>
-              </div>
-<!-- >>>>>>> e3b1cc604fc8b1217b8c6f1750441855ebefa24f -->
-          </div>
-        </div>
-
-<!-- <<<<<<< HEAD -->
-        <div class="tab-pane fade" id="tab4">
-          <div class="search2">
-            <input type="text" class="form-control input" maxlength="64" placeholder="Search">
-            <button type="submit" class="btn btn-primary  pull-right" ><span class="glyphicon glyphicon-search"></span></button>
-          </div>
-           <div id="announcement_body" class="msg-wrap ">
+                <div class="tab-pane fade" id="tab4">
+                        <div class="search2">
+                          <input type="text" class="form-control input" maxlength="64" placeholder="Search">
+                          <button type="submit" class="btn btn-danger pull-right" >
+                            <span class="glyphicon glyphicon-remove"></span>
+                          </buton>
+                          <button type="submit" class="btn btn-primary  pull-right" >
+                            <span class="glyphicon glyphicon-search"></span> 
+                          </buton>
+                        </div>
+                  <div id="announcement_body" class="msg-wrap ">
          
                   
-           </div>
+                  </div>
             
-            <div id="action-container" data-expanded="false">
-              <textarea id="announcement_message" class="form-control input-md" placeholder="..."></textarea>
+                  <div id="action-container" data-expanded="false">
+                  <textarea id="announcement_message" class="form-control input-md" placeholder="..."></textarea>
         
-              <div class="btn-panel btn-panel-conversation pull-right">       
-                <a class="btn " id="save_action" role="button"><i class="fa fa-save" aria-hidden="true"></i></a>
-                <a class="btn " id="cancel_action" role="button"><i class="fa fa-times" aria-hidden="true"></i></a>
+                    <div class="btn-panel btn-panel-conversation pull-right">       
+                    <a class="btn " id="save_action" role="button"><i class="fa fa-save" aria-hidden="true"></i></a>
+                    <a class="btn " id="cancel_action" role="button"><i class="fa fa-times" aria-hidden="true"></i></a>
                   
-              </div>
-<!--=====-->
-              <!-- <div class="announcement-wrap col-xs-4">
-              <div id="refresh-wrap" class="media msg " style="background-color: rgba(31, 27, 27, 0.21);">
-                <strong>PostWall</strong>
+                    </div>
+                   </div>
                 </div>
 
-               <div id="announcement_body" class="msg-wrap ">
-
-
-
-
-
-               </div>
-
-              <div id="action-container" data-expanded="false">
-               <textarea id="announcement_message" class="form-control input-md" placeholder="..."></textarea>
-
-                  <label><input id="action-pin-to-top" type="checkbox"> Pin top</label>
-
-                <!--<div class="btn-panel pull-right" id="action-buttons">-->
-                 <div class="btn-panel btn-panel-conversation pull-right">
-                   <a class="btn " id="save_action" role="button"><i class="fa fa-save" aria-hidden="true"></i></a>
-                   <a class="btn " id="cancel_action" role="button"><i class="fa fa-times" aria-hidden="true"></i></a>
-
-                </div>
-              </div>
-          </div> 
-
-          <!--<div id="fixed">
-          <div class="fixedHeader">ChatPrivate</div>
-           <div class="fixedContent"></div>
-             <div class="chatbox">
-              <textarea class="userinput" style="height: 30px; ">Type here...</textarea>
->>>>>>> e3b1cc604fc8b1217b8c6f1750441855ebefa24f
-            </div>
-        </div>
-
-        <div class="tab-pane fade" id="tab5">
-        </div>
+                <div class="tab-pane fade" id="tab5">
+                  <div class="well performace-box">
+                    <div class="form-group">
+                        <label >Duration</label>
+                        <div class="input-group">
+                        <input id="duration" placeholder="Duration time in sec" type="text" class="form-control"><span class="input-group-addon">seconds</span>
+                      </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <button id="start_test"class="btn btn-primary ">START</button>
+                        <button id="stop_test"class="btn btn-danger ">STOP</button>
+                    </div>
+                    <div class="list-group " id="test_result">
+                     <br>
+                    </div>
+                  </div>
                 
-      </div>
-     --> 
-      <div class="dropdown col-xs-1">
-          <div class="btn btn-primary "data-toggle="dropdown">Status<span class="caret"></span></div>
-            <ul class="dropdown-menu" role="menu">
-              <li><a href="#" id="status-ok" data-toggle="tab">OK</a></li>
-              <li><a href="#" id="status-emergency" data-toggle="tab">Emergency</a></li>
-              <li><a href="#" id="status-help" data-toggle="tab">Help</a></li>
-            </ul>
-      </div> 
-    </div>
-<!-- <<<<<<< HEAD
-          
-======= -->
-  <!--</div>-->
-</div>
-<!-- 
->>>>>>> e3b1cc604fc8b1217b8c6f1750441855ebefa24f -->
+              </div>
+        </div>
+        
+   
     <script src="javascript/jquery.min.js"></script>
     <script src="javascript/bootstrap.min.js"></script>
     <script src="../socket.io/socket.io.js"></script>
@@ -281,3 +278,4 @@
     <script type="text/javascript" src="javascript/chat_public.js"></script>
   </body>
 </html>
+

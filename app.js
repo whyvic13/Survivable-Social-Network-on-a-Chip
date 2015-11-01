@@ -37,6 +37,7 @@ var loggedInUsers = {}
 
 passport.use(new Strategy(
   function(username, password, cb) {
+		// console.log("Strategy");
     if (loggedInUsers[username]) {
       var dic ={}
       dic["username"] = username;
@@ -109,6 +110,7 @@ app.post('/user/login', function(req, res, next) {
     }
     req.logIn(user, function(err) {
       if (err) {
+        console.log(err);
         return res.json({"statusCode": 401, "message": "Unauthorized"});
       }
       
@@ -162,6 +164,18 @@ app.post('/privateMessage',  function(req, res, next){
     login.checkLogin(req,res, next, loggedInUsers);
   }, chatPrivately.postAPrivateMessage);
 
+app.get('/postPublicMessageTest',
+  function(req, res){
+    console.log("in post test");
+    res.status(200).end("ok");
+});
+
+app.get('/getPublicMessageTest',
+  function(req, res){
+    console.log("in get test");
+    res.status(200).end("ok");
+});
+
 //socket event
 io.on('connection', function(socket) {
   socket.on("user left", function(data){
@@ -169,7 +183,10 @@ io.on('connection', function(socket) {
   });
 
   socket.on("user join", function(data){
+    console.log("receive new user");
     loggedInUsers[data] = socket.id;
+    console.log("join: ", data);
+    console.log("socketId: ", socket.id);
     socket.broadcast.emit("user join", data);
 
   });
@@ -218,23 +235,7 @@ io.on('connection', function(socket) {
       "timestamp": timestamp
     }
 
-// <<<<<<< HEAD
-//     /*var roomname = "";
-//     if (data.sender < data.receiver) {
-//       roomname = data.sender + data.receiver;
-//     } else {
-//       roomname = data.receiver + data.sender;
-//     }*/
-//     //console.log("emitdata: ",emitData);
-// 		chatPrivately.insertMessage(
-//       emitData.sender, 
-//       emitData.receiver,
-//       emitData.message,
-//       emitData.senderStatus, 
-//       emitData.timestamp);
-// =======
- 		chatPrivately.insertMessage(emitData.sender, emitData.receiver, emitData.message, emitData.senderStatus, emitData.timestamp);
-// >>>>>>> e3b1cc604fc8b1217b8c6f1750441855ebefa24f
+		chatPrivately.insertMessage(emitData.sender, emitData.receiver, emitData.message, emitData.senderStatus, emitData.timestamp);
     var receiverId = loggedInUsers[data.receiver];
     var senderId = loggedInUsers[data.sender];
     io.to(receiverId).emit('new private message', emitData);
@@ -253,7 +254,6 @@ io.on('connection', function(socket) {
     announcements.insertAnnoucement(msg.message, msg.sender, msg.timestamp);
   });
 
-  console.log("test");
 
 });
 
