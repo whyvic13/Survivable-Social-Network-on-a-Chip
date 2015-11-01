@@ -29,6 +29,8 @@ $(document).ready(function() {
     $('#welcome_message').show();
   }
   var userList = {};  // Save up all the registered user
+  var stopWordsDict = {};
+  parseStopWords();
 
   // Emits user join event
   socket.emit("user join", username);
@@ -149,15 +151,16 @@ $(document).ready(function() {
     addMessage(data, flag, $private_body);
   }
 
-  function addAnnouncementMessage(data, flag) {
+  function addAnnouncementMessage(data) {
     var date = new Date(data.timestamp * 1000);
     var time = (date.getMonth() + 1) + '.' + date.getDate() + '  ' + date.toLocaleTimeString();
-    var htmlDiv = '<div class="media msg "><a class="pull-left" ></a>' +
+    var $div = $('<div class="media msg "><a class="pull-left" ></a>' +
       '<h5 div class="media-body">' + time + '</h5>' +
       '<h5 class="media-heading">' + data.sender + '</h5>' +
       '<h4 class="col-lg-10">' + data.message + '</h4>' +
-      '</div></div><div class="alert alert-info msg-date"></div>';
-    $announcement_body.append(htmlDiv);
+      '</div></div><div class="alert alert-info msg-date"></div>');
+    $div.data('data', data);
+    $announcement_body.prepend($div);
   }
 
 
@@ -283,7 +286,7 @@ $(document).ready(function() {
           sender: value.sender,
           message: value.message,
           timestamp: value.timestamp
-        }, false);
+        });
       });
     } else if (response.statusCode === 401) {
       BootstrapDialog.show({
@@ -368,6 +371,7 @@ $(document).ready(function() {
       postPrivateMessage();
     }
   });
+
 
   $("#save_action").click(function (event) {
     event.preventDefault();
@@ -508,7 +512,6 @@ $(document).ready(function() {
 
 
   $("#search-username").keydown(function (event) {
-    // When 'Return' key is pressed, post the message
     if (event.which === 13) {
       event.preventDefault();
     }
@@ -520,8 +523,64 @@ $(document).ready(function() {
     updateUserList(query);
   });
 
+  // Cancel search username
+  $("#search-username-cancel").click(function (event) {
+    updateUserList("");
+    $("#search-username").val("");
+  });
 
-  $("#search-chat").keydown(function (event) {
+
+  function searchAnnoucement() {
+    var query = $("#search-announcement").val().trim();
+    var queryWords = filterStopWords(query.split(/\s+/));
+    $announcement_body.children().each(function() {
+      var data = $(this).data('data');
+      var i;
+      for (i = 0; i < queryWords.length; i++) {
+        if (data.message.toLowerCase().indexOf(queryWords[i].toLowerCase()) !== -1) {
+          break;
+        }
+      }
+
+      if (i == queryWords.length) {
+        $(this).hide();
+      } else {
+        $(this).show();
+      }
+    });
+  }
+
+
+  $("#search-announcement-button").click(function (event) {
+    searchAnnoucement();
+  });
+
+  $("#search-announcement").keydown(function (event) {
+    if (event.which === 13) {
+      event.preventDefault();
+      searchAnnoucement();
+    }
+  });
+
+
+  $("#search-announcement-cancel").click(function (event) {
+    $announcement_body.children().each(function() {
+      $(this).show();
+      $("#search-announcement").val('');
+    });
+  });
+
+  function filterStopWords(words) {
+    var ret = [];
+    for (var i = 0; i < words.length; i++) {
+      if (!(words[i] in stopWordsDict)) {
+        ret.push(words[i]);
+      }
+    }
+    return ret;
+  }
+
+  /*$("#search-chat").keydown(function (event) {
     // When 'Return' key is pressed, post the message
     if (event.which === 13) {
       event.preventDefault();
@@ -552,7 +611,16 @@ $(document).ready(function() {
         }
       });
     }
-  });
+  });*/
+
+  function parseStopWords() {
+    $.get('../stopWords.txt', function (data) {
+      var stopWordsList = data.split(',');
+      for (var i = 0; i < stopWordsList.length; i++) {
+        stopWordsDict[stopWordsList[i]] = true;
+      }
+    });
+  }
 
 
   // Whenever the server emits new message, update the chat body
@@ -584,7 +652,7 @@ $(document).ready(function() {
 
 
   socket.on('new announcement', function (data) {
-    addAnnouncementMessage(data, true);
+    addAnnouncementMessage(data);
   });
 
 

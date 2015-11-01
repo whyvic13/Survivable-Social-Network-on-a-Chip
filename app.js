@@ -67,6 +67,7 @@ app.use(require('express-session')({ secret: 'wahaha', resave: false, saveUninit
 
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'routes')));
+app.use(express.static('public'));
 
 app.use(passport.initialize());
 app.use(passport.session());

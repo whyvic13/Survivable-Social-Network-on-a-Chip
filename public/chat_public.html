@@ -59,11 +59,11 @@
 
           <div class="search2">
             <!-- Button appear before the search box to make floating work -->
-            <button type="submit" class="btn btn-danger pull-right" >
+            <button id="search-username-cancel" type="submit" class="btn btn-danger pull-right" >
               <span class="glyphicon glyphicon-remove"></span>
             </button>
             <div class="search-box">
-              <input type="text" class="form-control input" maxlength="64" placeholder="Search">
+              <input id="search-username" type="text" class="form-control input" maxlength="64" placeholder="Search">
             </div>
           </div>
 
@@ -91,7 +91,7 @@
               <span class="glyphicon glyphicon-search"></span>
             </button>
             <div class="search-box">
-              <input type="text" class="form-control input" maxlength="64" placeholder="Search">
+              <input id="search-public" type="text" class="form-control input" maxlength="64" placeholder="Search">
             </div>
           </div>
 
@@ -177,7 +177,7 @@
                       <span class="glyphicon glyphicon-search"></span>
                     </button>
                     <div class="search-box">
-                      <input type="text" class="form-control input" maxlength="64" placeholder="Search">
+                      <input id="search-private" type="text" class="form-control input" maxlength="64" placeholder="Search">
                     </div>
                   </div>
                   <div class="panel panel-primary">
@@ -242,14 +242,14 @@
 
       <div class="tab-pane fade" id="tab4">
         <div class="search2">
-          <button type="submit" class="btn btn-danger pull-right" >
+          <button id="search-announcement-cancel" type="submit" class="btn btn-danger pull-right" >
             <span class="glyphicon glyphicon-remove"></span>
           </button>
-          <button type="submit" class="btn btn-primary  pull-right" >
+          <button id="search-announcement-button" type="submit" class="btn btn-primary  pull-right" >
             <span class="glyphicon glyphicon-search"></span>
           </button>
           <div class="search-box">
-            <input type="text" class="form-control input" maxlength="64" placeholder="Search">
+            <input id="search-announcement" type="text" class="form-control input" maxlength="64" placeholder="Search">
           </div>
         </div>
         <div id="announcement_body" class="msg-wrap ">
