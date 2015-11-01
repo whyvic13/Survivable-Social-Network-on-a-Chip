@@ -10,22 +10,24 @@ body{
     line-height: 22px;
 }
 
-.search2 input {
-    position: absolute;
-    width: 80%;
-    float: Left;
-    opacity:0.8;
-    -webkit-transition: all 0.7s ease-in-out;
-    -moz-transition: all 0.7s ease-in-out;
-}  
-.search2 button {
-    height: 35px;
-    width:10%;
-    top: 5px;
-    border-radius:3px;
+.search2 .search-box {
+    overflow: hidden;
 }
 
+.search2 input {
+    width: 100%;
+    opacity: 0.8;
+    -webkit-transition: all 0.7s ease-in-out;
+    -moz-transition: all 0.7s ease-in-out;
+}
 
+.search2 button {
+    height: 35px;
+    width: 10%;
+    min-width: 35px;
+    top: 5px;
+    border-radius: 3px;
+}
 
 .round.online {
     background-color: #42A129;
