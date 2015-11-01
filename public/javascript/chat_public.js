@@ -1,23 +1,23 @@
 $(document).ready(function() {
   var socket = io.connect();
-    var $public_post = $("#btn-chat")
-        $public_message = $("#btn-input")
-        $private_post = $("#private-chat")
-        $private_message = $("#private-input")
-        $userlist = $("#userlist")
-  $public_body = $("#public_body")
-        $private_body = $("#private_body")
-  $logout = $("#logout")
-  $refresh = $("#refresh")
-  $save_action = $("#save_action")
-  $announcement_message = $("#announcement_message")
-  $announcement_body = $("#announcement_body");
+  var $public_post = $("#btn-chat");
+  var $public_message = $("#btn-input");
+  var $private_post = $("#private-chat");
+  var $private_message = $("#private-input");
+  var $userlist = $("#userlist");
+  var $public_body = $("#public_body");
+  var $private_body = $("#private_body");
+  var $logout = $("#logout");
+  var $refresh = $("#refresh");
+  var $save_action = $("#save_action");
+  var $announcement_message = $("#announcement_message");
+  var $announcement_body = $("#announcement_body");
 
   var chatTarget = undefined;  // Non-empty string for private mode, undefined for public mode.
   var load_time = Date.parse(new Date()) / 1000;
   var initial_loadtime = load_time;
 
-  var newID = 99999999;
+  var newID = 99999999;  // MaxID
   var href = window.location.href;
   var parameters = href.split('?')[1].split('=')[1];
   var username = parameters.split('&')[0];
@@ -43,7 +43,6 @@ $(document).ready(function() {
     var safety = safety_status;
 
     var statusDiv = function(buttonClass, status) {
-
       return $('<tr><td><div class="round round-lg'+online_status+'"><span class="glyphicon glyphicon-user"></span></div>'+
                '<a class="user-link">'+user+'</a></td><td class="text-center">'+
                '<span class="label ' + buttonClass + '">' + status +
@@ -54,49 +53,16 @@ $(document).ready(function() {
     if (safety === 'OK') {
       // Green 'Ok'
       $htmlDiv = statusDiv('label-success', 'OK');
-    } else if (safety === 'Emergency') {
-      // Yellow 'Emergency'
-      $htmlDiv = statusDiv('label-warning', 'EMERGENCY');
     } else if (safety === 'Help') {
-      // Red 'Help'
-      $htmlDiv = statusDiv('label-danger', 'HELP');
+      // Yellow 'Help'
+      $htmlDiv = statusDiv('label-warning', 'HELP');
+    } else if (safety === 'Emergency') {
+      // Red 'Emergency'
+      $htmlDiv = statusDiv('label-danger', 'EMERGENCY');
     } else {
       $htmlDiv = statusDiv('label-default', 'NONE');
     }
     $userlist.append($htmlDiv);
-
-    // Click function
-    $htmlDiv.children(".btn.pull-left").click(function(event) {
-      event.preventDefault();
-      chatTarget = $(this).siblings(".media-body").text();
-      $public_body.empty();
-      $('#refresh-wrap').empty();
-      $("#refresh-wrap").append('<a id="refresh" class="col-xs-3 pull-left"><h4>' + chatTarget + '</h4></a>');
-      $refresh.css("visibility", "hidden");
-
-
-      $.get("/getPrivateMessages", {
-        sender: username,
-        receiver: chatTarget
-      }, function(response) {
-        $userlist.append($htmlDiv);
-        if (response.statusCode == 200) {
-          response.data.forEach(function(value, index) {
-            addPrivateMessage({
-              username: value.sender,
-              message: value.message,
-              timestamp: value.timestamp,
-              userStatus: value.senderStatus
-            }, false);
-          });
-        } else {
-          BootstrapDialog.show({
-            title: 'Alert Message',
-            message: "Bad database request."
-          });
-        }
-      });
-    });
   }
 
   function updateUserList(query) {
@@ -142,33 +108,34 @@ $(document).ready(function() {
     var labelName, statusText;
     if (status === "OK") {
       labelName = "label-success";
-      statusText = "OK;
-    } else if (status === "Emergency") {
-      labelName = "label-warning";
-      statusText = "EMERGENCY";
+      statusText = "OK";
     } else if (status === "Help") {
+      labelName = "label-warning";
+      statusText = "HELP";
+    } else if (status === "Emergency") {
       labelName = "label-danger";
-      statusText = "DANGER";
+      statusText = "EMERGENCY";
     } else {
       labelName = "label-default";
       statusText = "NONE";
     }
-    return '<li class="left clearfix"><span class="chat-img pull-left">'+
-      '<img src="./img/'+png+'.png" alt="User Avatar" class="img-circle" />'+
+
+    return '<li class="left clearfix"><span class="chat-img pull-left">' +
+      '<img src="./img/' + png + '.png" alt="User Avatar" class="img-circle" />' +
       '</span><div class="chat-body clearfix">' +
-      '<div class="header"><strong class="primary-font">'+sender+
+      '<div class="header"><strong class="primary-font">' + sender +
       '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label '
-      + labelName + '">' + statusText + '</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">'+
-      '</span>'+formattedTime+'</small></div>'+
-      '<p>'+message+'</p></div></li>';
+      + labelName + '">' + statusText + '</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">' +
+      '</span>' + formattedTime + '</small></div>' +
+      '<p>' + message + '</p></div></li>';
   }
 
 
   function addMessage(data, flag, $messageBody) {
     var htmlDiv = getMessageDiv(data.username, data.userStatus, data.timestamp, data.message);
-    $public_body.append(htmlDiv);
+    $messageBody.append(htmlDiv);
     if (flag) {
-      $messageBody.animate({
+      $messageBody.parent().animate({
         scrollTop: $messageBody[0].scrollHeight
       }, 500);
     }
@@ -188,63 +155,60 @@ $(document).ready(function() {
     var htmlDiv = '<div class="media msg "><a class="pull-left" ></a>' +
       '<h5 div class="media-body">' + time + '</h5>' +
       '<h5 class="media-heading">' + data.sender + '</h5>' +
-      '<h4 class="col-lg-10">' +data.message + '</h4>' +
+      '<h4 class="col-lg-10">' + data.message + '</h4>' +
       '</div></div><div class="alert alert-info msg-date"></div>';
     $announcement_body.append(htmlDiv);
   }
 
-  function setDropdownUserlistClick(user) {
-      var $htmlDiv = $('<li><a href="" id="chat-userlist"><span class="glyphicon glyphicon-user">'+
-                     '</span>'+user+'</a></li>');
-      $('#userlist-dropdown-append').append($htmlDiv);
-      $htmlDiv.children('#chat-userlist').click(function(event) {
-        event.preventDefault();
-        receiver = $(this).text();
-        // set chat name
-        $('#private-head').empty().append('   '+receiver);
 
-        // get private history message
-        $private_body.empty();
-        $.get("/getPrivateMessages",{
-          sender: username,
-          receiver: receiver
-        },
-        function(response){
-          // console.log(response);
-          if(response.statusCode == 200){
-            response.data.forEach(function (value, index){
-              if(value.sender == username) {
-                addPrivateMessage({
-                  username: value.sender, 
-                  message: value.message, 
-                  timestamp: value.timestamp,
-                  userStatus: value.senderStatus
-                }, true);
-              }
-              else {
-                addPrivateMessage({
-                  username: value.sender, 
-                  message: value.message, 
-                  timestamp: value.timestamp,
-                  userStatus: value.senderStatus
-                }, true);
-              }
-              
-            });
-          }
-          else{
-            BootstrapDialog.show({
-              title: 'Alert Message',
-              message: "Bad database request."
-            });
-          }
-        });
+  function setDropdownUserlistClick(user) {
+    var $htmlDiv = $('<li><a href="" id="chat-userlist"><span class="glyphicon glyphicon-user">' +
+                     '</span>' + user + '</a></li>');
+    $('#userlist-dropdown-append').append($htmlDiv);
+    $htmlDiv.children('#chat-userlist').click(function (event) {
+      event.preventDefault();
+      chatTarget = $(this).text();
+
+      // Set chat name
+      $('#private-head').empty().append('   ' + chatTarget);
+
+      // Get private history message
+      $private_body.empty();
+      $.get("/getPrivateMessages",{
+        sender: username,
+        receiver: chatTarget
+      }, function (response) {
+        if (response.statusCode == 200) {
+          response.data.forEach(function (value, index) {
+            if (value.sender == username) {
+              addPrivateMessage({
+                username: value.sender,
+                message: value.message,
+                timestamp: value.timestamp,
+                userStatus: value.senderStatus
+              }, true);
+            } else {
+              addPrivateMessage({
+                username: value.sender,
+                message: value.message,
+                timestamp: value.timestamp,
+                userStatus: value.senderStatus
+              }, true);
+            }
+          });
+        } else {
+          BootstrapDialog.show({
+            title: 'Alert Message',
+            message: "Bad database request."
+          });
+        }
       });
-    }
+    });
+  }
 
 
   // Get all users from REST GET
-  $.get("/users", function(response) {
+  $.get("/users", function (response) {
     if (response.statusCode === 200) {
       userList = response;
       delete userList.statusCode;
@@ -274,7 +238,6 @@ $(document).ready(function() {
         message: "Bad database request."
       });
     }
-
   });
 
 
@@ -312,7 +275,7 @@ $(document).ready(function() {
 
   getPublicMessages();
 
-  // Get Announcement messages
+  // Get announcement messages
   $.get("/getAnnoucements", function (response) {
     if (response.statusCode === 200) {
       response.data.forEach(function (value, index) {
@@ -338,7 +301,6 @@ $(document).ready(function() {
 
   function postPublicMessage() {
     var message = $public_message.val().trim();
-
     if (!message) {
       BootstrapDialog.show({
         title: 'Alert Message',
@@ -355,9 +317,9 @@ $(document).ready(function() {
     $public_message.val('');
   }
 
+
   function postPrivateMessage() {
     var message = $private_message.val().trim();
-
     if (!message) {
       BootstrapDialog.show({
         title: 'Alert Message',
@@ -375,16 +337,18 @@ $(document).ready(function() {
     $private_message.val('');
   }
 
-  // Public chat post button
-  $public_post.click(function(event) {
-    event.preventDefault();
-    postPublicMessage();   
-  });
 
   // Public chat post button
-  $private_post.click(function(event) {
+  $public_post.click(function (event) {
     event.preventDefault();
-    postPrivateMessage();   
+    postPublicMessage();
+  });
+
+
+  // Public chat post button
+  $private_post.click(function (event) {
+    event.preventDefault();
+    postPrivateMessage();
   });
 
 
@@ -422,6 +386,7 @@ $(document).ready(function() {
     $announcement_message.val('');
   });
 
+
   // Get another 20 messages if in mode get message history
   // Get another 10 search results if in mode search chat messages
   $refresh.click(function (event) {
@@ -456,7 +421,7 @@ $(document).ready(function() {
               $public_body.prepend(htmlDiv);
             }
 
-            $public_body.animate({
+            $public_body.parent().animate({
               scrollTop: 0
             }, 500);
           } else if (response.statusCode === 401) {
@@ -476,11 +441,12 @@ $(document).ready(function() {
 
   $("#userlist-dropdwon").click(function (event) {
     for (key in userList) {
-      var htmlDiv = '<li><a href="" id="'+key+'"><span class="glyphicon glyphicon-refresh">'+
+      var htmlDiv = '<li><a href="" id="' + key + '"><span class="glyphicon glyphicon-refresh">' +
                     '</span>Refresh</a></li>';
       $('#userlist-dropdown-append').append(htmlDiv);
     }
-  }); 
+  });
+
 
   // Logout
   $logout.click(function (event) {
@@ -507,12 +473,12 @@ $(document).ready(function() {
     if (newStatus === "OK") {
       labelName = "label-success";
       statusText = "OK";
-    } else if (newStatus === "Emergency") {
-      labelName = "label-warning";
-      statusText = "EMERGENCY";
     } else if (newStatus === "Help") {
-      labelName = "label-danger";
+      labelName = "label-warning";
       statusText = "HELP";
+    } else if (newStatus === "Emergency") {
+      labelName = "label-danger";
+      statusText = "EMERGENCY";
     }
 
     $('#status-toggle').empty().append(
@@ -562,9 +528,10 @@ $(document).ready(function() {
     }
 
     if (!($("#search-chat").val())) {
-      chatLog = #public_body.html();
+      chatLog = $public_body.html();
     }
   });
+
 
   // Allows instant search
   $("#search-chat").keyup(function (event) {
@@ -631,14 +598,14 @@ $(document).ready(function() {
   socket.on('user join', function (username) {
     if (username in userList) {
       userList[username].online = true;
-    } else {
+    } else {  // New sign-up user
       userList[username] = {
         online: true,
         userStatus: null
       };
-      setDropdownUserlistClick(username);
     }
 
+    setDropdownUserlistClick(username);
     updateUserList();
   });
 
@@ -647,4 +614,9 @@ $(document).ready(function() {
     userList[username].online = false;
     updateUserList();
   });
+
+  // TODO: remove user from dropdownuserlistclick when user left room
+  // TODO: Add effect to let user know which tab he/she currently in
+  // TODO: Restructure UI for private chat (now: click on userlist, nothing happens, expected: auto move to chat private,
+  // propose: remove private chat tab, interact through user list only)
 });
