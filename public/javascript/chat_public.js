@@ -12,6 +12,7 @@ $(document).ready(function() {
   var $save_action = $("#save_action");
   var $announcement_message = $("#announcement_message");
   var $announcement_body = $("#announcement_body");
+  var $duration = $('#duration');
 
   var chatTarget = undefined;  // Non-empty string for private mode, undefined for public mode.
   var load_time = Date.parse(new Date()) / 1000;
@@ -24,6 +25,7 @@ $(document).ready(function() {
   var isNewUser = parameters.split('&')[1];
   var chatLog = undefined;
 
+  var testMsg = 'TestTestTestTestTestTest';
   $("#head_title").append("<h3>WELCOME " + username + " !</h3>");
   if (isNewUser == "1") {
     $('#welcome_message').show();
@@ -621,6 +623,60 @@ $(document).ready(function() {
       }
     });
   }
+
+
+
+  $("#start_test").click(function(event) {
+    /* Act on the event */
+    event.preventDefault();
+    console.log('start_test');
+    var dur=$('#duration').val();
+
+    var postCount = 0;
+    var getCount = 0;
+    var start = new Date(); 
+
+    var reqCount = 0;
+    while ((elapse = new Date() - start) < dur * 1000)
+    {
+      reqCount++;
+      $.get("/postPublicMessageTest", {
+        sender: username,
+        message: testMsg,
+        timestamp: load_time,
+        senderLocation: 'B19',
+        senderStatus: userList[username].userStatus
+      },
+      function(response){
+        //if(response.statusCode == 200){
+        postCount++;   
+        //console.log("response: "+response+" count: "+postCount);
+      });
+
+      $.get("/getPublicMessageTest",
+        function (response) {
+          getCount++;
+          //console.log("response: "+response+" count: "+postCount);
+      });
+    }
+
+    setTimeout(function() { 
+      console.log("postCount: " + postCount);
+      console.log("getCount: " + getCount);
+      console.log("reqCount: " + reqCount);
+
+      var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
+      $('#test_result').append(htmlDiv1); 
+      var htmlDiv2 = '<div><strong> The Number of GET Requests per second) is: ' + Math.round(getCount/dur) + ' /sec</strong></div><br>';
+      $('#test_result').append(htmlDiv2); 
+    }, 5000);
+  });
+
+  $("#stop_test").click(function(event) {
+    $('#duration').val('');
+    $('#test_result').empty();
+    socket.emit("stop measuring performance",{username: username});
+  });
 
 
   // Whenever the server emits new message, update the chat body

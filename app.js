@@ -37,6 +37,7 @@ var loggedInUsers = {}
 
 passport.use(new Strategy(
   function(username, password, cb) {
+		// console.log("Strategy");
     if (loggedInUsers[username]) {
       var dic ={}
       dic["username"] = username;
@@ -110,6 +111,7 @@ app.post('/user/login', function(req, res, next) {
     }
     req.logIn(user, function(err) {
       if (err) {
+        console.log(err);
         return res.json({"statusCode": 401, "message": "Unauthorized"});
       }
 
@@ -187,6 +189,18 @@ app.post('/privateMessage',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers);
   }, chatPrivately.postAPrivateMessage);
 
+app.get('/postPublicMessageTest',
+  function(req, res){
+    console.log("in post test");
+    res.status(200).end("ok");
+});
+
+app.get('/getPublicMessageTest',
+  function(req, res){
+    console.log("in get test");
+    res.status(200).end("ok");
+});
+
 //socket event
 io.on('connection', function(socket) {
   socket.on("user left", function(data){
@@ -194,7 +208,10 @@ io.on('connection', function(socket) {
   });
 
   socket.on("user join", function(data){
+    console.log("receive new user");
     loggedInUsers[data] = socket.id;
+    console.log("join: ", data);
+    console.log("socketId: ", socket.id);
     socket.broadcast.emit("user join", data);
 
   });

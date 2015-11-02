@@ -40,6 +40,7 @@
           <li><a href="#tab2" data-toggle="tab">Public</a></li>
           <li><a href="#tab3" data-toggle="tab">Private</a></li>
           <li><a href="#tab4" data-toggle="tab">Announcement</a></li>
+          <li><a href="#tab5" data-toggle="tab">Perform</a></li>
           <li class="dropdown">
             <a href="#" data-toggle="dropdown" id="status-toggle">Status<span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
@@ -57,7 +58,16 @@
       <div class="tab-content col-xs-12 col-xs-offset-0">
         <div class="tab-pane fade in active" id="sidebar-wrapper">
 
-          <div class="search2">
+          <div class="search2 input-group">
+            <div class="input-group-btn dropdown-toggle">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><strong>Filter
+              </strong><span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a href="#">UserName</a></li>
+                <li><a href="#">UserStatus</a></li>
+              </ul>
+            </div>
+
             <!-- Button appear before the search box to make floating work -->
             <button id="search-username-cancel" type="submit" class="btn btn-danger pull-right" >
               <span class="glyphicon glyphicon-remove"></span>
@@ -66,6 +76,7 @@
               <input id="search-username" type="text" class="form-control input" maxlength="64" placeholder="Search">
             </div>
           </div>
+          </br>
 
           <div class="main-box no-header">
             <div class="main-box-body">
@@ -196,37 +207,7 @@
       </div>
       <div class="chat panel-body">
         <ul class="chat" id="private_body">
-
-
-          <!-- <li class="left clearfix"><span class="chat-img pull-left">
-              <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
-          </span>
-              <div class="chat-body clearfix">
-                  <div class="header">
-                      <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted">
-                          <span class="glyphicon glyphicon-time"></span>14 mins ago</small>
-                  </div>
-                  <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
-                      dolor, quis ullamcorper ligula sodales.
-                  </p>
-              </div>
-          </li>
-          <li class="right clearfix"><span class="chat-img pull-right">
-              <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
-          </span>
-              <div class="chat-body clearfix">
-                  <div class="header">
-                      <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>15 mins ago</small>
-                      <strong class="pull-right primary-font">Bhaumik Patel</strong>
-                  </div>
-                  <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
-                      dolor, quis ullamcorper ligula sodales.
-                  </p>
-              </div>
-            </li>  -->
-          </ul>
+        </ul>
         </div>
         <div class="panel-footer">
           <div class="input-group">
@@ -269,8 +250,21 @@
       </div>
 
       <div class="tab-pane fade" id="tab5">
+        <div class="well performace-box">
+          <div class="form-group">
+	    <label>Duration</label>
+	    <div class="input-group">
+	      <input id="duration" placeholder="Duration time in sec" type="text" class="form-control"><span class="input-group-addon">seconds</span>
+            </div>
+          </div>
+          <div class="form-group text-center">
+	    <button id="start_test"class="btn btn-primary ">START</button>
+	    <button id="stop_test"class="btn btn-danger ">STOP</button>
+          </div>
+        <div class="list-group" id="test_result">
+          <br>
+        </div>
       </div>
-
     </div>
   </div>
 
