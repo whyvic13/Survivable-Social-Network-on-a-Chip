@@ -19,8 +19,6 @@ $(document).ready(function() {
   var initial_loadtime = load_time;
 
   var newID = 99999999;  // MaxID
-  var searchPrivateID = 99999999;
-  var searchPublicID = 99999999;
   var href = window.location.href;
   var parameters = href.split('?')[1].split('=')[1];
   var username = parameters.split('&')[0];
@@ -404,20 +402,26 @@ $(document).ready(function() {
   $refresh.click(function (event) {
     event.preventDefault();
 
-    var query = $("#search-chat").val();
-    if (query) { // Search mode
-      /*$get("/searchPrivateMessages", {
-        username: username,
-        query: query,
-        ID: newID
+    var queryPublic = $("#search-public").val();
+    if (queryPublic) { // Query for more of public search results
+      if ($("#search-public").data('id') === undefined) {
+        return;
+      }
+
+      $.get("/searchPublicMessages", {
+        keywords: queryPublic,
+        id: $("#search-public").data('id')
       }, function (response) {
-        for (var i = 0; i < response.data.length; i++) {
-          var data = response.data[i];
-          var htmlDiv = getMessageDiv(data.sender, data.senderStatus, data.timestamp, data.message);
-          $public_body.prepend(htmlDiv);
-        }
-        newID = response.newID;
-      });*/
+        response.data.forEach(function (value, index) {
+          $("#search-public").data('id', value.id);
+          addPublicMessage({
+            username: value.sender,
+            message: value.message,
+            userStatus:value.userStatus,
+            timestamp: value.timestamp
+          }, false);
+        });
+      });
     } else { // Chat mode
       $.get("/getPublicMessages", {
           start: load_time,
@@ -549,11 +553,51 @@ $(document).ready(function() {
     }
   });
 
-  function searchAnnoucement() {
-    var query = $("#search-announcement").val().trim();
-    var queryWords = filterStopWords(query.split(/\s+/));
-    $announcement_body.children().each(function() {
+  function searchAnnouncement(firstSearch) {
+    var isHidden = function() {
+      return $(this).is(":visible") === false;
+    }
+
+    var $announcements = $announcement_body.children('.msg');
+
+    if (firstSearch) {
+      var query = $("#search-announcement").val().trim();
+
+      if (query === "") {
+        cancelSearchAnnouncement();
+        return;
+      }
+
+      var queryWords = filterStopWords(query.split(/\s+/));
+
+      var match = function($item) {
+        var data = $item.data('data');
+        for (i = 0; i < queryWords.length; i++) {
+          if (data.message.toLowerCase().indexOf(queryWords[i].toLowerCase()) !== -1) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      $announcement_body.children('.alert').hide();
+
+      $announcements.each(function() {
+        $(this).hide();
+        $(this).data('match', match($(this)));
+      });
+      $("#search-more-announcement").show();
+    }
+
+    $announcements.filter(function() { return $(this).data('match'); })
+                  .filter(isHidden)
+                  .slice(0, 10)
+                  .each(function() { $(this).show(); });
+
+
+    /*$announcement_body.children().each(function() {
       var data = $(this).data('data');
+      var cnt = 0;
       var i;
       for (i = 0; i < queryWords.length; i++) {
         if (data.message.toLowerCase().indexOf(queryWords[i].toLowerCase()) !== -1) {
@@ -561,32 +605,43 @@ $(document).ready(function() {
         }
       }
 
-      if (i == queryWords.length) {
+      if (i == queryWords.length || cnt >= 10) {
         $(this).hide();
       } else {
         $(this).show();
+        cnt++;
       }
-    });
+    });*/
   }
 
 
   $("#search-announcement-button").click(function (event) {
-    searchAnnoucement();
+    searchAnnouncement();
   });
 
   $("#search-announcement").keydown(function (event) {
     if (event.which === 13) {
       event.preventDefault();
-      searchAnnoucement();
+      searchAnnouncement(true);
     }
   });
 
 
-  $("#search-announcement-cancel").click(function (event) {
+  function cancelSearchAnnouncement() {
     $announcement_body.children().each(function() {
       $(this).show();
-      $("#search-announcement").val('');
     });
+    $("#search-announcement").val('');
+    $("#search-more-announcement").hide();
+  }
+
+
+  $("#search-announcement-cancel").click(function (event) {
+    cancelSearchAnnouncement();
+  });
+
+  $("#search-more-announcement").click(function (event) {
+    searchAnnouncement(false);
   });
 
   function filterStopWords(words) {
@@ -626,7 +681,7 @@ $(document).ready(function() {
 
     $.get("/searchPublicMessages", {
       keywords: query,
-      id: searchPublicID
+      id: 99999999
     }, function (response) {
       var $publicBody = $("#public_body");
       if (!$publicBody.data('data')) {
@@ -634,6 +689,7 @@ $(document).ready(function() {
       }
       $publicBody.empty();
       response.data.forEach(function (value, index) {
+        $("#search-public").data('id', value.id);
         addPublicMessage({
           username: value.sender,
           message: value.message,
@@ -823,8 +879,10 @@ $(document).ready(function() {
   // propose: remove private chat tab, interact through user list only)
   // TODO: search private: remove receiver field in database
   // TODO: now word search for status also
+  // TODO: search public bug, return results not correct
+  // TODO: add 'refresh' button for private chat + search private chat
 
-  // TODO-Nga: limit 10, reload
-  // search status
+  // TODO(Nga): limit 10, reload
+  // TODO(Nga): handle error code
   // handle error code
 });
