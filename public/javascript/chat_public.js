@@ -21,7 +21,7 @@ $(document).ready(function() {
   var newID = 99999999;  // MaxID
   var href = window.location.href;
   var parameters = href.split('?')[1].split('=')[1];
-  var username = parameters.split('&')[0];
+  var username = parameters.split('&')[0].split('#')[0];
   var isNewUser = parameters.split('&')[1];
   var chatLog = undefined;
 
@@ -169,10 +169,46 @@ $(document).ready(function() {
     $announcement_body.prepend($div);
   }
 
+  function updateDropDownUserList() {
+    $('#userlist-dropdown-append').empty();
 
-  function setDropdownUserlistClick(user) {
-    var $htmlDiv = $('<li><a href="" id="chat-userlist"><span class="glyphicon glyphicon-user">' +
+    var onlineUsers = [];
+    var offlineUsers = [];
+    for (name in userList) {
+      if (userList[name].online) {
+        onlineUsers.push(name);
+      } else {
+        offlineUsers.push(name);
+      }
+    }
+
+    var lowerCaseComparer = function(a, b) {
+      return a.toLowerCase().localeCompare(b.toLowerCase());
+    };
+
+    onlineUsers.sort(lowerCaseComparer);
+    offlineUsers.sort(lowerCaseComparer);
+
+    onlineUsers.forEach(function(value, index) {
+      setDropdownUserlistClick(value,true);
+    });
+
+    offlineUsers.forEach(function(value, index) {
+      setDropdownUserlistClick(value,false);
+    });
+
+  }
+
+
+  function setDropdownUserlistClick(user, online_flag) {
+    if(online_flag) {
+      var $htmlDiv = $('<li><a href="" id="chat-userlist"><span class="glyphicon glyphicon-user">' +
                      '</span>' + user + '</a></li>');
+    }
+    else {
+      var $htmlDiv = $('<li><a href="" id="chat-userlist">' + user + '</a></li>');
+    }
+    
     $('#userlist-dropdown-append').append($htmlDiv);
     $htmlDiv.children('#chat-userlist').click(function (event) {
       event.preventDefault();
@@ -223,8 +259,8 @@ $(document).ready(function() {
       delete userList.statusCode;
       for (key in userList) {
         if (userList[key].online === 1) {
-          // Userlist-toggle append
-          setDropdownUserlistClick(key);
+          // // Userlist-toggle append
+          // setDropdownUserlistClick(key);
 
           userList[key].online = true;
 
@@ -241,6 +277,8 @@ $(document).ready(function() {
           addUserList(key, false, userList[key].userStatus);
         }
       }
+      // Userlist-toggle append
+      updateDropDownUserList();
     } else {
       BootstrapDialog.show({
         title: 'Alert Message',
@@ -863,14 +901,16 @@ $(document).ready(function() {
       };
     }
 
-    setDropdownUserlistClick(username);
+    
     updateUserList();
+    updateDropDownUserList();
   });
 
   // Whenever the server emits 'user left', log it in the chat body
   socket.on('user left', function (username) {
     userList[username].online = false;
     updateUserList();
+    updateDropDownUserList();
   });
 
   // TODO: remove user from dropdownuserlistclick when user left room
