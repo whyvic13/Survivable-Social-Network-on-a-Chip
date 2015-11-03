@@ -18,9 +18,47 @@
     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     <strong>Welcome to SSNoC! In case of a disastrous event, you can use SSNoC to communicate with each other, share status to let others know if you are OK, need help or in emergency. Your status and location will be visible to everybody in the community!</strong>
   </div>
-  <div class="text-center" id="head_title">
 
-  </div>
+
+  <div class="text-center" id="head_title">
+  
+</div>
+    <!--Maintainence Modal Info-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="myModalLabel">
+                    Oops!!
+                    </h3>
+                </div>
+
+                <div class="modal-body">
+                    <strong>The Server is in the Maintainence, Please Do nothing But Wait For A While.</strong>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!--Maintainence Modal Info For Monitor-->
+    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="myModalLabel">
+                     The Server is Running The Test.
+                    </h3>
+                </div>
+
+                <div class="modal-body">
+                    <strong>You Can Choose To Stop The Measurement Or Wait For Its End.</strong>
+                </div>
+                <div class="modal-footer">
+                    <button id="stop_test"class="btn btn-danger ">STOP</button>
+                </div>
+            </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
   <nav class="navbar navbar-custom " role="navigation">
 
     <div class="container" id="navbar">

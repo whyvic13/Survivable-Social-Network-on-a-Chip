@@ -1,4 +1,5 @@
 $(function() {
+    var socket = io.connect();
     var $usernameInput = $('.form-username form-control'); // Input for username
     var $userPassword = $('#form-password');
     var $login = $('#login');
@@ -110,7 +111,17 @@ $(function() {
         $('#form-password').val('');
     }
 
+    socket.on('start measuring performance', function (username) {
+    // BootstrapDialog.show({
+    //     title: 'Alert Message',
+    //     message: "Server In the Maintance"
+    //   });
+   $('#myModal').modal('show');
+  });
 
+  socket.on('stop measuring performance', function (username) {
+   $('#myModal').modal('hide');
+  });
     
     
 });

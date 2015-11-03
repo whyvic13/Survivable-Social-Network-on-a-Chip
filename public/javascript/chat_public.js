@@ -30,6 +30,8 @@ $(document).ready(function() {
   if (isNewUser == "1") {
     $('#welcome_message').show();
   }
+
+  
   var userList = {};  // Save up all the registered user
   var stopWordsDict = {};
   parseStopWords();
@@ -760,9 +762,12 @@ $(document).ready(function() {
 
 
 
-  $("#start_test").click(function(event) {
+   $("#start_test").click(function(event) {
     /* Act on the event */
     event.preventDefault();
+    socket.emit("start measuring performance",{username: username});
+    socket.emit('block other operations');
+
     console.log('start_test');
     var dur=$('#duration').val();
 
@@ -774,7 +779,7 @@ $(document).ready(function() {
     while ((elapse = new Date() - start) < dur * 1000)
     {
       reqCount++;
-      $.get("/postPublicMessageTest", {
+      $.post("/postPublicMessageTest", {
         sender: username,
         message: testMsg,
         timestamp: load_time,
@@ -785,12 +790,15 @@ $(document).ready(function() {
         //if(response.statusCode == 200){
         postCount++;
         //console.log("response: "+response+" count: "+postCount);
+        //}
       });
 
       $.get("/getPublicMessageTest",
         function (response) {
+          //if(response.statusCode == 200){
           getCount++;
           //console.log("response: "+response+" count: "+postCount);
+          //}
       });
     }
 
@@ -799,11 +807,12 @@ $(document).ready(function() {
       console.log("getCount: " + getCount);
       console.log("reqCount: " + reqCount);
 
+      socket.emit('stop measuring performance',{username: username});
       var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
       $('#test_result').append(htmlDiv1);
       var htmlDiv2 = '<div><strong> The Number of GET Requests per second) is: ' + Math.round(getCount/dur) + ' /sec</strong></div><br>';
       $('#test_result').append(htmlDiv2);
-    }, 5000);
+    }, 5000+dur*1000);
   });
 
   $("#stop_test").click(function(event) {
@@ -871,6 +880,30 @@ $(document).ready(function() {
   socket.on('user left', function (username) {
     userList[username].online = false;
     updateUserList();
+  });
+
+  socket.on('start measuring performance', function (username) {
+    // BootstrapDialog.show({
+    //     title: 'Alert Message',
+    //     message: "Server In the Maintance"
+    //   });
+   $('#myModal').modal('show');
+  });
+
+  socket.on('stop measuring performance', function (username) {
+   $('#myModal').modal('hide');
+  });
+
+  socket.on('block other operations', function () {
+    // BootstrapDialog.show({
+    //     title: 'Alert Message',
+    //     message: "Server In the Maintance"
+    //   });
+   $('#myModal2').modal('show');
+  });
+
+  socket.on('unblock other operations', function () {
+   $('#myModal2').modal('hide');
   });
 
   // TODO: remove user from dropdownuserlistclick when user left room
