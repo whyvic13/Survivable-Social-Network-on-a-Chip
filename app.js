@@ -142,19 +142,19 @@ app.post('/postPublicMessageTest', function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPubliclyTest.postPublicMessage);
 
-app.get('/startTest', function(req, res, next){
-  login.checkLogin(req, res, next, loggedInUsers, isTesting);
-}, function(req, res, next){
-  chatPubliclyTest.startFromAPI(req, res, next);
-}, function(req, res, next){
-  if (isTesting) {
-    res.json({"statusCode": 401, "message": "Test is running."});
-  }else {
-    isTesting = true;
-    testRunner = req.user.username;
-    res.json({"statusCode": 200, "message": "You can start testing."});
-  }
-});
+// app.get('/startTest', function(req, res, next){
+//   login.checkLogin(req, res, next, loggedInUsers, isTesting);
+// }, function(req, res, next){
+//   chatPubliclyTest.startFromAPI(req, res, next);
+// }, function(req, res, next){
+//   if (isTesting) {
+//     res.json({"statusCode": 401, "message": "Test is running."});
+//   }else {
+//     isTesting = true;
+//     testRunner = req.user.username;
+//     res.json({"statusCode": 200, "message": "You can start testing."});
+//   }
+// });
 
 app.get('/stopTest', function(req, res, next){
   login.checkLogin(req, res, next, loggedInUsers, isTesting);
@@ -237,17 +237,17 @@ app.post('/privateMessage',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPrivately.postAPrivateMessage);
 
-app.get('/postPublicMessageTest',
-  function(req, res){
-    console.log("in post test");
-    res.status(200).end("ok");
-});
+// app.get('/postPublicMessageTest',
+//   function(req, res){
+//     console.log("in post test");
+//     res.status(200).end("ok");
+// });
 
-app.get('/getPublicMessageTest',
-  function(req, res){
-    console.log("in get test");
-    res.status(200).end("ok");
-});
+// app.get('/getPublicMessageTest',
+//   function(req, res){
+//     console.log("in get test");
+//     res.status(200).end("ok");
+// });
 
 //socket event
 io.on('connection', function(socket) {
@@ -265,21 +265,24 @@ io.on('connection', function(socket) {
   });
 
   socket.on("start measuring performance", function(data){
-    if (isTesting) {
-      return;
-    }
-    isTesting = true;
+    // if (isTesting) {
+    //   return;
+    // }
+    //isTesting = true;
     testRunner = data.username;
-    chatPubliclyTest.startFromSocket();
+    //chatPubliclyTest.startFromSocket();
+    console.log("in start ");
     socket.broadcast.emit("start measuring performance", data);
+    socket.emit("block other operations");
   });
 
   socket.on("stop measuring performance", function(data){
-    if (!isTesting) {
-      return;
-    }
-    isTesting = false;
+    // if (!isTesting) {
+    //   return;
+    // }
+    //isTesting = false;
     socket.broadcast.emit("stop measuring performance", data);
+    socket.emit("unblock other operations");
   });
 
   //receive client add message

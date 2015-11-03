@@ -847,6 +847,9 @@ $(document).ready(function() {
   $("#start_test").click(function(event) {
     /* Act on the event */
     event.preventDefault();
+    socket.emit("start measuring performance",{username: username});
+    socket.emit('block other operations');
+
     console.log('start_test');
     var dur=$('#duration').val();
 
@@ -858,7 +861,7 @@ $(document).ready(function() {
     while ((elapse = new Date() - start) < dur * 1000)
     {
       reqCount++;
-      $.get("/postPublicMessageTest", {
+      $.post("/postPublicMessageTest", {
         sender: username,
         message: testMsg,
         timestamp: load_time,
@@ -883,11 +886,12 @@ $(document).ready(function() {
       console.log("getCount: " + getCount);
       console.log("reqCount: " + reqCount);
 
+      socket.emit('stop measuring performance',{username: username});
       var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
       $('#test_result').append(htmlDiv1);
       var htmlDiv2 = '<div><strong> The Number of GET Requests per second) is: ' + Math.round(getCount/dur) + ' /sec</strong></div><br>';
       $('#test_result').append(htmlDiv2);
-    }, 5000);
+    }, 5000+dur*1000);
   });
 
   $("#stop_test").click(function(event) {
@@ -957,6 +961,18 @@ $(document).ready(function() {
     userList[username].online = false;
     updateUserList();
     updateDropDownUserList();
+  });
+
+   socket.on('start measuring performance', function (username) {
+    // BootstrapDialog.show({
+    //     title: 'Alert Message',
+    //     message: "Server In the Maintance"
+    //   });
+   $('#myModal').modal('show');
+  });
+
+  socket.on('stop measuring performance', function (username) {
+   $('#myModal').modal('hide');
   });
 
   // TODO: remove user from dropdownuserlistclick when user left room x

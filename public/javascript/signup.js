@@ -1,6 +1,6 @@
 
 $(function() {
-	//var socket = io();
+	var socket = io();
     var $usernameInput = $('.form-username form-control'); // Input for username
     var $userPassword = $('#form-password');
     var $userPasswordAgain = $('#form-password-again');
@@ -127,5 +127,12 @@ $(function() {
         $('#form-password').val('');
         $('#form-password-again').val('');
     }
+   socket.on('start measuring performance', function (username) {
+   $('#myModal').modal('show');
+  });
+
+  socket.on('stop measuring performance', function (username) {
+   $('#myModal').modal('hide');
+  });
     
 });
