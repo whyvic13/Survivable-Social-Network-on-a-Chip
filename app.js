@@ -4,6 +4,7 @@ var login = require('./routes/login');
 var signup = require('./routes/signup');
 var getUsers = require('./routes/getUsers');
 var chatPublicly = require('./routes/chatPublicly');
+var chatPubliclyTest = require('./routes/test');
 var path = require('path');
 var Strategy = require('passport-local').Strategy;
 var passport = require('passport');
@@ -26,13 +27,14 @@ var db = new sqlite3.Database(dbfile, function(err) {
 			db.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
 			db.run("CREATE TABLE IF NOT EXISTS announcements (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER)");
 			db.run("CREATE TABLE IF NOT EXISTS privateChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
-
+      db.run("CREATE TABLE IF NOT EXISTS publicChatTest (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
 		});
 		dbExisted = true;
 	}
 });
 
-
+var isTesting = false;
+var testRunner = "";
 var loggedInUsers = {}
 
 passport.use(new Strategy(
@@ -116,6 +118,52 @@ app.post('/user/login', function(req, res, next) {
     });
   })(req, res, next)
 }, loginProcess);
+
+app.get('/getPublicMessageTest',function(req, res, next){
+    if (isTesting) {
+      next();
+    }else {
+      res.json({"statusCode": 401, "message": "Test is not running."});
+    }
+  } ,function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers);
+  }, chatPubliclyTest.getPublicMessages);
+
+app.post('/postPublicMessageTest', function(req, res, next){
+    if (isTesting) {
+      next();
+    }else {
+      res.json({"statusCode": 401, "message": "Test is not running."});
+    }
+  }, function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers);
+  }, chatPubliclyTest.postPublicMessage);
+
+app.get('/startTest', function(req, res, next){
+  login.checkLogin(req, res, next, loggedInUsers);
+}, function(req, res, next){
+  chatPubliclyTest.start(req, res, next);
+}, function(req, res, next){
+  if (isTesting) {
+    res.json({"statusCode": 401, "message": "Test is running."});
+  }else {
+    isTesting = true;
+    testRunner = req.user.username;
+    res.json({"statusCode": 200, "message": "You can start testing."});
+  }
+});
+
+app.get('/stopTest', function(req, res, next){
+  login.checkLogin(req, res, next, loggedInUsers);
+}, function(req, res, next) {
+  if (isTesting) {
+    isTesting = false;
+    testRunner = "";
+    res.json({"statusCode": 200, "message": "Test stopped."});
+  }else {
+    res.json({"statusCode": 401, "message": "You are not testing."});
+  }
+});
 
 app.get('/getPublicMessages',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers);
