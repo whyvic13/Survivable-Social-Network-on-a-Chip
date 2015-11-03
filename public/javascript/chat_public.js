@@ -77,7 +77,11 @@ $(document).ready(function() {
     var onlineUsers = [];
     var offlineUsers = [];
     for (name in userList) {
-      if (query !== undefined && name.indexOf(query) === -1) {
+      if (query !== undefined){
+        name_t =  name.toLowerCase();
+        query = query.toLowerCase();
+      }      
+      if (query !== undefined && name_t.indexOf(query) === -1) {
         continue;
       }
 
@@ -232,14 +236,14 @@ $(document).ready(function() {
                 message: value.message,
                 timestamp: value.timestamp,
                 userStatus: value.senderStatus
-              }, true);
+              }, false);
             } else {
               addPrivateMessage({
                 username: value.sender,
                 message: value.message,
                 timestamp: value.timestamp,
                 userStatus: value.senderStatus
-              }, true);
+              }, false);
             }
           });
         } else {
@@ -680,7 +684,8 @@ $(document).ready(function() {
 
 
   $("#search-announcement-button").click(function (event) {
-    searchAnnouncement();
+    event.preventDefault();
+    searchAnnouncement(true);
   });
 
   $("#search-announcement").keydown(function (event) {
