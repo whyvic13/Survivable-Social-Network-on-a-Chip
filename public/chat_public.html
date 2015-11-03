@@ -57,29 +57,37 @@
 
       <div class="tab-content col-xs-12 col-xs-offset-0">
         <div class="tab-pane fade in active" id="sidebar-wrapper">
-
-          <div class="search2 input-group">
+          <div class="search2 input-group pull-left">
+            <span>Search by status: </span>
             <div class="input-group-btn dropdown-toggle">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><strong>Search Status
-              </strong><span class="caret"></span></button>
+              <!--button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
               <ul id="search-status" class="dropdown-menu">
                 <li><a href='#'>Any</a></li>
                 <li><a href='#'>OK</a></li>
                 <li><a href='#'>Help</a></li>
                 <li><a href='#'>Emergency</a></li>
                 <li><a href='#'>None</a></li>
-              </ul>
+              </ul-->
+              <select id="search-status" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <option value="Any">Any</option>
+                <option value="OK">OK</option>
+                <option value="Help">Help</option>
+                <option value="Emergency">Emergency</option>
+                <option value="None">None</option>
+              </select>
             </div>
+          </div>
 
+          <div class="search2 input-group">
+            <span>Search by username: </span>
             <!-- Button appear before the search box to make floating work -->
             <button id="search-username-cancel" type="submit" class="btn btn-danger pull-right" >
               <span class="glyphicon glyphicon-remove"></span>
             </button>
-            <div class="search-box">
-              <input id="search-username" type="text" class="form-control input" maxlength="64" placeholder="Search Username">
+            <div id="search-username-box" class="search-box">
+              <input id="search-username" type="text" class="form-control input" maxlength="64" placeholder="Username">
             </div>
           </div>
-          </br>
 
           <div class="main-box no-header">
             <div class="main-box-body">
@@ -98,7 +106,7 @@
         </div>
         <div class="tab-pane fade" id="tab2">
           <div class="search2">
-            <button id="search-public-cancel" type="submit" class="btn btn-danger pull-right" >
+            <button id="search-public-cancel" type="submit" disabled="disabled" class="btn btn-danger pull-right" >
               <span class="glyphicon glyphicon-remove"></span>
             </button>
             <button id="search-public-button" type="submit" class="btn btn-primary  pull-right" >
@@ -184,7 +192,7 @@
 
                 <div class="tab-pane fade" id="tab3">
                   <div class="search2">
-                    <button id="search-private-cancel" type="submit" class="btn btn-danger pull-right" >
+                    <button id="search-private-cancel" type="submit" disabled="disabled" class="btn btn-danger pull-right" >
                       <span class="glyphicon glyphicon-remove"></span>
                     </button>
                     <button id="search-private-button" type="submit" class="btn btn-primary  pull-right" >
@@ -231,7 +239,7 @@
 
       <div class="tab-pane fade" id="tab4">
         <div class="search2">
-          <button id="search-announcement-cancel" type="submit" class="btn btn-danger pull-right" >
+          <button id="search-announcement-cancel" type="submit" disabled="disabled" class="btn btn-danger pull-right" >
             <span class="glyphicon glyphicon-remove"></span>
           </button>
           <button id="search-announcement-button" type="submit" class="btn btn-primary  pull-right" >

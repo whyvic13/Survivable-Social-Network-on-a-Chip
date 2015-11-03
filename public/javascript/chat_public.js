@@ -208,7 +208,7 @@ $(document).ready(function() {
     else {
       var $htmlDiv = $('<li><a href="" id="chat-userlist">' + user + '</a></li>');
     }
-    
+
     $('#userlist-dropdown-append').append($htmlDiv);
     $htmlDiv.children('#chat-userlist').click(function (event) {
       event.preventDefault();
@@ -435,6 +435,42 @@ $(document).ready(function() {
   });
 
 
+  $("#private-refresh").click(function (event) {
+    event.preventDefault();
+
+    var queryPrivate = $("#search-private").val();
+    if (queryPrivate) { // Query for more of private search results
+      if ($("#search-private").data('id') === undefined) {
+        return;
+      }
+
+      $.get("/searchPrivateMessages", {
+        keywords: queryPrivate,
+        id: $("#search-private").data('id'),
+        sender: username,
+        receiver: chatTarget
+      }, function (response) {
+        if (response.statusCode === 200) {
+          response.data.forEach(function (value, index) {
+            $("#search-private").data('id', value.id);
+            addPrivateMessage({
+              username: value.sender,
+              message: value.message,
+              userStatus:value.senderStatus,
+              timestamp: value.timestamp
+            }, false);
+          });
+        } else {
+          BootstrapDialog.show({
+            title: 'Alert Message',
+            message: response.message
+          });
+        }
+      });
+    }
+  });
+
+
   // Get another 20 messages if in mode get message history
   // Get another 10 search results if in mode search chat messages
   $refresh.click(function (event) {
@@ -587,8 +623,8 @@ $(document).ready(function() {
   });
 
 
-  $("#search-status li a").click(function (event) {
-    var status = $(this).text();
+  $("#search-status").change(function (event) {
+    var status = $(this).val();
     if (status === 'Any') {
       updateUserList();
     } else if (status === 'None') {
@@ -613,6 +649,7 @@ $(document).ready(function() {
         return;
       }
 
+      $("#search-announcement-cancel").attr("disabled", false);
       var queryWords = filterStopWords(query.split(/\s+/));
 
       var match = function($item) {
@@ -659,6 +696,7 @@ $(document).ready(function() {
     });
     $("#search-announcement").val('');
     $("#search-more-announcement").hide();
+    $("#search-announcement-cancel").attr("disabled", "disabled");
   }
 
 
@@ -695,6 +733,7 @@ $(document).ready(function() {
     $("#public_body").html($("#public_body").data('data'));
     $("#public_body").removeData('data');
     $("#search-public").val('');
+    $("#search-public-cancel").attr("disabled", "disabled");
   });
 
   function searchPublic() {
@@ -702,9 +741,11 @@ $(document).ready(function() {
     if (!query) {
       $("#public_body").html($("#public_body").data('data'));
       $("#public_body").removeData('data');
+      $("#search-public-cancel").attr("disabled", "disabled");
       return;
     }
 
+    $("#search-public-cancel").attr("disabled", false);
     $.get("/searchPublicMessages", {
       keywords: query,
       id: 99999999
@@ -748,6 +789,7 @@ $(document).ready(function() {
     $("#private_body").html($("#private_body").data('data'));
     $("#private_body").removeData('data');
     $("#search-private").val('');
+    $("#search-private-cancel").attr("disabled", "disabled");
   });
 
 
@@ -756,23 +798,25 @@ $(document).ready(function() {
     if (!query) {
       $("#private_body").html($("#private_body").data('data'));
       $("#private_body").removeData('data');
+      $("#search-private-cancel").attr("disabled", "disabled");
       return;
     }
 
+    $("#search-private-cancel").attr("disabled", false);
     $.get("/searchPrivateMessages", {
       keywords: query,
       sender: username,
       receiver: chatTarget,
-      id: searchPrivateID
+      id: 99999999
     }, function (response) {
       if (response.statusCode === 200) {
         var $privateBody = $("#private_body");
         if (!$privateBody.data('data')) {
           $privateBody.data('data', $privateBody.html());
-          console.log($privateBody.data('data'));
         }
         $privateBody.empty();
         response.data.forEach(function (value, index) {
+          $("#search-private").data('id', value.id);
           addPrivateMessage({
             username: value.sender,
             message: value.message,
@@ -903,7 +947,7 @@ $(document).ready(function() {
       };
     }
 
-    
+
     updateUserList();
     updateDropDownUserList();
   });
@@ -916,7 +960,6 @@ $(document).ready(function() {
   });
 
   // TODO: remove user from dropdownuserlistclick when user left room x
-  // TODO: Add effect to let user know which tab he/she currently in
   // TODO: Restructure UI for private chat (now: click on userlist, nothing happens, expected: auto move to chat private,
   // propose: remove private chat tab, interact through user list only)
   // TODO: search private: remove receiver field in database
@@ -924,8 +967,6 @@ $(document).ready(function() {
   // TODO: search public bug, return results not correct
   // TODO: add 'refresh' button for private chat + search private chat
 
-  // TODO(Nga): limit 10, reload for private
-  // disable stop button, enable only when user types something in
   // add search by status, search by username
   // mocha + test coverage
 });
