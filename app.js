@@ -265,22 +265,22 @@ io.on('connection', function(socket) {
   });
 
   socket.on("start measuring performance", function(data){
-    // if (isTesting) {
-    //   return;
-    // }
-    //isTesting = true;
+    if (isTesting) {
+      return;
+    }
+    isTesting = true;
     testRunner = data.username;
-    //chatPubliclyTest.startFromSocket();
+    chatPubliclyTest.startFromSocket();
     console.log("in start ");
     socket.broadcast.emit("start measuring performance", data);
     socket.emit("block other operations");
   });
 
   socket.on("stop measuring performance", function(data){
-    // if (!isTesting) {
-    //   return;
-    // }
-    //isTesting = false;
+    if (!isTesting) {
+      return;
+    }
+    isTesting = false;
     socket.broadcast.emit("stop measuring performance", data);
     socket.emit("unblock other operations");
   });
