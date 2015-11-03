@@ -66,7 +66,7 @@ exports.searchPrivateMessages = function(req, res) {
   }
 
   var sqlstm = "SELECT * FROM privateChat WHERE (";
-  var fields = ['sender', 'receiver', 'message', 'timestamp', 'senderStatus', 'senderLocation'];
+  var fields = ['message'];
   wordsToSql = "";
   for (var i = 0; i < fields.length; i++) {
     if (i > 0) {

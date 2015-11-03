@@ -2,6 +2,15 @@ body{
     background:#eee;
 }
 
+#search-username {
+    width: auto;
+    float: none;
+}
+
+#search-username-box {
+    display: inline;
+}
+
 .panel-primary>.panel-heading {
     min-height: 50px;
 }
@@ -37,8 +46,10 @@ body{
 }
 
 .search2 .dropdown-toggle {
-    min-width: 150px;
-    float: left;
+    min-width: 75px;
+    width: auto;
+    display: inline;
+    padding-right: 20px;
 }
 
 .round.online {
@@ -102,6 +113,10 @@ body{
     border-radius: 3px;
     font-size: 0.875em;
     font-weight: 600;
+}
+
+.user-list {
+    margin: auto;
 }
 
 .user-list tbody {

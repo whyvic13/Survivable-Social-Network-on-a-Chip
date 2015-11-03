@@ -52,7 +52,7 @@ exports.searchPublicMessages = function(req, res) {
   }
 
   var sqlstm = "SELECT * FROM publicChat WHERE (";
-  var fields = ['sender', 'message', 'timestamp', 'senderStatus', 'senderLocation'];
+  var fields = ['message'];
   wordsToSql = "";
   for (var i = 0; i < fields.length; i++) {
     if (i > 0) {

@@ -30,8 +30,6 @@ $(document).ready(function() {
   if (isNewUser == "1") {
     $('#welcome_message').show();
   }
-
-  
   var userList = {};  // Save up all the registered user
   var stopWordsDict = {};
   parseStopWords();
@@ -210,7 +208,7 @@ $(document).ready(function() {
     else {
       var $htmlDiv = $('<li><a href="" id="chat-userlist">' + user + '</a></li>');
     }
-    
+
     $('#userlist-dropdown-append').append($htmlDiv);
     $htmlDiv.children('#chat-userlist').click(function (event) {
       event.preventDefault();
@@ -437,6 +435,42 @@ $(document).ready(function() {
   });
 
 
+  $("#private-refresh").click(function (event) {
+    event.preventDefault();
+
+    var queryPrivate = $("#search-private").val();
+    if (queryPrivate) { // Query for more of private search results
+      if ($("#search-private").data('id') === undefined) {
+        return;
+      }
+
+      $.get("/searchPrivateMessages", {
+        keywords: queryPrivate,
+        id: $("#search-private").data('id'),
+        sender: username,
+        receiver: chatTarget
+      }, function (response) {
+        if (response.statusCode === 200) {
+          response.data.forEach(function (value, index) {
+            $("#search-private").data('id', value.id);
+            addPrivateMessage({
+              username: value.sender,
+              message: value.message,
+              userStatus:value.senderStatus,
+              timestamp: value.timestamp
+            }, false);
+          });
+        } else {
+          BootstrapDialog.show({
+            title: 'Alert Message',
+            message: response.message
+          });
+        }
+      });
+    }
+  });
+
+
   // Get another 20 messages if in mode get message history
   // Get another 10 search results if in mode search chat messages
   $refresh.click(function (event) {
@@ -452,15 +486,22 @@ $(document).ready(function() {
         keywords: queryPublic,
         id: $("#search-public").data('id')
       }, function (response) {
-        response.data.forEach(function (value, index) {
-          $("#search-public").data('id', value.id);
-          addPublicMessage({
-            username: value.sender,
-            message: value.message,
-            userStatus:value.userStatus,
-            timestamp: value.timestamp
-          }, false);
-        });
+        if (response.statusCode === 200) {
+          response.data.forEach(function (value, index) {
+            $("#search-public").data('id', value.id);
+            addPublicMessage({
+              username: value.sender,
+              message: value.message,
+              userStatus:value.userStatus,
+              timestamp: value.timestamp
+            }, false);
+          });
+        } else {
+          BootstrapDialog.show({
+            title: 'Alert Message',
+            message: response.message
+          });
+        }
       });
     } else { // Chat mode
       $.get("/getPublicMessages", {
@@ -582,8 +623,8 @@ $(document).ready(function() {
   });
 
 
-  $("#search-status li a").click(function (event) {
-    var status = $(this).text();
+  $("#search-status").change(function (event) {
+    var status = $(this).val();
     if (status === 'Any') {
       updateUserList();
     } else if (status === 'None') {
@@ -608,6 +649,7 @@ $(document).ready(function() {
         return;
       }
 
+      $("#search-announcement-cancel").attr("disabled", false);
       var queryWords = filterStopWords(query.split(/\s+/));
 
       var match = function($item) {
@@ -633,25 +675,6 @@ $(document).ready(function() {
                   .filter(isHidden)
                   .slice(0, 10)
                   .each(function() { $(this).show(); });
-
-
-    /*$announcement_body.children().each(function() {
-      var data = $(this).data('data');
-      var cnt = 0;
-      var i;
-      for (i = 0; i < queryWords.length; i++) {
-        if (data.message.toLowerCase().indexOf(queryWords[i].toLowerCase()) !== -1) {
-          break;
-        }
-      }
-
-      if (i == queryWords.length || cnt >= 10) {
-        $(this).hide();
-      } else {
-        $(this).show();
-        cnt++;
-      }
-    });*/
   }
 
 
@@ -673,6 +696,7 @@ $(document).ready(function() {
     });
     $("#search-announcement").val('');
     $("#search-more-announcement").hide();
+    $("#search-announcement-cancel").attr("disabled", "disabled");
   }
 
 
@@ -709,6 +733,7 @@ $(document).ready(function() {
     $("#public_body").html($("#public_body").data('data'));
     $("#public_body").removeData('data');
     $("#search-public").val('');
+    $("#search-public-cancel").attr("disabled", "disabled");
   });
 
   function searchPublic() {
@@ -716,27 +741,36 @@ $(document).ready(function() {
     if (!query) {
       $("#public_body").html($("#public_body").data('data'));
       $("#public_body").removeData('data');
+      $("#search-public-cancel").attr("disabled", "disabled");
       return;
     }
 
+    $("#search-public-cancel").attr("disabled", false);
     $.get("/searchPublicMessages", {
       keywords: query,
       id: 99999999
     }, function (response) {
-      var $publicBody = $("#public_body");
-      if (!$publicBody.data('data')) {
-        $publicBody.data('data', $publicBody.html());
+      if (response.statusCode === 200) {
+        var $publicBody = $("#public_body");
+        if (!$publicBody.data('data')) {
+          $publicBody.data('data', $publicBody.html());
+        }
+        $publicBody.empty();
+        response.data.forEach(function (value, index) {
+          $("#search-public").data('id', value.id);
+          addPublicMessage({
+            username: value.sender,
+            message: value.message,
+            userStatus:value.userStatus,
+            timestamp: value.timestamp
+          }, false);
+        });
+      } else {
+        BootstrapDialog.show({
+          title: 'Alert Message',
+          message: response.message
+        });
       }
-      $publicBody.empty();
-      response.data.forEach(function (value, index) {
-        $("#search-public").data('id', value.id);
-        addPublicMessage({
-          username: value.sender,
-          message: value.message,
-          userStatus:value.userStatus,
-          timestamp: value.timestamp
-        }, false);
-      });
     });
   }
 
@@ -755,6 +789,7 @@ $(document).ready(function() {
     $("#private_body").html($("#private_body").data('data'));
     $("#private_body").removeData('data');
     $("#search-private").val('');
+    $("#search-private-cancel").attr("disabled", "disabled");
   });
 
 
@@ -763,29 +798,38 @@ $(document).ready(function() {
     if (!query) {
       $("#private_body").html($("#private_body").data('data'));
       $("#private_body").removeData('data');
+      $("#search-private-cancel").attr("disabled", "disabled");
       return;
     }
 
+    $("#search-private-cancel").attr("disabled", false);
     $.get("/searchPrivateMessages", {
       keywords: query,
       sender: username,
       receiver: chatTarget,
-      id: searchPrivateID
+      id: 99999999
     }, function (response) {
-      var $privateBody = $("#private_body");
-      if (!$privateBody.data('data')) {
-        $privateBody.data('data', $privateBody.html());
-        console.log($privateBody.data('data'));
+      if (response.statusCode === 200) {
+        var $privateBody = $("#private_body");
+        if (!$privateBody.data('data')) {
+          $privateBody.data('data', $privateBody.html());
+        }
+        $privateBody.empty();
+        response.data.forEach(function (value, index) {
+          $("#search-private").data('id', value.id);
+          addPrivateMessage({
+            username: value.sender,
+            message: value.message,
+            userStatus:value.senderStatus,
+            timestamp: value.timestamp
+          }, false);
+        });
+      } else {
+        BootstrapDialog.show({
+          title: 'Alert Message',
+          message: response.message
+        });
       }
-      $privateBody.empty();
-      response.data.forEach(function (value, index) {
-        addPrivateMessage({
-          username: value.sender,
-          message: value.message,
-          userStatus:value.senderStatus,
-          timestamp: value.timestamp
-        }, false);
-      });
     });
   }
 
@@ -800,7 +844,7 @@ $(document).ready(function() {
 
 
 
-   $("#start_test").click(function(event) {
+  $("#start_test").click(function(event) {
     /* Act on the event */
     event.preventDefault();
     socket.emit("start measuring performance",{username: username});
@@ -828,15 +872,12 @@ $(document).ready(function() {
         //if(response.statusCode == 200){
         postCount++;
         //console.log("response: "+response+" count: "+postCount);
-        //}
       });
 
       $.get("/getPublicMessageTest",
         function (response) {
-          //if(response.statusCode == 200){
           getCount++;
           //console.log("response: "+response+" count: "+postCount);
-          //}
       });
     }
 
@@ -910,7 +951,7 @@ $(document).ready(function() {
       };
     }
 
-    
+
     updateUserList();
     updateDropDownUserList();
   });
@@ -922,7 +963,7 @@ $(document).ready(function() {
     updateDropDownUserList();
   });
 
-  socket.on('start measuring performance', function (username) {
+   socket.on('start measuring performance', function (username) {
     // BootstrapDialog.show({
     //     title: 'Alert Message',
     //     message: "Server In the Maintance"
@@ -934,20 +975,7 @@ $(document).ready(function() {
    $('#myModal').modal('hide');
   });
 
-  socket.on('block other operations', function () {
-    // BootstrapDialog.show({
-    //     title: 'Alert Message',
-    //     message: "Server In the Maintance"
-    //   });
-   $('#myModal2').modal('show');
-  });
-
-  socket.on('unblock other operations', function () {
-   $('#myModal2').modal('hide');
-  });
-
-  // TODO: remove user from dropdownuserlistclick when user left room
-  // TODO: Add effect to let user know which tab he/she currently in
+  // TODO: remove user from dropdownuserlistclick when user left room x
   // TODO: Restructure UI for private chat (now: click on userlist, nothing happens, expected: auto move to chat private,
   // propose: remove private chat tab, interact through user list only)
   // TODO: search private: remove receiver field in database
@@ -955,7 +983,6 @@ $(document).ready(function() {
   // TODO: search public bug, return results not correct
   // TODO: add 'refresh' button for private chat + search private chat
 
-  // TODO(Nga): limit 10, reload
-  // TODO(Nga): handle error code
-  // handle error code
+  // add search by status, search by username
+  // mocha + test coverage
 });
