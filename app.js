@@ -142,7 +142,7 @@ app.post('/postPublicMessageTest', function(req, res, next){
 app.get('/startTest', function(req, res, next){
   login.checkLogin(req, res, next, loggedInUsers, isTesting);
 }, function(req, res, next){
-  chatPubliclyTest.start(req, res, next);
+  chatPubliclyTest.startFromAPI(req, res, next);
 }, function(req, res, next){
   if (isTesting) {
     res.json({"statusCode": 401, "message": "Test is running."});
@@ -244,6 +244,24 @@ io.on('connection', function(socket) {
     loggedInUsers[data] = socket.id;
     socket.broadcast.emit("user join", data);
 
+  });
+
+  socket.on("start measuring performance", function(data){
+    if (isTesting) {
+      return;
+    }
+    isTesting = true;
+    testRunner = data.username;
+    chatPubliclyTest.startFromSocket();
+    socket.broadcast.emit("start measuring performance", data);
+  });
+
+  socket.on("stop measuring performance", function(data){
+    if (!isTesting) {
+      return;
+    }
+    isTesting = false;
+    socket.broadcast.emit("stop measuring performance", data);
   });
 
   //receive client add message

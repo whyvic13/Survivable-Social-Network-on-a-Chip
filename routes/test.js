@@ -4,9 +4,17 @@ var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(dbFile);
 
 var numberOfPosts = 0;
-var limit = 40;
+var limit = 1000;
 
-exports.start = function(req, res, next) {
+exports.startFromAPI = function(req, res, next) {
+  startTest();
+}
+
+exports.startFromSocket = function() {
+  startTest();
+}
+
+function startTest(){
   var sqlstm = "SELECT * FROM publicChatTest";
   console.log(sqlstm);
   db.all(sqlstm, function(err, row){
