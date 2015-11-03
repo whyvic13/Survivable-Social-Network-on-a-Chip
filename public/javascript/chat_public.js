@@ -17,6 +17,7 @@ $(document).ready(function() {
   var chatTarget = undefined;  // Non-empty string for private mode, undefined for public mode.
   var load_time = Date.parse(new Date()) / 1000;
   var initial_loadtime = load_time;
+  var interupt_flag = 0;
 
   var newID = 99999999;  // MaxID
   var href = window.location.href;
@@ -847,8 +848,9 @@ $(document).ready(function() {
   $("#start_test").click(function(event) {
     /* Act on the event */
     event.preventDefault();
+    // socket.emit('block other operations');
+    $('#myModal2').modal('show');
     socket.emit("start measuring performance",{username: username});
-    socket.emit('block other operations');
 
     console.log('start_test');
     var dur=$('#duration').val();
@@ -858,9 +860,11 @@ $(document).ready(function() {
     var start = new Date();
 
     var reqCount = 0;
-    while ((elapse = new Date() - start) < dur * 1000)
-    {
-      reqCount++;
+    setTimeout(function() {
+       while ((elapse = new Date() - start) < dur * 1000 )
+      {
+       reqCount++;
+
       $.post("/postPublicMessageTest", {
         sender: username,
         message: testMsg,
@@ -879,27 +883,39 @@ $(document).ready(function() {
           getCount++;
           //console.log("response: "+response+" count: "+postCount);
       });
-    }
+
+      }
+    },500);
 
     setTimeout(function() {
       console.log("postCount: " + postCount);
       console.log("getCount: " + getCount);
       console.log("reqCount: " + reqCount);
-
-      socket.emit('stop measuring performance',{username: username});
+      
       var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
       $('#test_result').append(htmlDiv1);
       var htmlDiv2 = '<div><strong> The Number of GET Requests per second) is: ' + Math.round(getCount/dur) + ' /sec</strong></div><br>';
       $('#test_result').append(htmlDiv2);
-    }, 5000+dur*1000);
+      socket.emit('stop measuring performance',{username: username});
+
+    }, 100+dur*1000);
   });
 
-  $("#stop_test").click(function(event) {
-    $('#duration').val('');
-    $('#test_result').empty();
-    socket.emit("stop measuring performance",{username: username});
-  });
+  $("#clean_test").click(function(event) {
+      $('#test_result').empty();
+      $('#duration').val('');
+    });
 
+   $("#stop_test").click(function(event) {
+
+      interupt_flag = 1;
+      socket.emit("interupt measuring performance",{username:username});  
+      setTimeout(function(){
+      $('#test_result').empty();
+      $('#duration').val('');
+    },1000);
+
+    });
 
   // Whenever the server emits new message, update the chat body
   socket.on('new private message', function (data) {
@@ -951,7 +967,6 @@ $(document).ready(function() {
       };
     }
 
-
     updateUserList();
     updateDropDownUserList();
   });
@@ -961,18 +976,29 @@ $(document).ready(function() {
     userList[username].online = false;
     updateUserList();
     updateDropDownUserList();
-  });
+  })
 
+  // socket.on('unblock other operations', function () {
+  //  $('#myModal2').modal('hide');
+  // });
+
+  //other users cannot operate
    socket.on('start measuring performance', function (username) {
-    // BootstrapDialog.show({
-    //     title: 'Alert Message',
-    //     message: "Server In the Maintance"
-    //   });
    $('#myModal').modal('show');
   });
 
-  socket.on('stop measuring performance', function (username) {
+  //measure performance end normally
+  socket.on('stop measuring performance', function (username) { 
    $('#myModal').modal('hide');
+   $('#myModal2').modal('hide');
+  });
+
+  //interupt measure performance 
+  socket.on('interupt measuring performance', function (username) {
+   // $('#myModal2').modal('show');
+   $('#test_result').empty();
+   $('#duration').val('');
+   $('#myModal2').modal('hide');
   });
 
   // TODO: remove user from dropdownuserlistclick when user left room x

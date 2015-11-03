@@ -264,16 +264,21 @@ io.on('connection', function(socket) {
 
   });
 
+   socket.on("interupt measuring performance ",function(data){
+    socket.emit("interupt measuring performance");
+    socket.broadcast.emit("stop measuring performance", data); 
+   });
+
   socket.on("start measuring performance", function(data){
     if (isTesting) {
       return;
     }
     isTesting = true;
     testRunner = data.username;
-    chatPubliclyTest.startFromSocket();
-    console.log("in start ");
+   
     socket.broadcast.emit("start measuring performance", data);
-    socket.emit("block other operations");
+    chatPubliclyTest.startFromSocket();    
+    //console.log("in start ");  
   });
 
   socket.on("stop measuring performance", function(data){
@@ -281,9 +286,12 @@ io.on('connection', function(socket) {
       return;
     }
     isTesting = false;
-    socket.broadcast.emit("stop measuring performance", data);
-    socket.emit("unblock other operations");
+    
+    socket.emit("stop measuring performance", data);   
+    socket.broadcast.emit("stop measuring performance", data); 
+    
   });
+
 
   //receive client add message
   socket.on("new public message", function(data) {
