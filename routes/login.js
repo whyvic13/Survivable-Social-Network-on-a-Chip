@@ -34,7 +34,7 @@ exports.findByUsername = function(username, cb) {
       return cb(null, null);
     }else{
       if (row) {
-        console.log(row);
+        //console.log(row);
         return cb(null, row);
       }else{
         console.log("Not found");

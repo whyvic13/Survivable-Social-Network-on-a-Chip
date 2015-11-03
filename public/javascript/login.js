@@ -111,15 +111,11 @@ $(function() {
         $('#form-password').val('');
     }
 
-    socket.on('start measuring performance', function (username) {
-    // BootstrapDialog.show({
-    //     title: 'Alert Message',
-    //     message: "Server In the Maintance"
-    //   });
+   socket.on('start measuring performance', function (username) {
    $('#myModal').modal('show');
-  });
+   });
 
-  socket.on('stop measuring performance', function (username) {
+   socket.on('stop measuring performance', function (username) {
    $('#myModal').modal('hide');
   });
     

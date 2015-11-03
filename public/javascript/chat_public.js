@@ -200,7 +200,6 @@ $(document).ready(function() {
 
   }
 
-
   function setDropdownUserlistClick(user, online_flag) {
     if(online_flag) {
       var $htmlDiv = $('<li><a href="" id="chat-userlist"><span class="glyphicon glyphicon-user">' +
@@ -252,7 +251,6 @@ $(document).ready(function() {
     });
   }
 
-
   // Get all users from REST GET
   $.get("/users", function (response) {
     if (response.statusCode === 200) {
@@ -287,7 +285,6 @@ $(document).ready(function() {
       });
     }
   });
-
 
   // Get all public messages
   function getPublicMessages() {
@@ -346,7 +343,6 @@ $(document).ready(function() {
     }
   });
 
-
   function postPublicMessage() {
     var message = $public_message.val().trim();
     if (!message) {
@@ -364,7 +360,6 @@ $(document).ready(function() {
 
     $public_message.val('');
   }
-
 
   function postPrivateMessage() {
     var message = $private_message.val().trim();
@@ -385,13 +380,11 @@ $(document).ready(function() {
     $private_message.val('');
   }
 
-
   // Public chat post button
   $public_post.click(function (event) {
     event.preventDefault();
     postPublicMessage();
   });
-
 
   // Public chat post button
   $private_post.click(function (event) {
@@ -603,7 +596,6 @@ $(document).ready(function() {
     event.preventDefault();
     updateStatus('Help');
   });
-
 
   $("#search-username").keydown(function (event) {
     if (event.which === 13) {
@@ -844,8 +836,7 @@ $(document).ready(function() {
   }
 
 
-
-  $("#start_test").click(function(event) {
+ $("#start_test_post").click(function(event) {
     /* Act on the event */
     event.preventDefault();
     // socket.emit('block other operations');
@@ -856,7 +847,6 @@ $(document).ready(function() {
     var dur=$('#duration').val();
 
     var postCount = 0;
-    var getCount = 0;
     var start = new Date();
 
     var reqCount = 0;
@@ -878,6 +868,42 @@ $(document).ready(function() {
         //console.log("response: "+response+" count: "+postCount);
       });
 
+      }
+    },500);
+
+    setTimeout(function() {
+      console.log("postCount: " + postCount);
+      // console.log("getCount: " + getCount);
+      console.log("reqCount: " + reqCount);
+      
+      var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
+      $('#test_result').append(htmlDiv1);
+      // var htmlDiv2 = '<div><strong> The Number of GET Requests per second) is: ' + Math.round(getCount/dur) + ' /sec</strong></div><br>';
+      // $('#test_result').append(htmlDiv2);
+      socket.emit('stop measuring performance',{username: username});
+
+    }, 100+dur*1000);
+  });
+
+$("#start_test_get").click(function(event) {
+    /* Act on the event */
+    event.preventDefault();
+    // socket.emit('block other operations');
+    $('#myModal2').modal('show');
+    socket.emit("start measuring performance",{username: username});
+
+    console.log('start_test');
+    var dur=$('#duration').val();
+
+    var getCount = 0;
+    var start = new Date();
+
+    var reqCount = 0;
+    setTimeout(function() {
+    while ((elapse = new Date() - start) < dur * 1000 )
+      {
+       reqCount++;
+
       $.get("/getPublicMessageTest",
         function (response) {
           getCount++;
@@ -888,34 +914,52 @@ $(document).ready(function() {
     },500);
 
     setTimeout(function() {
-      console.log("postCount: " + postCount);
       console.log("getCount: " + getCount);
       console.log("reqCount: " + reqCount);
       
-      var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
-      $('#test_result').append(htmlDiv1);
+      // var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
+      // $('#test_result').append(htmlDiv1);
       var htmlDiv2 = '<div><strong> The Number of GET Requests per second) is: ' + Math.round(getCount/dur) + ' /sec</strong></div><br>';
       $('#test_result').append(htmlDiv2);
       socket.emit('stop measuring performance',{username: username});
+      }, 100+dur*1000);
 
-    }, 100+dur*1000);
   });
 
   $("#clean_test").click(function(event) {
       $('#test_result').empty();
       $('#duration').val('');
-    });
+  });
 
-   $("#stop_test").click(function(event) {
+  $("#stop_test").click(function(event) {
 
-      interupt_flag = 1;
+      console.log("I click the stop");
       socket.emit("interupt measuring performance",{username:username});  
       setTimeout(function(){
       $('#test_result').empty();
       $('#duration').val('');
     },1000);
-
     });
+
+  //other users cannot operate
+   socket.on('start measuring performance', function (data) {
+   $('#myModal').modal('show');
+  });
+
+  //measure performance end normally
+  socket.on('stop measuring performance', function (data) { 
+   $('#myModal').modal('hide');
+   $('#myModal2').modal('hide');
+  });
+
+  //interupt measure performance 
+  socket.on('interupt measuring performance', function (data) {
+   // $('#myModal2').modal('show');
+   console.log("I receive the interupt socket");
+   $('#test_result').empty();
+   $('#duration').val('');
+   $('#myModal2').modal('hide');
+  });
 
   // Whenever the server emits new message, update the chat body
   socket.on('new private message', function (data) {
@@ -981,25 +1025,6 @@ $(document).ready(function() {
   // socket.on('unblock other operations', function () {
   //  $('#myModal2').modal('hide');
   // });
-
-  //other users cannot operate
-   socket.on('start measuring performance', function (username) {
-   $('#myModal').modal('show');
-  });
-
-  //measure performance end normally
-  socket.on('stop measuring performance', function (username) { 
-   $('#myModal').modal('hide');
-   $('#myModal2').modal('hide');
-  });
-
-  //interupt measure performance 
-  socket.on('interupt measuring performance', function (username) {
-   // $('#myModal2').modal('show');
-   $('#test_result').empty();
-   $('#duration').val('');
-   $('#myModal2').modal('hide');
-  });
 
   // TODO: remove user from dropdownuserlistclick when user left room x
   // TODO: Restructure UI for private chat (now: click on userlist, nothing happens, expected: auto move to chat private,

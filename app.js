@@ -265,7 +265,8 @@ io.on('connection', function(socket) {
   });
 
    socket.on("interupt measuring performance ",function(data){
-    socket.emit("interupt measuring performance");
+    console.log("Receive Interupt Socket From User");
+    socket.emit("interupt measuring performance",data);
     socket.broadcast.emit("stop measuring performance", data); 
    });
 
@@ -291,7 +292,6 @@ io.on('connection', function(socket) {
     socket.broadcast.emit("stop measuring performance", data); 
     
   });
-
 
   //receive client add message
   socket.on("new public message", function(data) {
