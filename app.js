@@ -4,6 +4,7 @@ var login = require('./routes/login');
 var signup = require('./routes/signup');
 var getUsers = require('./routes/getUsers');
 var chatPublicly = require('./routes/chatPublicly');
+var chatPubliclyTest = require('./routes/test');
 var path = require('path');
 var Strategy = require('passport-local').Strategy;
 var passport = require('passport');
@@ -26,13 +27,14 @@ var db = new sqlite3.Database(dbfile, function(err) {
 			db.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
 			db.run("CREATE TABLE IF NOT EXISTS announcements (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER)");
 			db.run("CREATE TABLE IF NOT EXISTS privateChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
-
+      db.run("CREATE TABLE IF NOT EXISTS publicChatTest (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
 		});
 		dbExisted = true;
 	}
 });
 
-
+var isTesting = false;
+var testRunner = "";
 var loggedInUsers = {}
 
 passport.use(new Strategy(
@@ -120,34 +122,80 @@ app.post('/user/login', function(req, res, next) {
   })(req, res, next)
 }, loginProcess);
 
+app.get('/getPublicMessageTest',function(req, res, next){
+    if (isTesting) {
+      next();
+    }else {
+      res.json({"statusCode": 401, "message": "Test is not running."});
+    }
+  } ,function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
+  }, chatPubliclyTest.getPublicMessages);
+
+app.post('/postPublicMessageTest', function(req, res, next){
+    if (isTesting) {
+      next();
+    }else {
+      res.json({"statusCode": 401, "message": "Test is not running."});
+    }
+  }, function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
+  }, chatPubliclyTest.postPublicMessage);
+
+app.get('/startTest', function(req, res, next){
+  login.checkLogin(req, res, next, loggedInUsers, isTesting);
+}, function(req, res, next){
+  chatPubliclyTest.startFromAPI(req, res, next);
+}, function(req, res, next){
+  if (isTesting) {
+    res.json({"statusCode": 401, "message": "Test is running."});
+  }else {
+    isTesting = true;
+    testRunner = req.user.username;
+    res.json({"statusCode": 200, "message": "You can start testing."});
+  }
+});
+
+app.get('/stopTest', function(req, res, next){
+  login.checkLogin(req, res, next, loggedInUsers, isTesting);
+}, function(req, res, next) {
+  if (isTesting) {
+    isTesting = false;
+    testRunner = "";
+    res.json({"statusCode": 200, "message": "Test stopped."});
+  }else {
+    res.json({"statusCode": 401, "message": "You are not testing."});
+  }
+});
+
 app.get('/getPublicMessages',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPublicly.getPublicMessages);
 
 app.get('/searchPublicMessages',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPublicly.searchPublicMessages);
 
 app.get('/user/isLogin',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
       res.status(200).end("ok");
 });
 
 app.get('/users', function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
     getUsers.getAllUsers(req, res, loggedInUsers);
 });
 
 app.get('/users/name',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
      getUsers.searchUsers(req, res, loggedInUsers)
   });
 
 app.get('/users/status',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
     getUsers.showUsersByStatus(req, res, loggedInUsers)
   });
@@ -166,27 +214,27 @@ app.get('/user/logout',
 });
 
 app.get('/getAnnoucements',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, announcements.getAnnouncements);
 
 app.get('/searchAnnouncements',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, announcements.searchAnnouncements);
 
 app.post('/announcement',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, announcements.postAnnouncement);
 
 app.get('/getPrivateMessages',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPrivately.getPrivateMessagesBetween);
 
 app.get('/searchPrivateMessages',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPrivately.searchPrivateMessages);
 
 app.post('/privateMessage',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPrivately.postAPrivateMessage);
 
 app.get('/postPublicMessageTest',
@@ -216,8 +264,29 @@ io.on('connection', function(socket) {
 
   });
 
+  socket.on("start measuring performance", function(data){
+    if (isTesting) {
+      return;
+    }
+    isTesting = true;
+    testRunner = data.username;
+    chatPubliclyTest.startFromSocket();
+    socket.broadcast.emit("start measuring performance", data);
+  });
+
+  socket.on("stop measuring performance", function(data){
+    if (!isTesting) {
+      return;
+    }
+    isTesting = false;
+    socket.broadcast.emit("stop measuring performance", data);
+  });
+
   //receive client add message
   socket.on("new public message", function(data) {
+    if (isTesting) {
+      return;
+    }
     var timestamp = Math.floor(Date.now() / 1000);
     var emitData = {
       "username": data.username,
@@ -235,6 +304,9 @@ io.on('connection', function(socket) {
 
   // share status
   socket.on("share status", function(data) {
+    if (isTesting) {
+      return;
+    }
     var timestamp = Math.floor(Date.now() / 1000);
     var emitData = {
       "username": data.username,
@@ -251,6 +323,9 @@ io.on('connection', function(socket) {
 
 
   socket.on("new private message", function(data) {
+    if (isTesting) {
+      return;
+    }
     var timestamp = Math.floor(Date.now() / 1000);
     var emitData = {
       "sender": data.sender,
@@ -268,6 +343,9 @@ io.on('connection', function(socket) {
   });
 
 	socket.on("new announcement", function(message) {
+    if (isTesting) {
+      return;
+    }
     var timestamp = Math.floor(Date.now() / 1000);
     var msg = {
       "sender": message.username,

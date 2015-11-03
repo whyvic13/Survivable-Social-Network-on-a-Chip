@@ -44,9 +44,13 @@ exports.findByUsername = function(username, cb) {
   });
 }
 
-exports.checkLogin = function(req, res, next, loggedInUsers) {
+exports.checkLogin = function(req, res, next, loggedInUsers, isTesting) {
   if (req.user && loggedInUsers[req.user.username]) {
-    next();
+    if (isTesting) {
+      res.json({"statusCode": 401, "message": "Test is running."});
+    }else {
+      next();
+    }
   }else {
     res.status(401).end("Unauthorized");
   }
