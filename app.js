@@ -126,7 +126,7 @@ app.get('/getPublicMessageTest',function(req, res, next){
       res.json({"statusCode": 401, "message": "Test is not running."});
     }
   } ,function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPubliclyTest.getPublicMessages);
 
 app.post('/postPublicMessageTest', function(req, res, next){
@@ -136,11 +136,11 @@ app.post('/postPublicMessageTest', function(req, res, next){
       res.json({"statusCode": 401, "message": "Test is not running."});
     }
   }, function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPubliclyTest.postPublicMessage);
 
 app.get('/startTest', function(req, res, next){
-  login.checkLogin(req, res, next, loggedInUsers);
+  login.checkLogin(req, res, next, loggedInUsers, isTesting);
 }, function(req, res, next){
   chatPubliclyTest.start(req, res, next);
 }, function(req, res, next){
@@ -154,7 +154,7 @@ app.get('/startTest', function(req, res, next){
 });
 
 app.get('/stopTest', function(req, res, next){
-  login.checkLogin(req, res, next, loggedInUsers);
+  login.checkLogin(req, res, next, loggedInUsers, isTesting);
 }, function(req, res, next) {
   if (isTesting) {
     isTesting = false;
@@ -166,33 +166,33 @@ app.get('/stopTest', function(req, res, next){
 });
 
 app.get('/getPublicMessages',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPublicly.getPublicMessages);
 
 app.get('/searchPublicMessages',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPublicly.searchPublicMessages);
 
 app.get('/user/isLogin',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
       res.status(200).end("ok");
 });
 
 app.get('/users', function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
     getUsers.getAllUsers(req, res, loggedInUsers);
 });
 
 app.get('/users/name',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
      getUsers.searchUsers(req, res, loggedInUsers)
   });
 
 app.get('/users/status',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
     getUsers.showUsersByStatus(req, res, loggedInUsers)
   });
@@ -211,27 +211,27 @@ app.get('/user/logout',
 });
 
 app.get('/getAnnoucements',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, announcements.getAnnouncements);
 
 app.get('/searchAnnouncements',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, announcements.searchAnnouncements);
 
 app.post('/announcement',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, announcements.postAnnouncement);
 
 app.get('/getPrivateMessages',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPrivately.getPrivateMessagesBetween);
 
 app.get('/searchPrivateMessages',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPrivately.searchPrivateMessages);
 
 app.post('/privateMessage',  function(req, res, next){
-    login.checkLogin(req, res, next, loggedInUsers);
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPrivately.postAPrivateMessage);
 
 //socket event
@@ -248,6 +248,9 @@ io.on('connection', function(socket) {
 
   //receive client add message
   socket.on("new public message", function(data) {
+    if (isTesting) {
+      return;
+    }
     var timestamp = Math.floor(Date.now() / 1000);
     var emitData = {
       "username": data.username,
@@ -265,6 +268,9 @@ io.on('connection', function(socket) {
 
   // share status
   socket.on("share status", function(data) {
+    if (isTesting) {
+      return;
+    }
     var timestamp = Math.floor(Date.now() / 1000);
     var emitData = {
       "username": data.username,
@@ -281,6 +287,9 @@ io.on('connection', function(socket) {
 
 
   socket.on("new private message", function(data) {
+    if (isTesting) {
+      return;
+    }
     var timestamp = Math.floor(Date.now() / 1000);
     var emitData = {
       "sender": data.sender,
@@ -298,6 +307,9 @@ io.on('connection', function(socket) {
   });
 
 	socket.on("new announcement", function(message) {
+    if (isTesting) {
+      return;
+    }
     var timestamp = Math.floor(Date.now() / 1000);
     var msg = {
       "sender": message.username,
