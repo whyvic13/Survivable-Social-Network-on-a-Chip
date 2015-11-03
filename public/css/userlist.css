@@ -2,6 +2,14 @@ body{
     background:#eee;
 }
 
+.panel-primary>.panel-heading {
+    min-height: 50px;
+}
+
+.glyphicon.glyphicon-comment {
+    font-size: 15px;
+    top: 7px;
+}
 
 .search2 {
     padding: 5px 0;

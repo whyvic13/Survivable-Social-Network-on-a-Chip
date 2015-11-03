@@ -231,6 +231,8 @@ a:focus {
 
 .navbar-custom .nav li.active {
     outline: 0;
+    background-color: #428bca;
+    border-radius: 10px;
 }
 
 
