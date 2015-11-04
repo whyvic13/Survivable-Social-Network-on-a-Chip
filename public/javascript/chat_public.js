@@ -77,11 +77,7 @@ $(document).ready(function() {
     var onlineUsers = [];
     var offlineUsers = [];
     for (name in userList) {
-      if (query !== undefined){
-        name_t =  name.toLowerCase();
-        query = query.toLowerCase();
-      }      
-      if (query !== undefined && name_t.indexOf(query) === -1) {
+      if (query !== undefined && name.indexOf(query) === -1) {
         continue;
       }
 
@@ -235,14 +231,14 @@ $(document).ready(function() {
                 message: value.message,
                 timestamp: value.timestamp,
                 userStatus: value.senderStatus
-              }, false);
+              }, true);
             } else {
               addPrivateMessage({
                 username: value.sender,
                 message: value.message,
                 timestamp: value.timestamp,
                 userStatus: value.senderStatus
-              }, false);
+              }, true);
             }
           });
         } else {
@@ -676,8 +672,7 @@ $(document).ready(function() {
 
 
   $("#search-announcement-button").click(function (event) {
-    event.preventDefault();
-    searchAnnouncement(true);
+    searchAnnouncement();
   });
 
   $("#search-announcement").keydown(function (event) {
@@ -790,7 +785,6 @@ $(document).ready(function() {
     $("#search-private-cancel").attr("disabled", "disabled");
   });
 
-
   function searchPrivate() {
     var query = $("#search-private").val().trim();
     if (!query) {
@@ -848,86 +842,111 @@ $(document).ready(function() {
     $('#myModal2').modal('show');
     socket.emit("start measuring performance",{username: username});
 
-    console.log('start_test');
-    var dur=$('#duration').val();
+    //console.log('start_test');
+    var dur=parseInt($('#duration').val(),10);
 
     var postCount = 0;
     var start = new Date();
 
     var reqCount = 0;
-    setTimeout(function() {
-       while ((elapse = new Date() - start) < dur * 1000 )
-      {
-       reqCount++;
-
-      $.post("/postPublicMessageTest", {
+    function postTest(duration, start){
+    if (duration > 0 && interupt_flag == 0) 
+    {
+      while ( (elapse = new Date() - start) < 1000 && interupt_flag == 0)
+      { 
+       $.post("/postPublicMessageTest", {
         sender: username,
         message: testMsg,
         timestamp: load_time,
         senderLocation: 'B19',
         senderStatus: userList[username].userStatus
-      },
-      function(response){
+        },
+        function(response){
         //if(response.statusCode == 200){
         postCount++;
         //console.log("response: "+response+" count: "+postCount);
-      });
-
-      }
-    },500);
-
-    setTimeout(function() {
-      console.log("postCount: " + postCount);
-      // console.log("getCount: " + getCount);
-      console.log("reqCount: " + reqCount);
+        });
+       }
       
+      setTimeout( function(){
+          start = new Date();
+          postTest(duration - 1, start);
+        }, 1000);
+    }
+     
+    }
+       
+    postTest(dur, start);
+        
+    setTimeout(function() {
+
+    console.log("postCount: " + postCount);
+    console.log("reqCount: " + reqCount);
+
+    if(interupt_flag==0)
+    {  
       var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
       $('#test_result').append(htmlDiv1);
-      // var htmlDiv2 = '<div><strong> The Number of GET Requests per second) is: ' + Math.round(getCount/dur) + ' /sec</strong></div><br>';
-      // $('#test_result').append(htmlDiv2);
+    }
       socket.emit('stop measuring performance',{username: username});
 
     }, 100+dur*1000);
+    
   });
-
+// var interupt_flag=0;
 $("#start_test_get").click(function(event) {
     /* Act on the event */
     event.preventDefault();
-    // socket.emit('block other operations');
+ 
     $('#myModal2').modal('show');
     socket.emit("start measuring performance",{username: username});
 
-    console.log('start_test');
-    var dur=$('#duration').val();
+    var dur=parseInt($('#duration').val(), 10);
 
     var getCount = 0;
+    var reqCount = 0;
+
     var start = new Date();
 
-    var reqCount = 0;
-    setTimeout(function() {
-    while ((elapse = new Date() - start) < dur * 1000 )
-      {
-       reqCount++;
+    function getTest(duration, start){
+    if (duration > 0 && interupt_flag == 0) 
+    {
+        //console.log("getCount: "+ getCount + " " + duration + " " + interupt_flag);
 
-      $.get("/getPublicMessageTest",
+        //setTimeout for 1 second after while loop
+      while ( (elapse = new Date() - start) < 1000 && interupt_flag == 0)
+      { 
+        reqCount++;
+        $.get("/getPublicMessageTest",
         function (response) {
+          //Get response
           getCount++;
-          //console.log("response: "+response+" count: "+postCount);
-      });
-
+        });
       }
-    },500);
+       
+      setTimeout( function(){
+          start = new Date();
+          getTest(duration - 1, start);
+        }, 1000);
+      }
+      // else{
+      //   console.log("Test ended: " + getCount);
+      // }
+     }
+       
+      getTest(dur, start);
 
-    setTimeout(function() {
+      setTimeout(function() {
       console.log("getCount: " + getCount);
       console.log("reqCount: " + reqCount);
-      
-      // var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
-      // $('#test_result').append(htmlDiv1);
-      var htmlDiv2 = '<div><strong> The Number of GET Requests per second) is: ' + Math.round(getCount/dur) + ' /sec</strong></div><br>';
+      if( interupt_flag == 0)
+      {
+      var htmlDiv2 = '<div><strong> The Number of GET Requests per second is: ' + Math.round(getCount/dur) + ' /sec</strong></div><br>';
       $('#test_result').append(htmlDiv2);
+      }
       socket.emit('stop measuring performance',{username: username});
-      }, 100+dur*1000);
+      }, 100 + dur*1000);
+    
 
   });
 
@@ -937,12 +956,13 @@ $("#start_test_get").click(function(event) {
   });
 
   $("#stop_test").click(function(event) {
-
+      interupt_flag = 1;
       console.log("I click the stop");
       socket.emit("interupt measuring performance",{username:username});  
       setTimeout(function(){
       $('#test_result').empty();
       $('#duration').val('');
+      $('#myModal2').modal('hide');
     },1000);
     });
 
@@ -960,7 +980,7 @@ $("#start_test_get").click(function(event) {
   //interupt measure performance 
   socket.on('interupt measuring performance', function (data) {
    // $('#myModal2').modal('show');
-   console.log("I receive the interupt socket");
+   // console.log("I receive the interupt socket");
    $('#test_result').empty();
    $('#duration').val('');
    $('#myModal2').modal('hide');

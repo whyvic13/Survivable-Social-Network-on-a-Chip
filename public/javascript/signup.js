@@ -6,8 +6,7 @@ $(function() {
     var $userPasswordAgain = $('#form-password-again');
     var $signup = $('#signup');
     // Variables for Username invalidation
-
-    //var socket = io();
+    
     var username;
     var password;
     var passwordAgain;

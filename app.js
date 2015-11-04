@@ -264,7 +264,7 @@ io.on('connection', function(socket) {
 
   });
 
-   socket.on("interupt measuring performance ",function(data){
+   socket.on("interupt measuring performance",function(data){
     console.log("Receive Interupt Socket From User");
     socket.emit("interupt measuring performance",data);
     socket.broadcast.emit("stop measuring performance", data); 
