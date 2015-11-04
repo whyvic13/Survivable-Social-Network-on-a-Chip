@@ -849,6 +849,7 @@ $(document).ready(function() {
     var start = new Date();
 
     var reqCount = 0;
+    interupt_flag = 0;
     function postTest(duration, start){
     if (duration > 0 && interupt_flag == 0) 
     {
@@ -907,7 +908,7 @@ $("#start_test_get").click(function(event) {
     var reqCount = 0;
 
     var start = new Date();
-
+    interupt_flag = 0;
     function getTest(duration, start){
     if (duration > 0 && interupt_flag == 0) 
     {
