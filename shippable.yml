@@ -13,3 +13,4 @@ before_install:
 # Running npm test to run your test cases
 script:
  - grunt test
+ - grunt coverage
