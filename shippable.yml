@@ -12,5 +12,4 @@ before_install:
 
 # Running npm test to run your test cases
 script:
- - npm test
-
+ - grunt test
