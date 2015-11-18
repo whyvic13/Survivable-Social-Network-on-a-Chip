@@ -15,13 +15,44 @@ $(document).ready(function() {
   var $duration = $('#duration');
   var uploadBtn = $('#uploadBtn');
   var sendImageBtn = $('#sendImage');
+  var resetBtn = $('#resetBtn');
+  var stickerSectionBtn = $('#stickera');
+  var imageVideoSectionBtn = $('#imagevideoa');
+  var onesticker = $('.onesticker')
   var uploadedFileName = "";
   var uploadedFileType = "";
 
   sendImageBtn.click(function(event){
     postPublicImageOrVideo();
+    $('#inputFile').val();
+    uploadBtn.text("Upload");
+    uploadBtn.removeAttr("disabled");
+    $('.uploadSuccess').attr("style", "display: none");
   });
-
+  imageVideoSectionBtn.click(function(event){
+    stickerSectionBtn.parent().attr("class", "");
+    imageVideoSectionBtn.parent().attr("class", "active");
+    $('.uploadFormDiv').attr("style", "");
+    $('.stickerDiv').attr("style", "display: none");
+  });
+  stickerSectionBtn.click(function(event){
+    stickerSectionBtn.parent().attr("class", "active");
+    imageVideoSectionBtn.parent().attr("class", "");
+    $('.uploadFormDiv').attr("style", "display: none");
+    $('.stickerDiv').attr("style", "");
+  });
+  onesticker.click(function(event){
+    postPublicSticker($(this).children().attr("src"));
+    console.log($(this).children().attr("src"));
+  });
+  resetBtn.click(function(event){
+    uploadedFileName = "";
+    uploadedFileType = "";
+    $('#inputFile').val();
+    uploadBtn.text("Upload");
+    uploadBtn.removeAttr("disabled");
+    $('.uploadSuccess').attr("style", "display: none");
+  });
   uploadBtn.click(function (event) {
     $(this).attr("disabled", "disabled");
     $(this).text("Uploading");
@@ -167,10 +198,18 @@ $(document).ready(function() {
         + labelName + '">' + statusText + '</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">' +
         '</span>' + formattedTime + '</small></div>' +
         '<p>' + message + '</p></div></li>';
-    }else {
+    } else if (type == "sticker"){
+      return '<li class="left clearfix"><span class="chat-img pull-left">' +
+        '<img src="./img/' + png + '.png" alt="User Avatar" class="img-circle" />' +
+        '</span><div class="chat-body clearfix">' +
+        '<div class="header"><strong class="primary-font">' + sender +
+        '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label '
+        + labelName + '">' + statusText + '</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">' +
+        '</span>' + formattedTime + '</small></div>' +
+        '<div class="row"><dic class="col-xs-4 col-md-2">' + '<p></p><img src="' + message + '" alt="img" class="img-responsive img-rounded" alt="Responsive image"></div></div></div></li>';
+    } else {
       var arr = type.split('/');
       if (arr[0] == "image") {
-        //var modal = $();
         filename = message.split('.')[0];
         $('.modals').append('<div class="modal fade" id="' + filename + 'modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times; </span></button><div class="bigImageDescription">' + formattedTime + '</div><!-- <h4 class="modal-title"><font color="white">-</font></h4> --></div><div class="modal-body"><img src="/uploads/' + message + '" alt="img" class="img-responsive img-rounded" alt="Responsive image"></div></div></div></div>');
         return '<li class="left clearfix"><span class="chat-img pull-left">' +
@@ -182,7 +221,14 @@ $(document).ready(function() {
           '</span>' + formattedTime + '</small></div>' +
           '<div class="row"><dic class="col-xs-6 col-md-3">' + '<p></p><a class="thumbnail" data-toggle="modal" data-target="#' + filename + 'modal"><img src="/uploads/' + message + '" alt="img" class="img-responsive img-rounded" alt="Responsive image"></a></div></div></div></li>';
       }else{
-
+        return '<li class="left clearfix"><span class="chat-img pull-left">' +
+          '<img src="./img/' + png + '.png" alt="User Avatar" class="img-circle" />' +
+          '</span><div class="chat-body clearfix">' +
+          '<div class="header"><strong class="primary-font">' + sender +
+          '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label '
+          + labelName + '">' + statusText + '</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">' +
+          '</span>' + formattedTime + '</small></div>' +
+          '<div class="row"><dic class="col-xs-6 col-md-3">' + '<p></p><div class="embed-responsive embed-responsive-16by9"><video controls class="embed-responsive-item" preload="auto" autoplay><source src="/uploads/' + message + '" type="' + type + '"></video></div></div><p><a href="/uploads/' + message + '" target="_blank">view this video</a></p></div></div></li>';
       }
     }
 
@@ -425,6 +471,24 @@ $(document).ready(function() {
         message: message,
         userStatus: userList[username].userStatus,
         type: uploadedFileType
+      });
+    }
+    uploadedFileName = "";
+    uploadedFileType = "";
+  }
+
+  function postPublicSticker(sticker) {
+    if (sticker == "") {
+      BootstrapDialog.show({
+        title: 'Alert Message',
+        message: 'Cannot input empty message!'
+      });
+    } else {
+      socket.emit('new public message', {
+        username: username,
+        message: sticker,
+        userStatus: userList[username].userStatus,
+        type: "sticker"
       });
     }
     uploadedFileName = "";
@@ -1121,10 +1185,6 @@ $("#start_test_get").click(function(event) {
     updateUserList();
     updateDropDownUserList();
   })
-  var imageInMessage = $('.thumbnail');
-  imageInMessage.click(function(event){
-    console.log("clicked");
-  });
   // socket.on('unblock other operations', function () {
   //  $('#myModal2').modal('hide');
   // });
