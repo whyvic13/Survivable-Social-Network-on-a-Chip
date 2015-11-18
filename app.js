@@ -384,7 +384,7 @@ io.on('connection', function(socket) {
       "timestamp": timestamp,
       "type": data.type
     }
-
+    
 		chatPrivately.insertMessage(emitData.sender, emitData.receiver, emitData.message, emitData.senderStatus, emitData.timestamp, data.type);
     var receiverId = loggedInUsers[data.receiver];
     var senderId = loggedInUsers[data.sender];

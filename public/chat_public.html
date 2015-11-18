@@ -220,143 +220,144 @@
                     <div class="input-group">
                       <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
                       <span class="input-group-btn">
-                        <button class="btn btn-sm btn-info" id="btn-image" data-toggle="modal" data-target="#imageModal">
+                        <button class="btn btn-sm btn-info" id="btn-image-public" data-toggle="modal" data-target="#imageModal">
                           Image</button>
                         <button class="btn btn-warning btn-sm" id="btn-chat">
                           Send</button>
                         </span>
                       </div>
                     </div>
-                    <div class="modal fade" id="imageModal">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <ul class="nav nav-pills">
-                              <li role="presentation"><a id="stickera">Sticker</a></li>
-                              <li role="presentation" class="active"><a id="imagevideoa">Image/Video</a></li>
-                            </ul>
-                            <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-                            <!-- <h4 class="modal-title">Modal title</h4> -->
-                          </div>
-                          <div class="modal-body">
-                            <div class="stickerDiv"  style="display:none">
-                              <p>Choose one sticker</p>
-                              <div class="row">
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker" data-dismiss="modal">
-                                    <img src="/Stickers/fuck yeah clean.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker" data-dismiss="modal">
-                                    <img src="/Stickers/are you fucking kidding me clean.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker" data-dismiss="modal">
-                                    <img src="/Stickers/desk flip.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker" data-dismiss="modal">
-                                    <img src="/Stickers/dude come on.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="row">
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker" data-dismiss="modal">
-                                    <img src="/Stickers/epic win.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker" data-dismiss="modal">
-                                    <img src="/Stickers/fuck that yao ming.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker" data-dismiss="modal">
-                                    <img src="/Stickers/happy smile.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker" data-dismiss="modal">
-                                    <img src="/Stickers/lol.jpg" alt="...">
-                                  </a>
-                                </div>
-                                </div>
-                                <div class="row">
 
-
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker">
-                                    <img src="/Stickers/troll face.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker">
-                                    <img src="/Stickers/questioning.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker">
-                                    <img src="/Stickers/spiderpman.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker">
-                                    <img src="/Stickers/thumbs up.jpg" alt="...">
-                                  </a>
-                                </div>
-                                </div>
-                                <div class="row">
-
-
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker">
-                                    <img src="/Stickers/whyyy.jpg" alt="...">
-                                  </a>
-                                </div>
-                                <div class="col-xs-6 col-md-3">
-                                  <a class="thumbnail onesticker">
-                                    <img src="/Stickers/y u no.jpg" alt="...">
-                                  </a>
-                                </div>
-                                </div>
-                              </div>
-
-                            </div>
-                            <div class="uploadFormDiv">
-                              <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
-                                <div class="form-group">
-                                  <label for="exampleInputFile">Choose an image or video</label>
-                                  <input type="file" id="inputFile" name="photo" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff, .mp4, .mov, .mpg, .mpeg">
-                                </div>
-                                <div>
-                                  <button class="btn btn-danger btn-sm" id="resetBtn" type="reset">Reset</button>
-                                  <a class="btn btn-primary btn-sm" id="uploadBtn" type="submit">Upload</a>
-                                </div>
-                                <div>
-                                  <p></p>
-                                </div>
-                                <div class="uploadSuccess" style="display:none">
-                                  <span class="label label-success">Success</span>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" data-dismiss="modal" class="btn btn-primary" id="sendImage">Send</button>
-                          </div>
-                        </div><!-- /.modal-content -->
-                      </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
 
                   </div>
                 </div>
                 <div class="modals">
 
                 </div>
+                <div class="modal fade" id="imageModal">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <ul class="nav nav-pills">
+                          <li role="presentation"><a id="stickera">Sticker</a></li>
+                          <li role="presentation" class="active"><a id="imagevideoa">Image/Video</a></li>
+                        </ul>
+                        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+                        <!-- <h4 class="modal-title">Modal title</h4> -->
+                      </div>
+                      <div class="modal-body">
+                        <div class="stickerDiv"  style="display:none">
+                          <p>Choose one sticker</p>
+                          <div class="row">
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker" data-dismiss="modal">
+                                <img src="/Stickers/fuck yeah clean.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker" data-dismiss="modal">
+                                <img src="/Stickers/are you fucking kidding me clean.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker" data-dismiss="modal">
+                                <img src="/Stickers/desk flip.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker" data-dismiss="modal">
+                                <img src="/Stickers/dude come on.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="row">
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker" data-dismiss="modal">
+                                <img src="/Stickers/epic win.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker" data-dismiss="modal">
+                                <img src="/Stickers/fuck that yao ming.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker" data-dismiss="modal">
+                                <img src="/Stickers/happy smile.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker" data-dismiss="modal">
+                                <img src="/Stickers/lol.jpg" alt="...">
+                              </a>
+                            </div>
+                            </div>
+                            <div class="row">
+
+
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker">
+                                <img src="/Stickers/troll face.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker">
+                                <img src="/Stickers/questioning.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker">
+                                <img src="/Stickers/spiderpman.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker">
+                                <img src="/Stickers/thumbs up.jpg" alt="...">
+                              </a>
+                            </div>
+                            </div>
+                            <div class="row">
+
+
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker">
+                                <img src="/Stickers/whyyy.jpg" alt="...">
+                              </a>
+                            </div>
+                            <div class="col-xs-6 col-md-3">
+                              <a class="thumbnail onesticker">
+                                <img src="/Stickers/y u no.jpg" alt="...">
+                              </a>
+                            </div>
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="uploadFormDiv">
+                          <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+                            <div class="form-group">
+                              <label for="exampleInputFile">Choose an image or video</label>
+                              <input type="file" id="inputFile" name="photo" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff, .mp4, .mov, .mpg, .mpeg">
+                            </div>
+                            <div>
+                              <button class="btn btn-danger btn-sm" id="resetBtn" type="reset">Reset</button>
+                              <a class="btn btn-primary btn-sm" id="uploadBtn" type="submit">Upload</a>
+                            </div>
+                            <div>
+                              <p></p>
+                            </div>
+                            <div class="uploadSuccess" style="display:none">
+                              <span class="label label-success">Success</span>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" data-dismiss="modal" class="btn btn-primary" id="sendImage">Send</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
                 <div class="tab-pane fade" id="tab3">
                   <div class="search2">
                     <button id="search-private-cancel" type="submit" disabled="disabled" class="btn btn-danger pull-right" >
@@ -396,6 +397,8 @@
           <div class="input-group">
             <input id="private-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
             <span class="input-group-btn">
+              <button class="btn btn-sm btn-info" id="btn-image-private" data-toggle="modal" data-target="#imageModal">
+                Image</button>
               <button class="btn btn-warning btn-sm" id="private-chat">
                 Send</button>
               </span>

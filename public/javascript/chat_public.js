@@ -18,15 +18,31 @@ $(document).ready(function() {
   var resetBtn = $('#resetBtn');
   var stickerSectionBtn = $('#stickera');
   var imageVideoSectionBtn = $('#imagevideoa');
-  var onesticker = $('.onesticker')
+  var onesticker = $('.onesticker');
+  var publicImageBtn = $('#btn-image-public');
+  var privateImageBtn = $('#btn-image-private');
   var uploadedFileName = "";
   var uploadedFileType = "";
+  var isPublic = true;
 
+  publicImageBtn.click(function(event){
+    //console.log("public");
+    isPublic = true;
+  });
+  privateImageBtn.click(function(event){
+    //console.log("private");
+    isPublic = false;
+  });
   sendImageBtn.click(function(event){
-    postPublicImageOrVideo();
+    if (isPublic) {
+      postPublicImageOrVideo();
+    }else {
+      postPrivateImageOrVideo();
+    }
     $('#inputFile').val();
     uploadBtn.text("Upload");
     uploadBtn.removeAttr("disabled");
+    $('#uploadForm').trigger('reset');
     $('.uploadSuccess').attr("style", "display: none");
   });
   imageVideoSectionBtn.click(function(event){
@@ -42,8 +58,13 @@ $(document).ready(function() {
     $('.stickerDiv').attr("style", "");
   });
   onesticker.click(function(event){
-    postPublicSticker($(this).children().attr("src"));
-    console.log($(this).children().attr("src"));
+    if (isPublic) {
+      postPublicSticker($(this).children().attr("src"));
+    }else {
+      postPrivateSticker($(this).children().attr("src"));
+    }
+
+    //console.log($(this).children().attr("src"));
   });
   resetBtn.click(function(event){
     uploadedFileName = "";
@@ -325,14 +346,16 @@ $(document).ready(function() {
                 username: value.sender,
                 message: value.message,
                 timestamp: value.timestamp,
-                userStatus: value.senderStatus
+                userStatus: value.senderStatus,
+                type: value.type
               }, true);
             } else {
               addPrivateMessage({
                 username: value.sender,
                 message: value.message,
                 timestamp: value.timestamp,
-                userStatus: value.senderStatus
+                userStatus: value.senderStatus,
+                type: value.type
               }, true);
             }
           });
@@ -495,6 +518,45 @@ $(document).ready(function() {
     uploadedFileType = "";
   }
 
+  function postPrivateSticker(sticker) {
+    if (sticker == "") {
+      BootstrapDialog.show({
+        title: 'Alert Message',
+        message: 'Cannot input empty message!'
+      });
+    } else {
+      socket.emit('new private message', {
+        sender: username,
+        message: sticker,
+        receiver: chatTarget,
+        senderStatus: userList[username].userStatus,
+        type: "sticker"
+      });
+    }
+    uploadedFileName = "";
+    uploadedFileType = "";
+  }
+
+  function postPrivateImageOrVideo() {
+    var message = uploadedFileName;
+    if (!message) {
+      BootstrapDialog.show({
+        title: 'Alert Message',
+        message: 'Cannot input empty message!'
+      });
+    } else {
+      socket.emit('new private message', {
+        sender: username,
+        receiver: chatTarget,
+        senderStatus: userList[username].userStatus,
+        message: message,
+        type: uploadedFileType
+      });
+    }
+    uploadedFileName = "";
+    uploadedFileType = "";
+  }
+
   function postPrivateMessage() {
     var message = $private_message.val().trim();
     if (!message) {
@@ -508,7 +570,7 @@ $(document).ready(function() {
         receiver: chatTarget,
         senderStatus: userList[username].userStatus,
         message: message,
-        type: "TEXT"
+        type: "text"
       });
     }
 
@@ -586,7 +648,8 @@ $(document).ready(function() {
               username: value.sender,
               message: value.message,
               userStatus:value.senderStatus,
-              timestamp: value.timestamp
+              timestamp: value.timestamp,
+              type: value.type
             }, false);
           });
         } else {
@@ -950,7 +1013,8 @@ $(document).ready(function() {
             username: value.sender,
             message: value.message,
             userStatus:value.senderStatus,
-            timestamp: value.timestamp
+            timestamp: value.timestamp,
+            type: value.type
           }, false);
         });
       } else {
@@ -1131,7 +1195,8 @@ $("#start_test_get").click(function(event) {
         username: data.sender,
         timestamp: data.timestamp,
         message: data.message,
-        userStatus: data.senderStatus
+        userStatus: data.senderStatus,
+        type: data.type
       }, true);
     } else {
       BootstrapDialog.show({
