@@ -3,3 +3,5 @@ node_modules/*
 routes/database.db
 routes/publicChat.db
 uploads/*
+coverage/*
+shippable/*

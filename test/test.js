@@ -52,12 +52,12 @@ var options = {
   'force new connection': true
 };
 
-it('should broadcast new status to all users', function(done) {
+test('should broadcast new status to all users', function(done) {
 	var user1 = io.connect(socketURL, options);
 	user1.on('connect', function(data) {
 		console.log("user1 connected");
 		var user2 = io.connect(socketURL, options);
-      	
+
       	user2.on('connect', function(data) {
       		console.log("user2 connected");
       		user2.on('status update', function(emitData) {
@@ -76,16 +76,16 @@ it('should broadcast new status to all users', function(done) {
 });
 
 
-it('should send private message to user2', function(done) {
+test('should send private message to user2', function(done) {
 	var user1 = io.connect(socketURL, options);
 	user1.on('connect', function(data) {
 		console.log("user1 connected");
 		var user2 = io.connect(socketURL, options);
-      	
+
       	user2.on('connect', function(data) {
       		console.log("user2 connected");
       		user2.emit('user join', "user2");
-      		
+
       		user2.on('new private message', function(emitData) {
       			console.log("received");
       			console.log(emitData);
