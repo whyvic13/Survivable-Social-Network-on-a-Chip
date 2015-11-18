@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.065" tests="2" failures="0">
+  <testsuite name="Root Suite" timestamp="2015-11-18T18:04:59" tests="2" failures="0" time="0.065">
+    <testcase name="Root Suite should broadcast new status to all users" time="0.05" classname="should broadcast new status to all users">
+    </testcase>
+    <testcase name="Root Suite should send private message to user2" time="0.015" classname="should send private message to user2">
+    </testcase>
+  </testsuite>
+</testsuites>
