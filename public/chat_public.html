@@ -21,7 +21,7 @@
 
 
   <div class="text-center" id="head_title">
-  
+
 </div>
     <!--Maintainence Modal Info-->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -220,14 +220,62 @@
                     <div class="input-group">
                       <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
                       <span class="input-group-btn">
+                        <button class="btn btn-sm btn-info" id="btn-image" data-toggle="modal" data-target="#imageModal">
+                          Image</button>
                         <button class="btn btn-warning btn-sm" id="btn-chat">
                           Send</button>
                         </span>
                       </div>
                     </div>
+                    <div class="modal fade" id="imageModal">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <ul class="nav nav-pills">
+                              <li role="presentation"><a>Sticker</a></li>
+                              <li role="presentation" class="active"><a>Image/Video</a></li>
+                            </ul>
+                            <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+                            <!-- <h4 class="modal-title">Modal title</h4> -->
+                          </div>
+                          <div class="modal-body">
+                            <div class="sticker"  style="display:none">
+                              <p>Stickers</p>
+                            </div>
+                            <div class="uploadFormDiv">
+                              <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+                                <div class="form-group">
+                                  <label for="exampleInputFile">Choose an image or video</label>
+                                  <input type="file" id="inputFile" name="photo" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff, .mp4, .mov, .mpg, .mpeg">
+                                </div>
+                                <div>
+                                  <a class="btn btn-primary btn-sm" id="uploadBtn" type="submit">Upload</a>
+                                </div>
+                                <div>
+                                  <p></p>
+                                </div>
+                                <div class="uploadSuccess" style="display:none">
+                                  <span class="label label-success">Success</span>
+                                </div>
+
+
+
+                              </form>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" data-dismiss="modal" class="btn btn-primary" id="sendImage">Send</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
                   </div>
                 </div>
-
+                <div class="modals">
+                  
+                </div>
                 <div class="tab-pane fade" id="tab3">
                   <div class="search2">
                     <button id="search-private-cancel" type="submit" disabled="disabled" class="btn btn-danger pull-right" >
@@ -313,7 +361,7 @@
           <div class="form-group text-center">
 	       <button id="start_test_post"class="btn btn-primary ">TEST POST</button>
          <button id="start_test_get"class="btn btn-primary ">TEST GET</button>
-	       <button id="clean_test"class="btn btn-danger ">CLEAN</button> 
+	       <button id="clean_test"class="btn btn-danger ">CLEAN</button>
           </div>
         <div class="list-group" id="test_result">
           <br>

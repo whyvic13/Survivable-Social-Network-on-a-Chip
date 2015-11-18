@@ -6,15 +6,15 @@ var fs = require('fs');
 var commonWordsFile = path.join(__dirname, "./common-english-words.json");
 var commonWords = JSON.parse(fs.readFileSync(commonWordsFile, 'utf8'));
 
-function inserMessageSql(sender, receiver, message, senderStatus, timestamp){
-  var sqlstm = "INSERT INTO privateChat (sender, receiver, message, senderStatus, timestamp) VALUES (?, ?, ?, ?, ?)";
+function inserMessageSql(sender, receiver, message, senderStatus, timestamp, type){
+  var sqlstm = "INSERT INTO privateChat (sender, receiver, message, senderStatus, timestamp, type) VALUES (?, ?, ?, ?, ?, ?)";
   console.log(sqlstm);
   if (!timestamp) {
     timestamp = Math.floor(Date.now() / 1000);
   }
   // var timestamp = Math.floor(Date.now() / 1000);
   db.serialize(function() {
-    db.run(sqlstm, sender, receiver, message, senderStatus, timestamp);
+    db.run(sqlstm, sender, receiver, message, senderStatus, timestamp, type);
   });
 }
 
@@ -23,10 +23,10 @@ exports.postAPrivateMessage = function(req, res){
   res.status(200).json({"statusCode": 200});
 }
 
-exports.insertMessage = function(sender, receiver, message, senderStatus, timestamp){
+exports.insertMessage = function(sender, receiver, message, senderStatus, timestamp, type){
   console.log("s: ",sender);
   console.log("r: ",receiver);
-  inserMessageSql(sender, receiver, message, senderStatus, timestamp);
+  inserMessageSql(sender, receiver, message, senderStatus, timestamp, type);
 }
 
 exports.getPrivateMessagesBetween = function(req, res){

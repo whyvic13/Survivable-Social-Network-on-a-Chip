@@ -13,7 +13,37 @@ $(document).ready(function() {
   var $announcement_message = $("#announcement_message");
   var $announcement_body = $("#announcement_body");
   var $duration = $('#duration');
+  var uploadBtn = $('#uploadBtn');
+  var sendImageBtn = $('#sendImage');
+  var uploadedFileName = "";
+  var uploadedFileType = "";
 
+  sendImageBtn.click(function(event){
+    postPublicImageOrVideo();
+  });
+
+  uploadBtn.click(function (event) {
+    $(this).attr("disabled", "disabled");
+    $(this).text("Uploading");
+    var formData = new FormData();
+    formData.append('photo', $('#inputFile').get(0).files[0]);
+    console.log(formData);
+    var request = $.ajax({
+      url: "/upload",
+      method: "POST",
+      data: formData,
+      contentType: false,
+      processData: false,
+      cache: false
+    }).done(function(data){
+      console.log(data);
+      uploadedFileName = data.filename;
+      uploadedFileType = data.type;
+      uploadBtn.text("Uploaded");
+      $('.uploadSuccess').attr("style", "");
+    });
+
+  });
   var chatTarget = undefined;  // Non-empty string for private mode, undefined for public mode.
   var load_time = Date.parse(new Date()) / 1000;
   var initial_loadtime = load_time;
@@ -109,7 +139,7 @@ $(document).ready(function() {
   }
 
 
-  function getMessageDiv(sender, status, timestamp, message) {
+  function getMessageDiv(sender, status, timestamp, message, type) {
     var date = new Date(timestamp * 1000);
     var formattedTime = (date.getMonth() + 1) + '.' + date.getDate() + '  ' + date.toLocaleTimeString();
     var firstCharacter = sender[0].toLowerCase();
@@ -128,20 +158,39 @@ $(document).ready(function() {
       labelName = "label-default";
       statusText = "NONE";
     }
+    if (type == "text") {
+      return '<li class="left clearfix"><span class="chat-img pull-left">' +
+        '<img src="./img/' + png + '.png" alt="User Avatar" class="img-circle" />' +
+        '</span><div class="chat-body clearfix">' +
+        '<div class="header"><strong class="primary-font">' + sender +
+        '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label '
+        + labelName + '">' + statusText + '</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">' +
+        '</span>' + formattedTime + '</small></div>' +
+        '<p>' + message + '</p></div></li>';
+    }else {
+      var arr = type.split('/');
+      if (arr[0] == "image") {
+        //var modal = $();
+        filename = message.split('.')[0];
+        $('.modals').append('<div class="modal fade" id="' + filename + 'modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"><div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times; </span></button><div class="bigImageDescription">' + formattedTime + '</div><!-- <h4 class="modal-title"><font color="white">-</font></h4> --></div><div class="modal-body"><img src="/uploads/' + message + '" alt="img" class="img-responsive img-rounded" alt="Responsive image"></div></div></div></div>');
+        return '<li class="left clearfix"><span class="chat-img pull-left">' +
+          '<img src="./img/' + png + '.png" alt="User Avatar" class="img-circle" />' +
+          '</span><div class="chat-body clearfix">' +
+          '<div class="header"><strong class="primary-font">' + sender +
+          '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label '
+          + labelName + '">' + statusText + '</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">' +
+          '</span>' + formattedTime + '</small></div>' +
+          '<div class="row"><dic class="col-xs-6 col-md-3">' + '<p></p><a class="thumbnail" data-toggle="modal" data-target="#' + filename + 'modal"><img src="/uploads/' + message + '" alt="img" class="img-responsive img-rounded" alt="Responsive image"></a></div></div></div></li>';
+      }else{
 
-    return '<li class="left clearfix"><span class="chat-img pull-left">' +
-      '<img src="./img/' + png + '.png" alt="User Avatar" class="img-circle" />' +
-      '</span><div class="chat-body clearfix">' +
-      '<div class="header"><strong class="primary-font">' + sender +
-      '</strong> &nbsp;&nbsp;&nbsp;&nbsp;<span class="label '
-      + labelName + '">' + statusText + '</span><small class="pull-right text-muted"><span class="glyphicon glyphicon-time">' +
-      '</span>' + formattedTime + '</small></div>' +
-      '<p>' + message + '</p></div></li>';
+      }
+    }
+
   }
 
 
   function addMessage(data, flag, $messageBody) {
-    var htmlDiv = getMessageDiv(data.username, data.userStatus, data.timestamp, data.message);
+    var htmlDiv = getMessageDiv(data.username, data.userStatus, data.timestamp, data.message, data.type);
     $messageBody.append(htmlDiv);
     if (flag) {
       $messageBody.parent().animate({
@@ -301,7 +350,8 @@ $(document).ready(function() {
             username: value.sender,
             message: value.message,
             timestamp: value.timestamp,
-            userStatus: value.senderStatus
+            userStatus: value.senderStatus,
+            type: value.type
           }, false);
         });
       } else if (response.statusCode === 401) {
@@ -354,11 +404,31 @@ $(document).ready(function() {
       socket.emit('new public message', {
         username: username,
         message: message,
-        userStatus: userList[username].userStatus
+        userStatus: userList[username].userStatus,
+        type: "text"
       });
     }
 
     $public_message.val('');
+  }
+
+  function postPublicImageOrVideo() {
+    var message = uploadedFileName;
+    if (message == "") {
+      BootstrapDialog.show({
+        title: 'Alert Message',
+        message: 'Cannot input empty message!'
+      });
+    } else {
+      socket.emit('new public message', {
+        username: username,
+        message: message,
+        userStatus: userList[username].userStatus,
+        type: uploadedFileType
+      });
+    }
+    uploadedFileName = "";
+    uploadedFileType = "";
   }
 
   function postPrivateMessage() {
@@ -373,7 +443,8 @@ $(document).ready(function() {
         sender: username,
         receiver: chatTarget,
         senderStatus: userList[username].userStatus,
-        message: message
+        message: message,
+        type: "TEXT"
       });
     }
 
@@ -487,7 +558,8 @@ $(document).ready(function() {
               username: value.sender,
               message: value.message,
               userStatus:value.userStatus,
-              timestamp: value.timestamp
+              timestamp: value.timestamp,
+              type: value.type
             }, false);
           });
         } else {
@@ -755,7 +827,8 @@ $(document).ready(function() {
             username: value.sender,
             message: value.message,
             userStatus:value.userStatus,
-            timestamp: value.timestamp
+            timestamp: value.timestamp,
+            type: value.type
           }, false);
         });
       } else {
@@ -851,10 +924,10 @@ $(document).ready(function() {
     var reqCount = 0;
     interupt_flag = 0;
     function postTest(duration, start){
-    if (duration > 0 && interupt_flag == 0) 
+    if (duration > 0 && interupt_flag == 0)
     {
       while ( (elapse = new Date() - start) < 1000 && interupt_flag == 0)
-      { 
+      {
        $.post("/postPublicMessageTest", {
         sender: username,
         message: testMsg,
@@ -868,37 +941,37 @@ $(document).ready(function() {
         //console.log("response: "+response+" count: "+postCount);
         });
        }
-      
+
       setTimeout( function(){
           start = new Date();
           postTest(duration - 1, start);
         }, 1000);
     }
-     
+
     }
-       
+
     postTest(dur, start);
-        
+
     setTimeout(function() {
 
     console.log("postCount: " + postCount);
     console.log("reqCount: " + reqCount);
 
     if(interupt_flag==0)
-    {  
+    {
       var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
       $('#test_result').append(htmlDiv1);
     }
       socket.emit('stop measuring performance',{username: username});
 
     }, 100+dur*1000);
-    
+
   });
 // var interupt_flag=0;
 $("#start_test_get").click(function(event) {
     /* Act on the event */
     event.preventDefault();
- 
+
     $('#myModal2').modal('show');
     socket.emit("start measuring performance",{username: username});
 
@@ -910,13 +983,13 @@ $("#start_test_get").click(function(event) {
     var start = new Date();
     interupt_flag = 0;
     function getTest(duration, start){
-    if (duration > 0 && interupt_flag == 0) 
+    if (duration > 0 && interupt_flag == 0)
     {
         //console.log("getCount: "+ getCount + " " + duration + " " + interupt_flag);
 
         //setTimeout for 1 second after while loop
       while ( (elapse = new Date() - start) < 1000 && interupt_flag == 0)
-      { 
+      {
         reqCount++;
         $.get("/getPublicMessageTest",
         function (response) {
@@ -924,7 +997,7 @@ $("#start_test_get").click(function(event) {
           getCount++;
         });
       }
-       
+
       setTimeout( function(){
           start = new Date();
           getTest(duration - 1, start);
@@ -934,7 +1007,7 @@ $("#start_test_get").click(function(event) {
       //   console.log("Test ended: " + getCount);
       // }
      }
-       
+
       getTest(dur, start);
 
       setTimeout(function() {
@@ -947,7 +1020,7 @@ $("#start_test_get").click(function(event) {
       }
       socket.emit('stop measuring performance',{username: username});
       }, 100 + dur*1000);
-    
+
 
   });
 
@@ -959,7 +1032,7 @@ $("#start_test_get").click(function(event) {
   $("#stop_test").click(function(event) {
       interupt_flag = 1;
       console.log("I click the stop");
-      socket.emit("interupt measuring performance",{username:username});  
+      socket.emit("interupt measuring performance",{username:username});
       setTimeout(function(){
       $('#test_result').empty();
       $('#duration').val('');
@@ -973,12 +1046,12 @@ $("#start_test_get").click(function(event) {
   });
 
   //measure performance end normally
-  socket.on('stop measuring performance', function (data) { 
+  socket.on('stop measuring performance', function (data) {
    $('#myModal').modal('hide');
    $('#myModal2').modal('hide');
   });
 
-  //interupt measure performance 
+  //interupt measure performance
   socket.on('interupt measuring performance', function (data) {
    // $('#myModal2').modal('show');
    // console.log("I receive the interupt socket");
@@ -1010,7 +1083,8 @@ $("#start_test_get").click(function(event) {
       username: data.username,
       timestamp: data.timestamp,
       message: data.message,
-      userStatus: data.senderStatus
+      userStatus: data.senderStatus,
+      type: data.type
     }, true);
   });
 
@@ -1047,7 +1121,10 @@ $("#start_test_get").click(function(event) {
     updateUserList();
     updateDropDownUserList();
   })
-
+  var imageInMessage = $('.thumbnail');
+  imageInMessage.click(function(event){
+    console.log("clicked");
+  });
   // socket.on('unblock other operations', function () {
   //  $('#myModal2').modal('hide');
   // });

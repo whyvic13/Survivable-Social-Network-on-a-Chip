@@ -10,12 +10,18 @@ var Strategy = require('passport-local').Strategy;
 var passport = require('passport');
 var dbfile = "./routes/database.db";
 var sqlite3 = require('sqlite3').verbose();
+var multer = require('multer');
 
 var bodyParser = require('body-parser');
 
-app.use(bodyParser.json()); // support JSON-encoded bodies
+app.use(bodyParser.json({
+  limit: '50mb',
+  parameterLimit: 10000
+})); // support JSON-encoded bodies
 app.use(bodyParser.urlencoded( { // support URL-encoded bodies
   extended: true,
+  limit: '50mb',
+  parameterLimit: 10000
 }));
 
 var announcements = require('./routes/announcement');
@@ -24,9 +30,9 @@ var db = new sqlite3.Database(dbfile, function(err) {
 	if (!err) {
 		db.serialize(function() {
 			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, userStatus TEXT)");
-			db.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
+			db.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, type TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
 			db.run("CREATE TABLE IF NOT EXISTS announcements (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER)");
-			db.run("CREATE TABLE IF NOT EXISTS privateChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
+			db.run("CREATE TABLE IF NOT EXISTS privateChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT, type TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
       db.run("CREATE TABLE IF NOT EXISTS publicChatTest (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
 		});
 		dbExisted = true;
@@ -36,6 +42,32 @@ var db = new sqlite3.Database(dbfile, function(err) {
 var isTesting = false;
 var testRunner = "";
 var loggedInUsers = {}
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    var originalname = file.originalname;
+    var extension = originalname.split(".");
+    filename = req.user.username +  Date.now() + '.' + extension[extension.length-1];
+    console.log(filename);
+    cb(null, filename);
+  }
+});
+
+function fileFilter (req, file, cb){
+  var type = file.mimetype;
+  console.log(type);
+  var typeArray = type.split("/");
+  if (typeArray[0] == "video" || typeArray[0] == "image") {
+    cb(null, true);
+  }else {
+    cb(null, false);
+  }
+}
+
+var upload = multer({storage: storage, dest: "uploads/", fileFilter: fileFilter});
 
 passport.use(new Strategy(
   function(username, password, cb) {
@@ -121,6 +153,11 @@ app.post('/user/login', function(req, res, next) {
     });
   })(req, res, next)
 }, loginProcess);
+
+app.post('/upload', upload.single('photo'), function(req, res, next) {
+  console.log("Uploaded");
+  res.json({"statusCode": 200, "filename": req.file.filename, "type": req.file.mimetype});
+});
 
 app.get('/getPublicMessageTest',function(req, res, next){
     if (isTesting) {
@@ -267,7 +304,7 @@ io.on('connection', function(socket) {
    socket.on("interupt measuring performance",function(data){
     console.log("Receive Interupt Socket From User");
     socket.emit("interupt measuring performance",data);
-    socket.broadcast.emit("stop measuring performance", data); 
+    socket.broadcast.emit("stop measuring performance", data);
    });
 
   socket.on("start measuring performance", function(data){
@@ -276,10 +313,10 @@ io.on('connection', function(socket) {
     }
     isTesting = true;
     testRunner = data.username;
-   
+
     socket.broadcast.emit("start measuring performance", data);
-    chatPubliclyTest.startFromSocket();    
-    //console.log("in start ");  
+    chatPubliclyTest.startFromSocket();
+    //console.log("in start ");
   });
 
   socket.on("stop measuring performance", function(data){
@@ -287,10 +324,10 @@ io.on('connection', function(socket) {
       return;
     }
     isTesting = false;
-    
-    socket.emit("stop measuring performance", data);   
-    socket.broadcast.emit("stop measuring performance", data); 
-    
+
+    socket.emit("stop measuring performance", data);
+    socket.broadcast.emit("stop measuring performance", data);
+
   });
 
   //receive client add message
@@ -303,13 +340,14 @@ io.on('connection', function(socket) {
       "username": data.username,
       "message": data.message,
       "senderStatus": data.userStatus,
-      "timestamp": timestamp
+      "timestamp": timestamp,
+      "type": data.type
     };
     socket.broadcast.emit("new public message", emitData);
     socket.emit("new public message", emitData);
     db.serialize(function() {
-      var command = "INSERT INTO publicChat (sender, message, timestamp, senderStatus, senderLocation) VALUES (?, ?, ?, ?, ?)";
-      db.run(command, data.username, data.message, timestamp, data.userStatus, "");
+      var command = "INSERT INTO publicChat (sender, message, timestamp, senderStatus, senderLocation, type) VALUES (?, ?, ?, ?, ?, ?)";
+      db.run(command, data.username, data.message, timestamp, data.userStatus, "", data.type);
     });
   });
 
@@ -343,10 +381,11 @@ io.on('connection', function(socket) {
       "senderStatus": data.senderStatus,
       "receiver": data.receiver,
       "message": data.message,
-      "timestamp": timestamp
+      "timestamp": timestamp,
+      "type": data.type
     }
 
-		chatPrivately.insertMessage(emitData.sender, emitData.receiver, emitData.message, emitData.senderStatus, emitData.timestamp);
+		chatPrivately.insertMessage(emitData.sender, emitData.receiver, emitData.message, emitData.senderStatus, emitData.timestamp, data.type);
     var receiverId = loggedInUsers[data.receiver];
     var senderId = loggedInUsers[data.sender];
     io.to(receiverId).emit('new private message', emitData);
