@@ -11,8 +11,13 @@ var passport = require('passport');
 var dbfile = "./routes/database.db";
 var sqlite3 = require('sqlite3').verbose();
 var multer = require('multer');
+var fs = require('fs')
 
 var bodyParser = require('body-parser');
+
+if (!fs.existsSync("./uploads")){
+    fs.mkdirSync("./uploads");
+}
 
 app.use(bodyParser.json({
   limit: '50mb',
@@ -384,7 +389,7 @@ io.on('connection', function(socket) {
       "timestamp": timestamp,
       "type": data.type
     }
-    
+
 		chatPrivately.insertMessage(emitData.sender, emitData.receiver, emitData.message, emitData.senderStatus, emitData.timestamp, data.type);
     var receiverId = loggedInUsers[data.receiver];
     var senderId = loggedInUsers[data.sender];
