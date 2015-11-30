@@ -21,8 +21,8 @@ var db = new sqlite3.Database(dbfile, function(err) {
 exports.getAllUsers = function(req, res, loggedInUsers) {
 	if (dbExisted) {
 		var usersDict = {};
-		
-		db.each("SELECT username, userStatus FROM users ORDER BY username COLLATE NOCASE", function(err, row) {
+
+		db.each("SELECT * FROM users WHERE accountStatus='active' ORDER BY username COLLATE NOCASE", function(err, row) {
 			if (err) {
 				res.status(500).json({"statusCode": 500, "message": "Internal server error"});
 				return false;
@@ -30,7 +30,7 @@ exports.getAllUsers = function(req, res, loggedInUsers) {
 
 			usersDict[row.username] = {};
 			usersDict[row.username]['userStatus'] = row.userStatus;
-
+			usersDict[row.username]['level'] = row.level;
 
 			if (row.username in loggedInUsers) {
 				usersDict[row.username]['online'] = 1;
@@ -52,7 +52,7 @@ exports.getAllUsers = function(req, res, loggedInUsers) {
 exports.searchUsers = function(req, res, loggedInUsers) {
 	if (dbExisted) {
 		var usersDict = {};
-		var dbStatement = "SELECT username, userStatus FROM users WHERE username LIKE '%" + req.query.username + "%' COLLATE NOCASE ORDER BY username";
+		var dbStatement = "SELECT username, userStatus FROM users WHERE accountStatus='active' AND username LIKE '%" + req.query.username + "%' COLLATE NOCASE ORDER BY username";
 		console.log(dbStatement);
 		db.each(dbStatement, function(err, row) {
 			if (err) {
@@ -88,7 +88,7 @@ exports.searchUsers = function(req, res, loggedInUsers) {
 exports.showUsersByStatus = function(req, res, loggedInUsers) {
 	if (dbExisted) {
 		var usersDict = {};
-		var dbStatement = "SELECT username, userStatus FROM users WHERE userStatus='" + req.query.status + "' ORDER BY username";
+		var dbStatement = "SELECT username, userStatus FROM users WHERE accountStatus='active' AND userStatus='" + req.query.status + "' ORDER BY username";
 		db.each(dbStatement, function(err, row) {
 			if (err) {
 				res.status(500).json({"statusCode": 500, "message": "Internal server error"});

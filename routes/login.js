@@ -5,7 +5,7 @@ var db = new sqlite3.Database(dbFile);
 
 exports.findById = function(id, cb) {
   console.log("findbyid: " + id);
-  var sqlstm = "SELECT id, username FROM users WHERE id=" + id + ""
+  var sqlstm = "SELECT * FROM users WHERE id=" + id + " AND accountStatus='active'"
   console.log(sqlstm);
   console.log("---");
   db.get(sqlstm, function(err, row){
@@ -27,7 +27,7 @@ exports.findById = function(id, cb) {
 }
 
 exports.findByUsername = function(username, cb) {
-  var sqlstm = "SELECT * FROM users WHERE username='" + username + "'"
+  var sqlstm = "SELECT * FROM users WHERE username='" + username + "' AND accountStatus='active'"
   db.get(sqlstm, function(err, row){
     if (err) {
       console.log(err);
@@ -45,7 +45,7 @@ exports.findByUsername = function(username, cb) {
 }
 
 exports.checkLogin = function(req, res, next, loggedInUsers, isTesting) {
-  if (req.user && loggedInUsers[req.user.username]) {
+  if (req.user && loggedInUsers[req.user.username] && req.user.accountStatus == "active") {
     if (isTesting) {
       res.json({"statusCode": 401, "message": "Test is running."});
     }else {

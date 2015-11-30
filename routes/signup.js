@@ -5,18 +5,8 @@ var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
 var path = require('path');
 var dbfile = path.join(__dirname, "./database.db");
-// var dbExisted = false;
 
-//var bodyParser = require('body-parser');
 var db = new sqlite3.Database(dbfile);
-// var db = new sqlite3.Database(dbfile, function(err) {
-// 	if (!err) {
-// 		db.serialize(function() {
-// 			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT)");
-// 		});
-// 		dbExisted = true;
-// 	}
-// });
 
 var bannedUsersDict = {}; // a dictionary of banned users
 parseBannedUsers();

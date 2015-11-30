@@ -5,6 +5,7 @@ var signup = require('./routes/signup');
 var getUsers = require('./routes/getUsers');
 var chatPublicly = require('./routes/chatPublicly');
 var chatPubliclyTest = require('./routes/test');
+var profile = require('./routes/profile');
 var path = require('path');
 var Strategy = require('passport-local').Strategy;
 var passport = require('passport');
@@ -34,11 +35,22 @@ var chatPrivately = require('./routes/chatPrivately');
 var db = new sqlite3.Database(dbfile, function(err) {
 	if (!err) {
 		db.serialize(function() {
-			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, userStatus TEXT)");
+			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, userStatus TEXT, level TEXT DEFAULT 'Citizen', accountStatus TEXT DEFAULT 'active')");
 			db.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, type TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
 			db.run("CREATE TABLE IF NOT EXISTS announcements (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER)");
 			db.run("CREATE TABLE IF NOT EXISTS privateChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT, type TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
       db.run("CREATE TABLE IF NOT EXISTS publicChatTest (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
+      var sqlstm = "SELECT * FROM users WHERE username='SSNAdmin'";
+      db.get(sqlstm, function(err, row){
+        if (err) {
+          console.log(err);
+        }else{
+          if (!row) {
+            console.log("Not found");
+            db.run("INSERT into users (username, password, level, userStatus) VALUES (?, ?, ?, ?)", "SSNAdmin", "admin", "Administrator", "OK");
+          }
+        }
+      });
 		});
 		dbExisted = true;
 	}
@@ -86,6 +98,7 @@ passport.use(new Strategy(
       if (err) { return cb(err); }
       if (!user) { return cb(null, false); }
       if (user.password != password) { return cb(null, false); }
+      delete user.password;
       return cb(null, user);
     });
   }));
@@ -252,6 +265,7 @@ app.post('/user/signup', signup.register, function(req, res, next) {
 app.get('/user/logout',
   function(req, res){
     delete loggedInUsers[req.query.username];
+    req.logout();
     res.status(200).end("ok");
 });
 
@@ -278,6 +292,15 @@ app.get('/searchPrivateMessages',  function(req, res, next){
 app.post('/privateMessage',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPrivately.postAPrivateMessage);
+
+
+app.get('/allUserProfiles',  function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
+  }, profile.getProfileList);
+
+app.post('/updateUserProfile',  function(req, res, next){
+    login.checkLogin(req, res, next, loggedInUsers, isTesting);
+  }, profile.updateUserProfile);
 
 // app.get('/postPublicMessageTest',
 //   function(req, res){
