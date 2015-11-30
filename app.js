@@ -59,6 +59,7 @@ var db = new sqlite3.Database(dbfile, function(err) {
 var isTesting = false;
 var testRunner = "";
 var loggedInUsers = {}
+var loggedInUserLevel = {}
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -130,7 +131,7 @@ var io = require('socket.io')(server);
 
 function loginProcess(req, res){
   loggedInUsers[req.user.username] = true;
-
+  loggedInUserLevel[req.user.username] = req.user.level;
   if (req.statusCode && req.statusCode == 201) {
     res.status(201).json({"statusCode": req.statusCode, "username": req.user.username});
   }else {
@@ -339,6 +340,9 @@ io.on('connection', function(socket) {
     if (isTesting) {
       return;
     }
+    if (loggedInUserLevel[message.username] == "Citizen" || loggedInUserLevel[message.username] == "Coordinator"){
+      return;
+    }
     isTesting = true;
     testRunner = data.username;
 
@@ -422,6 +426,9 @@ io.on('connection', function(socket) {
 
 	socket.on("new announcement", function(message) {
     if (isTesting) {
+      return;
+    }
+    if (loggedInUserLevel[message.username] == "Citizen" || loggedInUserLevel[message.username] == "Monitor"){
       return;
     }
     var timestamp = Math.floor(Date.now() / 1000);
