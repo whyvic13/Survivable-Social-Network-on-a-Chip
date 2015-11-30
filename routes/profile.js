@@ -23,7 +23,7 @@ exports.getProfileList = function(req, res){
   }
 }
 
-exports.updateUserProfile = function(req, res){
+exports.updateUserProfile = function(req, res, next){
   if (req.user.level == "Administrator") {
     if (qualifiedUsernamePassword(req.body.newUsername, req.body.password)) {
       db.get("SELECT * FROM users WHERE username='" + req.body.newUsername + "'", function(err, row){
@@ -31,7 +31,7 @@ exports.updateUserProfile = function(req, res){
           console.log(err);
           res.json({"statusCode": 500, "message": "Internal server error"});
         }else{
-          if (row) {
+          if (!(row === undefined) && req.body.newUsername != req.body.oldUsername) {
             res.json({"statusCode": 401, "message": "Username already existed"});
           }else{
             var sqlstm = "UPDATE users SET username='" + req.body.newUsername + "', password='" + req.body.password + "', level='" + req.body.level + "', accountStatus='" + req.body.accountStatus + "' WHERE username='" + req.body.oldUsername + "'";
@@ -41,7 +41,11 @@ exports.updateUserProfile = function(req, res){
                 console.log(err);
                 res.json({"statusCode": 500, "message": "Internal server error"});
               }else{
-                res.status(200).json({"statusCode": 200});
+                // res.status(200).json({"statusCode": 200});
+                if (req.body.accountStatus == "inactive") {
+                  req.accountStatusChanged = req.body.newUsername;
+                }
+                next();
               }
             });
           }

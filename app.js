@@ -301,7 +301,19 @@ app.get('/allUserProfiles',  function(req, res, next){
 
 app.post('/updateUserProfile',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
-  }, profile.updateUserProfile);
+  }, function(req, res, next){
+    profile.updateUserProfile(req, res, next);
+  }, function(req, res){
+    if (req.accountStatusChanged) {
+      console.log(req.accountStatusChanged + " became inactive");
+      io.emit('someone became inactive', {"username": req.accountStatusChanged});
+    }
+    if (req.body.oldUsername != req.body.newUsername) {
+      console.log(req.body.oldUsername + " became " + req.body.newUsername);
+      io.emit('username changed', {"oldUsername": req.body.oldUsername, "newUsername": req.body.newUsername});
+    }
+    res.status(200).end("User profile updated");
+  });
 
 // app.get('/postPublicMessageTest',
 //   function(req, res){
