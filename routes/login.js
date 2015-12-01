@@ -1,9 +1,7 @@
 var path = require('path');
-var dbFile = path.join(__dirname, "./database.db");
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(dbFile);
+var db = require('./database');
 
-exports.findById = function(id, cb) {
+/*exports.findById = function(id, cb) {
   console.log("findbyid: " + id);
   var sqlstm = "SELECT * FROM users WHERE id=" + id + " AND accountStatus='active'"
   console.log(sqlstm);
@@ -24,23 +22,23 @@ exports.findById = function(id, cb) {
       }
     }
   })
-}
+}*/
 
 exports.findByUsername = function(username, cb) {
   var sqlstm = "SELECT * FROM users WHERE username='" + username + "' AND accountStatus='active'"
-  db.get(sqlstm, function(err, row){
-    if (err) {
-      console.log(err);
-      return cb(null, null);
-    }else{
-      if (row) {
-        //console.log(row);
-        return cb(null, row);
-      }else{
-        console.log("Not found");
+  db.serialize(function() {
+    db.get(sqlstm, function(err, row){
+      if (err) {
         return cb(null, null);
+      }else{
+        if (row) {
+          //console.log(row);
+          return cb(null, row);
+        }else{
+          return cb(null, null);
+        }
       }
-    }
+    });
   });
 }
 

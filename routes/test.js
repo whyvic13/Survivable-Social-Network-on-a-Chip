@@ -1,3 +1,5 @@
+/* istanbul ignore next */
+
 var path = require('path');
 var dbFile = path.join(__dirname, "./database.db");
 var sqlite3 = require('sqlite3').verbose();
@@ -6,6 +8,7 @@ var db = new sqlite3.Database(dbFile);
 var numberOfPosts = 0;
 var limit = 1000;
 
+/* istanbul ignore next */
 exports.startFromAPI = function(req, res, next) {
   var sqlstm = "SELECT * FROM publicChatTest";
   console.log(sqlstm);
@@ -25,6 +28,7 @@ exports.startFromAPI = function(req, res, next) {
   });
 }
 
+/* istanbul ignore next */
 exports.startFromSocket = function() {
   var sqlstm = "SELECT * FROM publicChatTest";
   console.log(sqlstm);
@@ -44,6 +48,7 @@ exports.startFromSocket = function() {
   });
 }
 
+/* istanbul ignore next */
 function deleteAllData(){
   db.all("DELETE FROM publicChatTest", function(err, row){
     if (err) {
@@ -55,6 +60,7 @@ function deleteAllData(){
   });
 }
 
+/* istanbul ignore next */
 exports.getPublicMessages = function(req, res) {
   var sqlstm = "SELECT * FROM publicChatTest";
   console.log(sqlstm);
@@ -72,6 +78,7 @@ exports.getPublicMessages = function(req, res) {
   });
 }
 
+/* istanbul ignore next */
 exports.postPublicMessage = function(req, res) {
   var sqlstm = "INSERT INTO publicChatTest (message, sender, timestamp) VALUES (?, ?, ?)";
   console.log(sqlstm);

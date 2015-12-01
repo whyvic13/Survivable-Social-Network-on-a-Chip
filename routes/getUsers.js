@@ -2,27 +2,16 @@
 // This file should be merged with login and signup
 
 var fs = require('fs');
-var sqlite3 = require('sqlite3').verbose();
-var dbfile = "database.db";
-var path = require('path');
-var dbfile = path.join(__dirname, "./database.db");
-
-var dbExisted = false;
-
-var db = new sqlite3.Database(dbfile, function(err) {
-	if (!err) {
-		dbExisted = true;
-	}
-});
+var db = require('./database');
 
 // Returns a dictionary of {username: {online: 0 or 1, status: string}}
 // If error occurs in database, return code 500
 
 exports.getAllUsers = function(req, res, loggedInUsers) {
-	if (dbExisted) {
+	db.serialize(function() {
 		var usersDict = {};
 
-		db.each("SELECT * FROM users WHERE accountStatus='active' ORDER BY username COLLATE NOCASE", function(err, row) {
+		db.each("SELECT username, userStatus FROM users ORDER BY username COLLATE NOCASE", function(err, row) {
 			if (err) {
 				res.status(500).json({"statusCode": 500, "message": "Internal server error"});
 				return false;
@@ -44,12 +33,10 @@ exports.getAllUsers = function(req, res, loggedInUsers) {
 			var jsonData = JSON.stringify(usersDict);
 			res.status(200).send(jsonData);
 		});
-	} else {
-		res.status(500).json({"statusCode": 500, "message": "Internal server error"});
-	}
+	});
 }
 
-exports.searchUsers = function(req, res, loggedInUsers) {
+/*exports.searchUsers = function(req, res, loggedInUsers) {
 	if (dbExisted) {
 		var usersDict = {};
 		var dbStatement = "SELECT username, userStatus FROM users WHERE accountStatus='active' AND username LIKE '%" + req.query.username + "%' COLLATE NOCASE ORDER BY username";
@@ -119,3 +106,4 @@ exports.showUsersByStatus = function(req, res, loggedInUsers) {
 		res.status(500).json({"statusCode": 500, "message": "Internal server error"});
 	}
 }
+*/

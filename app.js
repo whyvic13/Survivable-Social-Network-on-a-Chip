@@ -9,7 +9,6 @@ var profile = require('./routes/profile');
 var path = require('path');
 var Strategy = require('passport-local').Strategy;
 var passport = require('passport');
-var dbfile = "./routes/database.db";
 var sqlite3 = require('sqlite3').verbose();
 var multer = require('multer');
 var fs = require('fs')
@@ -32,29 +31,7 @@ app.use(bodyParser.urlencoded( { // support URL-encoded bodies
 
 var announcements = require('./routes/announcement');
 var chatPrivately = require('./routes/chatPrivately');
-var db = new sqlite3.Database(dbfile, function(err) {
-	if (!err) {
-		db.serialize(function() {
-			db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, userStatus TEXT, level TEXT DEFAULT 'Citizen', accountStatus TEXT DEFAULT 'active')");
-			db.run("CREATE TABLE IF NOT EXISTS publicChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, type TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
-			db.run("CREATE TABLE IF NOT EXISTS announcements (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER)");
-			db.run("CREATE TABLE IF NOT EXISTS privateChat (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, receiver TEXT, message TEXT, type TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
-      db.run("CREATE TABLE IF NOT EXISTS publicChatTest (id INTEGER PRIMARY KEY AUTOINCREMENT, sender TEXT, message TEXT, timestamp INTEGER, senderStatus TEXT, senderLocation TEXT)");
-      var sqlstm = "SELECT * FROM users WHERE username='SSNAdmin'";
-      db.get(sqlstm, function(err, row){
-        if (err) {
-          console.log(err);
-        }else{
-          if (!row) {
-            console.log("Not found");
-            db.run("INSERT into users (username, password, level, userStatus) VALUES (?, ?, ?, ?)", "SSNAdmin", "admin", "Administrator", "OK");
-          }
-        }
-      });
-		});
-		dbExisted = true;
-	}
-});
+var db = require('./routes/database');
 
 var isTesting = false;
 var testRunner = "";
@@ -232,11 +209,11 @@ app.get('/searchPublicMessages',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPublicly.searchPublicMessages);
 
-app.get('/user/isLogin',  function(req, res, next){
+/*app.get('/user/isLogin',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
       res.status(200).end("ok");
-});
+});*/
 
 app.get('/users', function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
@@ -244,7 +221,7 @@ app.get('/users', function(req, res, next){
     getUsers.getAllUsers(req, res, loggedInUsers);
 });
 
-app.get('/users/name',  function(req, res, next){
+/*app.get('/users/name',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
      getUsers.searchUsers(req, res, loggedInUsers)
@@ -254,7 +231,7 @@ app.get('/users/status',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, function(req, res){
     getUsers.showUsersByStatus(req, res, loggedInUsers)
-  });
+  });*/
 
 app.post('/user/signup', signup.register, function(req, res, next) {
     loggedInUsers[req.body.username] = true;
@@ -278,9 +255,9 @@ app.get('/searchAnnouncements',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, announcements.searchAnnouncements);
 
-app.post('/announcement',  function(req, res, next){
+/*app.post('/announcement',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
-  }, announcements.postAnnouncement);
+  }, announcements.postAnnouncement);*/
 
 app.get('/getPrivateMessages',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
@@ -290,9 +267,9 @@ app.get('/searchPrivateMessages',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
   }, chatPrivately.searchPrivateMessages);
 
-app.post('/privateMessage',  function(req, res, next){
+/*app.post('/privateMessage',  function(req, res, next){
     login.checkLogin(req, res, next, loggedInUsers, isTesting);
-  }, chatPrivately.postAPrivateMessage);
+  }, chatPrivately.postAPrivateMessage);*/
 
 
 app.get('/allUserProfiles',  function(req, res, next){
