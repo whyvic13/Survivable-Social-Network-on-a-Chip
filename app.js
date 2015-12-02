@@ -46,14 +46,12 @@ var storage = multer.diskStorage({
     var originalname = file.originalname;
     var extension = originalname.split(".");
     filename = req.user.username +  Date.now() + '.' + extension[extension.length-1];
-    console.log(filename);
     cb(null, filename);
   }
 });
 
 function fileFilter (req, file, cb){
   var type = file.mimetype;
-  console.log(type);
   var typeArray = type.split("/");
   if (typeArray[0] == "video" || typeArray[0] == "image") {
     cb(null, true);
@@ -132,16 +130,13 @@ app.get('/login',
 app.post('/user/login', function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     if (err) {
-      console.log(err);
       return res.json({"statusCode": 401, "message": "Unauthorized"});
     }
     if (!user) {
-      console.log("!user");
       return res.json({"statusCode": 401, "message": "Unauthorized"});
     }
     req.logIn(user, function(err) {
       if (err) {
-        console.log(err);
         return res.json({"statusCode": 401, "message": "Unauthorized"});
       }
 
@@ -151,7 +146,6 @@ app.post('/user/login', function(req, res, next) {
 }, loginProcess);
 
 app.post('/upload', upload.single('photo'), function(req, res, next) {
-  console.log("Uploaded");
   res.json({"statusCode": 200, "filename": req.file.filename, "type": req.file.mimetype});
 });
 
@@ -282,12 +276,13 @@ app.post('/updateUserProfile',  function(req, res, next){
     profile.updateUserProfile(req, res, next);
   }, function(req, res){
     if (req.accountStatusChanged) {
-      console.log(req.accountStatusChanged + " became inactive");
       io.emit('someone became inactive', {"username": req.accountStatusChanged});
     }
     if (req.body.oldUsername != req.body.newUsername) {
-      console.log(req.body.oldUsername + " became " + req.body.newUsername);
       io.emit('username changed', {"oldUsername": req.body.oldUsername, "newUsername": req.body.newUsername});
+    }
+    if (req.body.oldLevel != req.body.newLevel) {
+      io.emit('level changed', {"oldLevel": req.body.oldLevel, "newLevel": req.body.newLevel, "username": req.body.oldUsername});
     }
     res.status(200).end("User profile updated");
   });
@@ -311,16 +306,12 @@ io.on('connection', function(socket) {
   });
 
   socket.on("user join", function(data){
-    console.log("receive new user");
     loggedInUsers[data] = socket.id;
-    console.log("join: ", data);
-    console.log("socketId: ", socket.id);
     socket.broadcast.emit("user join", data);
 
   });
 
    socket.on("interupt measuring performance",function(data){
-    console.log("Receive Interupt Socket From User");
     socket.emit("interupt measuring performance",data);
     socket.broadcast.emit("stop measuring performance", data);
    });
@@ -329,7 +320,7 @@ io.on('connection', function(socket) {
     if (isTesting) {
       return;
     }
-    if (loggedInUserLevel[message.username] == "Citizen" || loggedInUserLevel[message.username] == "Coordinator"){
+    if (loggedInUserLevel[data.username] == "Citizen" || loggedInUserLevel[data.username] == "Coordinator"){
       return;
     }
     isTesting = true;

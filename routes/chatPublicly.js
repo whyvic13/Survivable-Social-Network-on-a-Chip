@@ -5,7 +5,6 @@ var commonWordsFile = path.join(__dirname, "./common-english-words.json");
 var commonWords = JSON.parse(fs.readFileSync(commonWordsFile, 'utf8'));
 
 exports.getPublicMessages = function(req, res) {
-  console.log("start time: "+req.query.start);
   if(req.query.ID <= 1){
     res.json({"statusCode": 401, "message": "No more history messages!"});
   }
@@ -14,7 +13,6 @@ exports.getPublicMessages = function(req, res) {
     db.serialize(function() {
       db.all(sqlstm, function(err, row){
         if (err) {
-          console.log(err);
           res.json({"statusCode": 400, "message": "Bad request"});
         }else{
           if(row.length !== 0){

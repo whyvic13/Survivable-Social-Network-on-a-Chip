@@ -80,7 +80,6 @@ $(document).ready(function() {
     $(this).text("Uploading");
     var formData = new FormData();
     formData.append('photo', $('#inputFile').get(0).files[0]);
-    console.log(formData);
     var request = $.ajax({
       url: "/upload",
       method: "POST",
@@ -89,7 +88,6 @@ $(document).ready(function() {
       processData: false,
       cache: false
     }).done(function(data){
-      console.log(data);
       uploadedFileName = data.filename;
       uploadedFileType = data.type;
       uploadBtn.text("Uploaded");
@@ -624,8 +622,10 @@ $(document).ready(function() {
                 '<button class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown"><span class="selection" id="accountstatus" value="'+data.accountStatus+'">'+data.accountStatus+
                 '<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#" id="accountactive">active</a></li><li><a href="#" id="accountinactive">inactive</a></li>'+
                 '</ul></div></div><div class="profile col-md-1"><button type="submit" class="btn btn-primary" id="updateprofile">Submit</button>'+
-                '</div><input style="display:none;" id="oldusername" class="form-control" value="'+data.username+'" placeholder="'+data.username+'">'+
-                '<input style="display:none;" id="oldlevel" class="form-control" value="'+data.username+'" placeholder="'+data.username+'">'
+                '</div><input style="display:none;" id="oldusername" class="form-control" value="'+data.username+
+                '" placeholder="'+data.username+'">'+
+                '<input style="display:none;" id="oldlevel" class="form-control"'+ 'value="'+data.level+
+                '" placeholder="'+data.level+'">'+
                 '<li class="divider"></li></div>');
       $('#tab6').append($html);
 
@@ -667,24 +667,49 @@ $(document).ready(function() {
         level = $(this).parents(".profile.col-md-12").find('#level').text();
         accountstatus = $(this).parents(".profile.col-md-12").find('#accountstatus').text();
         oldusername = $(this).parents(".profile.col-md-12").find('#oldusername').val();
-
+        oldlevel = $(this).parents(".profile.col-md-12").find('#oldlevel').val();
         $(this).parents(".profile.col-md-12").find('#oldusername').val(newusername);
-        //console.log(username+" "+password+" "+level+" "+accountstatus+" "+oldusername+" "+$(this).parents(".profile.col-xs-12").find('#oldusername').val());
+        $(this).parents(".profile.col-md-12").find('#oldlevel').val(level);
+
 
         $.post("/updateUserProfile", {
             oldUsername: oldusername,
             newUsername: newusername,
             password: password,
-            level: level,
+            newLevel: level,
+            oldLevel: oldlevel,
             accountStatus: accountstatus
           },
           function(response){
-            BootstrapDialog.show({
-              title: 'Update Success',
-              message: response.message
-            });
+            if(response.statusCode == 401) {
+              // refresh
+              $('#tab6').empty();
+              getAllUserProfile();
+
+              BootstrapDialog.show({
+                title: 'Update Failed',
+                message: response.message
+              });
+            }
+            else {
+
+              //console.log($(this).parents(".profile.col-md-12").find('#oldlevel').val());
+              BootstrapDialog.show({
+                title: 'Update Success',
+                message: response.message
+              });
+
+            }
+
           });
+          console.log($(this).parents(".profile.col-md-12").find('#oldusername').val()+
+          " "+$(this).parents(".profile.col-md-12").find('#oldlevel').val());
         });
+
+
+        //console.log(username+" "+password+" "+level+" "+accountstatus+" "+oldusername+" "+$(this).parents(".profile.col-xs-12").find('#oldusername').val());
+
+
   }
 
   $('#tab1toggle').click(function () {
@@ -695,7 +720,6 @@ $(document).ready(function() {
         userList = response;
 
         delete userList.statusCode;
-        console.log(userList);
         for (key in userList) {
           if (userList[key].online === 1) {
             // // Userlist-toggle append
@@ -726,57 +750,60 @@ $(document).ready(function() {
       }
     });
 
-  }); 
-    
-  // Get allUserProfiles
-  $.get("/allUserProfiles", function (response) {
-    if (response.statusCode === 200) {
-      allusers = response;
-      delete allusers.statusCode;
-      console.log(allusers);
-      allusers.data.forEach(function (value, index) {
-          if(username == value.username) {
-            privilege = value.level;
-            if(privilege == "Citizen"){
-              $('#save_action').attr('disabled','disabled');
-              $('#tab5toggle').removeAttr('data-toggle');
-              $('#tab5toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
-              $('#tab6toggle').removeAttr('data-toggle');
-              $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
-            }
-            else if(privilege == "Monitor") {
-              $('#save_action').attr('disabled','disabled');
-              $('#tab6toggle').removeAttr('data-toggle');
-              $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
-            }
-            else if(privilege == "Coordinator") {
-              $('#tab5toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
-              $('#tab5toggle').removeAttr('data-toggle');
-              $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
-              $('#tab6toggle').removeAttr('data-toggle');
-            }
-          }
-          addUserProfile({
-            username: value.username,
-            password: value.password,
-            level: value.level,
-            accountStatus: value.accountStatus
-          });
-      });
-    } else if (response.statusCode === 401) {
-      BootstrapDialog.show({
-        title: 'Alert Message',
-        message: response.message
-      });
-    } else {
-      BootstrapDialog.show({
-        title: 'Alert Message',
-        message: response.message
-      });
-    }
   });
 
- 
+  // Get allUserProfiles
+  function getAllUserProfile () {
+    $.get("/allUserProfiles", function (response) {
+      if (response.statusCode === 200) {
+        allusers = response;
+        delete allusers.statusCode;
+        allusers.data.forEach(function (value, index) {
+            if(username == value.username) {
+              privilege = value.level;
+              if(privilege == "Citizen"){
+                $('#save_action').attr('disabled','disabled');
+                $('#tab5toggle').removeAttr('data-toggle');
+                $('#tab5toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+                $('#tab6toggle').removeAttr('data-toggle');
+                $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+              }
+              else if(privilege == "Monitor") {
+                $('#save_action').attr('disabled','disabled');
+                $('#tab6toggle').removeAttr('data-toggle');
+                $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+              }
+              else if(privilege == "Coordinator") {
+                $('#tab5toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+                $('#tab5toggle').removeAttr('data-toggle');
+                $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+                $('#tab6toggle').removeAttr('data-toggle');
+              }
+            }
+            addUserProfile({
+              username: value.username,
+              password: value.password,
+              level: value.level,
+              accountStatus: value.accountStatus
+            });
+        });
+      } else if (response.statusCode === 401) {
+        BootstrapDialog.show({
+          title: 'Alert Message',
+          message: response.message
+        });
+      } else {
+        BootstrapDialog.show({
+          title: 'Alert Message',
+          message: response.message
+        });
+      }
+    });
+  }
+
+  getAllUserProfile();
+
+
 
   $("#save_action").click(function (event) {
     event.preventDefault();
@@ -1209,11 +1236,9 @@ $(document).ready(function() {
  $("#start_test_post").click(function(event) {
     /* Act on the event */
     event.preventDefault();
-    // socket.emit('block other operations');
     $('#myModal2').modal('show');
     socket.emit("start measuring performance",{username: username});
 
-    //console.log('start_test');
     var dur=parseInt($('#duration').val(),10);
 
     var postCount = 0;
@@ -1234,9 +1259,7 @@ $(document).ready(function() {
         senderStatus: userList[username].userStatus
         },
         function(response){
-        //if(response.statusCode == 200){
-        postCount++;
-        //console.log("response: "+response+" count: "+postCount);
+          postCount++;
         });
        }
 
@@ -1251,10 +1274,6 @@ $(document).ready(function() {
     postTest(dur, start);
 
     setTimeout(function() {
-
-    console.log("postCount: " + postCount);
-    console.log("reqCount: " + reqCount);
-
     if(interupt_flag==0)
     {
       var htmlDiv1 = '<div><strong> The Number of POST Requests per second is: ' + Math.round(postCount/dur) + ' /sec</strong></div><br>';
@@ -1283,8 +1302,6 @@ $("#start_test_get").click(function(event) {
     function getTest(duration, start){
     if (duration > 0 && interupt_flag == 0)
     {
-        //console.log("getCount: "+ getCount + " " + duration + " " + interupt_flag);
-
         //setTimeout for 1 second after while loop
       while ( (elapse = new Date() - start) < 1000 && interupt_flag == 0)
       {
@@ -1301,16 +1318,11 @@ $("#start_test_get").click(function(event) {
           getTest(duration - 1, start);
         }, 1000);
       }
-      // else{
-      //   console.log("Test ended: " + getCount);
-      // }
      }
 
       getTest(dur, start);
 
       setTimeout(function() {
-      console.log("getCount: " + getCount);
-      console.log("reqCount: " + reqCount);
       if( interupt_flag == 0)
       {
       var htmlDiv2 = '<div><strong> The Number of GET Requests per second is: ' + Math.round(getCount/dur) + ' /sec</strong></div><br>';
@@ -1329,7 +1341,6 @@ $("#start_test_get").click(function(event) {
 
   $("#stop_test").click(function(event) {
       interupt_flag = 1;
-      console.log("I click the stop");
       socket.emit("interupt measuring performance",{username:username});
       setTimeout(function(){
       $('#test_result').empty();
@@ -1351,8 +1362,6 @@ $("#start_test_get").click(function(event) {
 
   //interupt measure performance
   socket.on('interupt measuring performance', function (data) {
-   // $('#myModal2').modal('show');
-   // console.log("I receive the interupt socket");
    $('#test_result').empty();
    $('#duration').val('');
    $('#myModal2').modal('hide');
@@ -1416,14 +1425,12 @@ $("#start_test_get").click(function(event) {
 
   // Whenever the server emits 'user left', log it in the chat body
   socket.on('user left', function (username) {
-    console.log("user left:"+username);
     userList[username].online = false;
     updateUserList();
     updateDropDownUserList();
   })
 
   socket.on('someone became inactive', function(data) {
-    //console.log(username);
     if (username == data.username) {
       BootstrapDialog.show({
           title: 'Your account became inactive.',
@@ -1441,7 +1448,7 @@ $("#start_test_get").click(function(event) {
                   );
               }
           }]
-      });      
+      });
     }
     // for(key in userList) {
     //   if(key == data.username){
@@ -1460,7 +1467,6 @@ $("#start_test_get").click(function(event) {
       oldusername = username;
       username = data.newUsername;
       userList[username] = tmp;
-      console.log(userList);
 
       BootstrapDialog.show({
           title: 'Your account name has been changed.',
@@ -1486,24 +1492,42 @@ $("#start_test_get").click(function(event) {
           tmp = userList[key];
           delete userList[key];
           userList[data.newUsername] = tmp;
-          console.log(userList);
         }
       }
     }
     updateUserList();
   });
-  // socket.on('unblock other operations', function () {
-  //  $('#myModal2').modal('hide');
-  // });
 
-  // TODO: remove user from dropdownuserlistclick when user left room x
-  // TODO: Restructure UI for private chat (now: click on userlist, nothing happens, expected: auto move to chat private,
-  // propose: remove private chat tab, interact through user list only)
-  // TODO: search private: remove receiver field in database
-  // TODO: now word search for status also
-  // TODO: search public bug, return results not correct
-  // TODO: add 'refresh' button for private chat + search private chat
+  socket.on('level changed', function(data){
+    if (username == data.username) {
 
-  // add search by status, search by username
-  // mocha + test coverage
+      BootstrapDialog.show({
+          title: 'Your account privilege has been changed.',
+          message: "New privilege: "+data.newLevel,
+          buttons: [{
+              label: 'Confirm',
+              action: function() {
+                  //logout
+                  $.get("/user/logout", {
+                      username: username
+                    }, function (response) {
+                      socket.emit("user left", username);
+                      window.location.href = "/";
+                    }
+                  );
+              }
+          }]
+      });
+    }
+    else {
+      for(key in userList) {
+        if(key == data.oldUsername){
+          tmp = userList[key];
+          delete userList[key];
+          userList[data.newUsername] = tmp;
+        }
+      }
+    }
+    updateUserList();
+  });
 });
