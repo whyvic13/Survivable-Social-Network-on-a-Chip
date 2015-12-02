@@ -18,28 +18,73 @@ exports.getProfileList = function(req, res){
 exports.updateUserProfile = function(req, res, next){
   if (req.user.level == "Administrator") {
     if (qualifiedUsernamePassword(req.body.newUsername, req.body.password)) {
-      db.get("SELECT * FROM users WHERE username='" + req.body.newUsername + "'", function(err, row){
-        if (err) {
-          res.json({"statusCode": 500, "message": "Internal server error"});
-        }else{
-          if (!(row === undefined) && req.body.newUsername != req.body.oldUsername) {
-            res.json({"statusCode": 401, "message": "Username already existed"});
+      if (req.body.newLevel != req.body.oldLevel && req.body.oldLevel == "Administrator") {
+        db.get("SELECT COUNT(*) FROM users WHERE level='Administrator'", function(err, count){
+          if (err) {
+            console.log(err);
+            res.json({"statusCode": 400, "message": "Bad request"});
           }else{
-            var sqlstm = "UPDATE users SET username='" + req.body.newUsername + "', password='" + req.body.password + "', level='" + req.body.level + "', accountStatus='" + req.body.accountStatus + "' WHERE username='" + req.body.oldUsername + "'";
-            db.run(sqlstm, function(err){
-              if (err) {
-                res.json({"statusCode": 500, "message": "Internal server error"});
-              }else{
-                // res.status(200).json({"statusCode": 200});
-                if (req.body.accountStatus == "inactive") {
-                  req.accountStatusChanged = req.body.newUsername;
+            console.log(count);
+            if (count["COUNT(*)"] == 1) {
+              res.json({"statusCode": 401, "message": "Should be at least one administrator."});
+            }else {
+              db.get("SELECT * FROM users WHERE username='" + req.body.newUsername + "'", function(err, row){
+                if (err) {
+                  console.log(err);
+                  res.json({"statusCode": 500, "message": "Internal server error"});
+                }else{
+                  if (!(row === undefined) && req.body.newUsername != req.body.oldUsername) {
+                    res.json({"statusCode": 401, "message": "Username already existed"});
+                  }else{
+                    var sqlstm = "UPDATE users SET username='" + req.body.newUsername + "', password='" + req.body.password + "', level='" + req.body.newLevel + "', accountStatus='" + req.body.accountStatus + "' WHERE username='" + req.body.oldUsername + "'";
+                    console.log(sqlstm);
+                    db.run(sqlstm, function(err){
+                      if (err) {
+                        console.log(err);
+                        res.json({"statusCode": 500, "message": "Internal server error"});
+                      }else{
+                        // res.status(200).json({"statusCode": 200});
+                        if (req.body.accountStatus == "inactive") {
+                          req.accountStatusChanged = req.body.newUsername;
+                        }
+                        next();
+                      }
+                    });
+                  }
                 }
-                next();
-              }
-            });
+              });
+            }
+
           }
-        }
-      });
+        });
+      }else{
+        db.get("SELECT * FROM users WHERE username='" + req.body.newUsername + "'", function(err, row){
+          if (err) {
+            console.log(err);
+            res.json({"statusCode": 500, "message": "Internal server error"});
+          }else{
+            if (!(row === undefined) && req.body.newUsername != req.body.oldUsername) {
+              res.json({"statusCode": 401, "message": "Username already existed"});
+            }else{
+              var sqlstm = "UPDATE users SET username='" + req.body.newUsername + "', password='" + req.body.password + "', level='" + req.body.newLevel + "', accountStatus='" + req.body.accountStatus + "' WHERE username='" + req.body.oldUsername + "'";
+              console.log(sqlstm);
+              db.run(sqlstm, function(err){
+                if (err) {
+                  console.log(err);
+                  res.json({"statusCode": 500, "message": "Internal server error"});
+                }else{
+                  // res.status(200).json({"statusCode": 200});
+                  if (req.body.accountStatus == "inactive") {
+                    req.accountStatusChanged = req.body.newUsername;
+                  }
+                  next();
+                }
+              });
+            }
+          }
+        });
+      }
+
     }else{
       res.json({"statusCode": 401, "message": "Username or password should follow the rules"});
     }

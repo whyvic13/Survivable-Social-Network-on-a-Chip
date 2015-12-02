@@ -281,6 +281,9 @@ app.post('/updateUserProfile',  function(req, res, next){
     if (req.body.oldUsername != req.body.newUsername) {
       io.emit('username changed', {"oldUsername": req.body.oldUsername, "newUsername": req.body.newUsername});
     }
+    if (req.body.oldLevel != req.body.newLevel) {
+      io.emit('level changed', {"oldLevel": req.body.oldLevel, "newLevel": req.body.newLevel, "username": req.body.oldUsername});
+    }
     res.status(200).end("User profile updated");
   });
 

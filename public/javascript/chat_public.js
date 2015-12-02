@@ -622,7 +622,11 @@ $(document).ready(function() {
                 '<button class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown"><span class="selection" id="accountstatus" value="'+data.accountStatus+'">'+data.accountStatus+
                 '<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#" id="accountactive">active</a></li><li><a href="#" id="accountinactive">inactive</a></li>'+
                 '</ul></div></div><div class="profile col-md-1"><button type="submit" class="btn btn-primary" id="updateprofile">Submit</button>'+
-                '</div><input style="display:none;" id="oldusername" class="form-control" value="'+data.username+'" placeholder="'+data.username+'"><li class="divider"></li></div>');
+                '</div><input style="display:none;" id="oldusername" class="form-control" value="'+data.username+
+                '" placeholder="'+data.username+'">'+
+                '<input style="display:none;" id="oldlevel" class="form-control"'+ 'value="'+data.level+
+                '" placeholder="'+data.level+'">'+
+                '<li class="divider"></li></div>');
       $('#tab6').append($html);
 
       $html.find('#admin').click(function (event){
@@ -663,29 +667,54 @@ $(document).ready(function() {
         level = $(this).parents(".profile.col-md-12").find('#level').text();
         accountstatus = $(this).parents(".profile.col-md-12").find('#accountstatus').text();
         oldusername = $(this).parents(".profile.col-md-12").find('#oldusername').val();
-
+        oldlevel = $(this).parents(".profile.col-md-12").find('#oldlevel').val();
         $(this).parents(".profile.col-md-12").find('#oldusername').val(newusername);
-        //console.log(username+" "+password+" "+level+" "+accountstatus+" "+oldusername+" "+$(this).parents(".profile.col-xs-12").find('#oldusername').val());
+        $(this).parents(".profile.col-md-12").find('#oldlevel').val(level);
+
 
         $.post("/updateUserProfile", {
             oldUsername: oldusername,
             newUsername: newusername,
             password: password,
-            level: level,
+            newLevel: level,
+            oldLevel: oldlevel,
             accountStatus: accountstatus
           },
           function(response){
-            BootstrapDialog.show({
-              title: 'Update Success',
-              message: response.message
-            });
+            if(response.statusCode == 401) {
+              // refresh
+              $('#tab6').empty();
+              getAllUserProfile();
+
+              BootstrapDialog.show({
+                title: 'Update Failed',
+                message: response.message
+              });
+            }
+            else {
+
+              //console.log($(this).parents(".profile.col-md-12").find('#oldlevel').val());
+              BootstrapDialog.show({
+                title: 'Update Success',
+                message: response.message
+              });
+
+            }
+
           });
+          console.log($(this).parents(".profile.col-md-12").find('#oldusername').val()+
+          " "+$(this).parents(".profile.col-md-12").find('#oldlevel').val());
         });
+
+
+        //console.log(username+" "+password+" "+level+" "+accountstatus+" "+oldusername+" "+$(this).parents(".profile.col-xs-12").find('#oldusername').val());
+
+
   }
 
   $('#tab1toggle').click(function () {
     $userlist.empty();
-    
+
     $.get("/users", function (response) {
       if (response.statusCode === 200) {
         userList = response;
@@ -721,56 +750,60 @@ $(document).ready(function() {
       }
     });
 
-  }); 
-    
-  // Get allUserProfiles
-  $.get("/allUserProfiles", function (response) {
-    if (response.statusCode === 200) {
-      allusers = response;
-      delete allusers.statusCode;
-      allusers.data.forEach(function (value, index) {
-          if(username == value.username) {
-            privilege = value.level;
-            if(privilege == "Citizen"){
-              $('#save_action').attr('disabled','disabled');
-              $('#tab5toggle').removeAttr('data-toggle');
-              $('#tab5toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
-              $('#tab6toggle').removeAttr('data-toggle');
-              $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
-            }
-            else if(privilege == "Monitor") {
-              $('#save_action').attr('disabled','disabled');
-              $('#tab6toggle').removeAttr('data-toggle');
-              $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
-            }
-            else if(privilege == "Coordinator") {
-              $('#tab5toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
-              $('#tab5toggle').removeAttr('data-toggle');
-              $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
-              $('#tab6toggle').removeAttr('data-toggle');
-            }
-          }
-          addUserProfile({
-            username: value.username,
-            password: value.password,
-            level: value.level,
-            accountStatus: value.accountStatus
-          });
-      });
-    } else if (response.statusCode === 401) {
-      BootstrapDialog.show({
-        title: 'Alert Message',
-        message: response.message
-      });
-    } else {
-      BootstrapDialog.show({
-        title: 'Alert Message',
-        message: response.message
-      });
-    }
   });
 
- 
+  // Get allUserProfiles
+  function getAllUserProfile () {
+    $.get("/allUserProfiles", function (response) {
+      if (response.statusCode === 200) {
+        allusers = response;
+        delete allusers.statusCode;
+        allusers.data.forEach(function (value, index) {
+            if(username == value.username) {
+              privilege = value.level;
+              if(privilege == "Citizen"){
+                $('#save_action').attr('disabled','disabled');
+                $('#tab5toggle').removeAttr('data-toggle');
+                $('#tab5toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+                $('#tab6toggle').removeAttr('data-toggle');
+                $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+              }
+              else if(privilege == "Monitor") {
+                $('#save_action').attr('disabled','disabled');
+                $('#tab6toggle').removeAttr('data-toggle');
+                $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+              }
+              else if(privilege == "Coordinator") {
+                $('#tab5toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+                $('#tab5toggle').removeAttr('data-toggle');
+                $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+                $('#tab6toggle').removeAttr('data-toggle');
+              }
+            }
+            addUserProfile({
+              username: value.username,
+              password: value.password,
+              level: value.level,
+              accountStatus: value.accountStatus
+            });
+        });
+      } else if (response.statusCode === 401) {
+        BootstrapDialog.show({
+          title: 'Alert Message',
+          message: response.message
+        });
+      } else {
+        BootstrapDialog.show({
+          title: 'Alert Message',
+          message: response.message
+        });
+      }
+    });
+  }
+
+  getAllUserProfile();
+
+
 
   $("#save_action").click(function (event) {
     event.preventDefault();
@@ -1446,6 +1479,39 @@ $("#start_test_get").click(function(event) {
                       username: oldusername
                     }, function (response) {
                       socket.emit("user left", oldusername);
+                      window.location.href = "/";
+                    }
+                  );
+              }
+          }]
+      });
+    }
+    else {
+      for(key in userList) {
+        if(key == data.oldUsername){
+          tmp = userList[key];
+          delete userList[key];
+          userList[data.newUsername] = tmp;
+        }
+      }
+    }
+    updateUserList();
+  });
+
+  socket.on('level changed', function(data){
+    if (username == data.username) {
+
+      BootstrapDialog.show({
+          title: 'Your account privilege has been changed.',
+          message: "New privilege: "+data.newLevel,
+          buttons: [{
+              label: 'Confirm',
+              action: function() {
+                  //logout
+                  $.get("/user/logout", {
+                      username: username
+                    }, function (response) {
+                      socket.emit("user left", username);
                       window.location.href = "/";
                     }
                   );
