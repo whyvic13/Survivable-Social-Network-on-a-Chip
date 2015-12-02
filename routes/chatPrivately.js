@@ -21,8 +21,6 @@ function inserMessageSql(sender, receiver, message, senderStatus, timestamp, typ
 }*/
 
 exports.insertMessage = function(sender, receiver, message, senderStatus, timestamp, type){
-  console.log("s: ",sender);
-  console.log("r: ",receiver);
   inserMessageSql(sender, receiver, message, senderStatus, timestamp, type);
 }
 
@@ -33,7 +31,6 @@ exports.getPrivateMessagesBetween = function(req, res){
   db.serialize(function() {
     db.all(sqlstm, function(err, row){
       if (err) {
-        console.log(err);
         res.json({"statusCode": 400, "message": "Bad request"});
         return;
       }else{
@@ -83,13 +80,11 @@ exports.searchPrivateMessages = function(req, res) {
   db.serialize(function() {
     db.all(sqlstm, function(err, row){
       if (err) {
-        console.log(err);
         res.json({"statusCode": 400, "message": "Bad request"});
         return;
       }else{
         if(row.length !== 0){
           //row.reverse();
-          console.log(row);
           //console.log(row[0].timestamp);
           res.status(200).json({"statusCode": 200, "data": row});
         }

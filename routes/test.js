@@ -11,18 +11,14 @@ var limit = 1000;
 /* istanbul ignore next */
 exports.startFromAPI = function(req, res, next) {
   var sqlstm = "SELECT * FROM publicChatTest";
-  console.log(sqlstm);
   db.all(sqlstm, function(err, row){
     if (err) {
-      console.log(err);
       res.json({"statusCode": 400, "message": "Bad request"});
     }else{
-      console.log(row);
       numberOfPosts = row.length;
       if (row.length > limit) {
         deleteAllData();
       }
-      console.log(numberOfPosts);
       next();
     }
   });
@@ -31,18 +27,14 @@ exports.startFromAPI = function(req, res, next) {
 /* istanbul ignore next */
 exports.startFromSocket = function() {
   var sqlstm = "SELECT * FROM publicChatTest";
-  console.log(sqlstm);
   db.all(sqlstm, function(err, row){
     if (err) {
-      console.log(err);
       return -1;
     }else{
-      console.log(row);
       numberOfPosts = row.length;
       if (row.length > limit) {
         deleteAllData();
       }
-      console.log(numberOfPosts);
       return numberOfPosts;
     }
   });

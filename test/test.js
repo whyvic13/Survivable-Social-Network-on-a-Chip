@@ -285,7 +285,6 @@ it('should response 401, wrong password', function(done) {
           .post('/user/login')
           .send({"username":"aaaa", "password":"dsalgj"})
           .expect(function (response) {
-            console.log(response.body);
             assert.equal(200, response.body.statusCode);
           })
           .end(done);
