@@ -687,10 +687,13 @@ $(document).ready(function() {
 
   $('#tab1toggle').click(function () {
     $userlist.empty();
+    
     $.get("/users", function (response) {
       if (response.statusCode === 200) {
         userList = response;
+
         delete userList.statusCode;
+        console.log(userList);
         for (key in userList) {
           if (userList[key].online === 1) {
             // // Userlist-toggle append
