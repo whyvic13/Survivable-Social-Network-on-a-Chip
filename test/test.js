@@ -334,7 +334,8 @@ it('should respond 200, successful update user profile', function(done) {
         .send({"oldUsername":"aaaa",
               "password":"aaaa",
               "newUsername":"aaaaa",
-              "level":"Citizen",
+              "oldLevel":"Citizen",
+              "newLevel":"Citizen",
               "accountStatus":"active"})
         .expect(200)
         .end(done);
