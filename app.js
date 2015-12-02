@@ -329,7 +329,7 @@ io.on('connection', function(socket) {
     if (isTesting) {
       return;
     }
-    if (loggedInUserLevel[message.username] == "Citizen" || loggedInUserLevel[message.username] == "Coordinator"){
+    if (loggedInUserLevel[data.username] == "Citizen" || loggedInUserLevel[data.username] == "Coordinator"){
       return;
     }
     isTesting = true;

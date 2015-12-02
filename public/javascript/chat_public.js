@@ -1343,6 +1343,7 @@ $("#start_test_get").click(function(event) {
 
   //measure performance end normally
   socket.on('stop measuring performance', function (data) {
+    console.log("Click");
    $('#myModal').modal('hide');
    $('#myModal2').modal('hide');
   });
