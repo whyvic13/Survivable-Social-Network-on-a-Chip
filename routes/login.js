@@ -45,6 +45,7 @@ exports.findByUsername = function(username, cb) {
 }
 
 exports.checkLogin = function(req, res, next, loggedInUsers, isTesting) {
+  console.log(req.user);
   if (req.user && loggedInUsers[req.user.username] && req.user.accountStatus == "active") {
     if (isTesting) {
       res.json({"statusCode": 401, "message": "Test is running."});

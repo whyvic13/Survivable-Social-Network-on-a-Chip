@@ -74,11 +74,12 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="#sidebar-wrapper" data-toggle="tab">Users</a></li>
-          <li><a href="#tab2" data-toggle="tab">Public</a></li>
-          <li><a href="#tab3" data-toggle="tab">Private</a></li>
-          <li><a href="#tab4" data-toggle="tab">Announcement</a></li>
-          <li><a href="#tab5" data-toggle="tab">Perform</a></li>
+          <li class="active"><a id="tab1toggle" href="#sidebar-wrapper" data-toggle="tab">Users</a></li>
+          <li><a id="tab2toggle" href="#tab2" data-toggle="tab">Public</a></li>
+          <li><a id="tab3toggle" href="#tab3" data-toggle="tab">Private</a></li>
+          <li><a id="tab4toggle" href="#tab4" data-toggle="tab">Announcement</a></li>
+          <li><a id="tab5toggle" href="#tab5" data-toggle="tab">Perform</a></li>
+          <li><a id="tab6toggle" href="#tab6" data-toggle="tab">Profile</a></li>
           <li class="dropdown">
             <a href="#" data-toggle="dropdown" id="status-toggle">Status<span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
@@ -437,22 +438,28 @@
       <div class="tab-pane fade" id="tab5">
         <div class="well performace-box">
           <div class="form-group">
-	    <label>Duration</label>
-	    <div class="input-group">
-	      <input id="duration" placeholder="Duration time in sec" type="text" class="form-control"><span class="input-group-addon">seconds</span>
+    	    <label>Duration</label>
+    	    <div class="input-group">
+    	      <input id="duration" placeholder="Duration time in sec" type="text" class="form-control"><span class="input-group-addon">seconds</span>
+                </div>
+              </div>
+              <div class="form-group text-center">
+    	       <button id="start_test_post"class="btn btn-primary ">TEST POST</button>
+             <button id="start_test_get"class="btn btn-primary ">TEST GET</button>
+    	       <button id="clean_test"class="btn btn-danger ">CLEAN</button>
+              </div>
+            <div class="list-group" id="test_result">
+              <br>
             </div>
           </div>
-          <div class="form-group text-center">
-	       <button id="start_test_post"class="btn btn-primary ">TEST POST</button>
-         <button id="start_test_get"class="btn btn-primary ">TEST GET</button>
-	       <button id="clean_test"class="btn btn-danger ">CLEAN</button>
-          </div>
-        <div class="list-group" id="test_result">
-          <br>
         </div>
-      </div>
+
+
+        <div class="tab-pane fade" id="tab6">
+
+        </div>
     </div>
-  </div>
+    
 
 
   <script src="javascript/jquery.min.js"></script>

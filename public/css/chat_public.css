@@ -11,6 +11,20 @@ body {
   background-color: #fff;
 }
 
+.profile {
+  margin-bottom: 15px;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.divider {
+  height: 1px;
+  width:100%;
+  display:block; /* for use on default inline elements like span */
+  margin: 9px 0;
+  overflow: hidden;
+  background-color: #ccc;
+}
 
 .text-center {
   padding-top: 25px;

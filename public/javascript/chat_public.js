@@ -608,6 +608,170 @@ $(document).ready(function() {
   });
 
 
+  function addUserProfile(data) {
+      var $html = $('<div class="profile col-md-12"><div class="profile col-md-3"><div class="input-group">'+
+                  '<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>'+
+                  '<input id="username" class="form-control" name="email" value="'+data.username+'" placeholder="'+data.username+
+                  '"></div></div><div class="profile col-md-3"><div class="input-group"><span class="input-group-addon">'+
+                  '<i class="glyphicon glyphicon-lock"></i></span>'+
+                  '<input id="password" class="form-control" name="password" value="'+data.password+'" placeholder="'+data.password+
+                  '"></div></div><div class="profile col-md-3"><div class="dropdown">'+
+                '<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="selection" id="level" value="'+data.level+'">'+data.level+
+                '<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#" id="admin">Administrator</a></li><li><a href="#" id="citizen">Citizen</a></li>'+
+                 '<li><a href="#" id="coord">Coordinator</a></li><li><a href="#" id="monitor">Monitor</a></li></ul></div></div>'+
+                '<div class="profile col-md-2"><div class="dropdown">'+
+                '<button class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown"><span class="selection" id="accountstatus" value="'+data.accountStatus+'">'+data.accountStatus+
+                '<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#" id="accountactive">active</a></li><li><a href="#" id="accountinactive">inactive</a></li>'+
+                '</ul></div></div><div class="profile col-md-1"><button type="submit" class="btn btn-primary" id="updateprofile">Submit</button>'+
+                '</div><input style="display:none;" id="oldusername" class="form-control" value="'+data.username+'" placeholder="'+data.username+'"><li class="divider"></li></div>');
+      $('#tab6').append($html);
+
+      $html.find('#admin').click(function (event){
+        event.preventDefault();
+        $(this).parents(".dropdown").find('.selection').html($(this).text()+'<span class="caret"></span>');
+        $(this).parents(".dropdown").find('.selection').val($(this).text());
+      });
+      $html.find('#citizen').click(function (event){
+        event.preventDefault();
+        $(this).parents(".dropdown").find('.selection').html($(this).text()+'<span class="caret"></span>');
+        $(this).parents(".dropdown").find('.selection').val($(this).text());
+      });
+      $html.find('#monitor').click(function (event){
+        event.preventDefault();
+        $(this).parents(".dropdown").find('.selection').html($(this).text()+'<span class="caret"></span>');
+        $(this).parents(".dropdown").find('.selection').val($(this).text());
+      });
+      $html.find('#coord').click(function (event){
+        event.preventDefault();
+        $(this).parents(".dropdown").find('.selection').html($(this).text()+'<span class="caret"></span>');
+        $(this).parents(".dropdown").find('.selection').val($(this).text());
+      });
+      $html.find('#accountactive').click(function (event){
+        event.preventDefault();
+        $(this).parents(".dropdown").find('.selection').html($(this).text()+'<span class="caret"></span>');
+        $(this).parents(".dropdown").find('.selection').val($(this).text());
+      });
+      $html.find('#accountinactive').click(function (event){
+        event.preventDefault();
+        $(this).parents(".dropdown").find('.selection').html($(this).text()+'<span class="caret"></span>');
+        $(this).parents(".dropdown").find('.selection').val($(this).text());
+      });
+
+      $html.find('#updateprofile').click(function(event) {
+        event.preventDefault();
+        newusername = $(this).parents(".profile.col-md-12").find('#username').val();
+        password = $(this).parents(".profile.col-md-12").find('#password').val();
+        level = $(this).parents(".profile.col-md-12").find('#level').text();
+        accountstatus = $(this).parents(".profile.col-md-12").find('#accountstatus').text();
+        oldusername = $(this).parents(".profile.col-md-12").find('#oldusername').val();
+
+        $(this).parents(".profile.col-md-12").find('#oldusername').val(newusername);
+        //console.log(username+" "+password+" "+level+" "+accountstatus+" "+oldusername+" "+$(this).parents(".profile.col-xs-12").find('#oldusername').val());
+
+        $.post("/updateUserProfile", {
+            oldUsername: oldusername,
+            newUsername: newusername,
+            password: password,
+            level: level,
+            accountStatus: accountstatus
+          },
+          function(response){
+            BootstrapDialog.show({
+              title: 'Update Success',
+              message: response.message
+            });
+          });
+        });
+  }
+
+  $('#tab1toggle').click(function () {
+    $userlist.empty();
+    $.get("/users", function (response) {
+      if (response.statusCode === 200) {
+        userList = response;
+        delete userList.statusCode;
+        for (key in userList) {
+          if (userList[key].online === 1) {
+            // // Userlist-toggle append
+            // setDropdownUserlistClick(key);
+
+            userList[key].online = true;
+
+            // Add online user first
+            addUserList(key, true, userList[key].userStatus);
+          } else {
+            userList[key].online = false;
+          }
+        }
+
+        // Then add offline user
+        for (key in userList) {
+          if (userList[key].online === false) {
+            addUserList(key, false, userList[key].userStatus);
+          }
+        }
+        // Userlist-toggle append
+        updateDropDownUserList();
+      } else {
+        BootstrapDialog.show({
+          title: 'Alert Message',
+          message: "Bad database request."
+        });
+      }
+    });
+
+  }); 
+    
+  // Get allUserProfiles
+  $.get("/allUserProfiles", function (response) {
+    if (response.statusCode === 200) {
+      allusers = response;
+      delete allusers.statusCode;
+      console.log(allusers);
+      allusers.data.forEach(function (value, index) {
+          if(username == value.username) {
+            privilege = value.level;
+            if(privilege == "Citizen"){
+              $('#save_action').attr('disabled','disabled');
+              $('#tab5toggle').removeAttr('data-toggle');
+              $('#tab5toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+              $('#tab6toggle').removeAttr('data-toggle');
+              $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+            }
+            else if(privilege == "Monitor") {
+              $('#save_action').attr('disabled','disabled');
+              $('#tab6toggle').removeAttr('data-toggle');
+              $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+            }
+            else if(privilege == "Coordinator") {
+              $('#tab5toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+              $('#tab5toggle').removeAttr('data-toggle');
+              $('#tab6toggle').attr('style','color:rgba(153, 153, 153, 0.79)');
+              $('#tab6toggle').removeAttr('data-toggle');
+            }
+          }
+          addUserProfile({
+            username: value.username,
+            password: value.password,
+            level: value.level,
+            accountStatus: value.accountStatus
+          });
+      });
+    } else if (response.statusCode === 401) {
+      BootstrapDialog.show({
+        title: 'Alert Message',
+        message: response.message
+      });
+    } else {
+      BootstrapDialog.show({
+        title: 'Alert Message',
+        message: response.message
+      });
+    }
+  });
+
+ 
+
   $("#save_action").click(function (event) {
     event.preventDefault();
     var announcement = $announcement_message.val().trim();
@@ -1246,10 +1410,82 @@ $("#start_test_get").click(function(event) {
 
   // Whenever the server emits 'user left', log it in the chat body
   socket.on('user left', function (username) {
+    console.log("user left:"+username);
     userList[username].online = false;
     updateUserList();
     updateDropDownUserList();
   })
+
+  socket.on('someone became inactive', function(data) {
+    //console.log(username);
+    if (username == data.username) {
+      BootstrapDialog.show({
+          title: 'Your account became inactive.',
+          message: "",
+          buttons: [{
+              label: 'Confirm',
+              action: function() {
+                  //logout
+                  $.get("/user/logout", {
+                      username: username
+                    }, function (response) {
+                      socket.emit("user left", username);
+                      window.location.href = "/";
+                    }
+                  );
+              }
+          }]
+      });      
+    }
+    // for(key in userList) {
+    //   if(key == data.username){
+    //     tmp = userList[key];
+    //     delete userList[key];
+    //     console.log(userList);
+    //   }
+    // }
+    // updateUserList();
+  });
+
+  socket.on('username changed', function(data){
+    if (username == data.oldUsername) {
+      tmp = userList[username];
+      delete userList[username];
+      oldusername = username;
+      username = data.newUsername;
+      userList[username] = tmp;
+      console.log(userList);
+
+      BootstrapDialog.show({
+          title: 'Your account name has been changed.',
+          message: "New username:"+username,
+          buttons: [{
+              label: 'Confirm',
+              action: function() {
+                  //logout
+                  $.get("/user/logout", {
+                      username: oldusername
+                    }, function (response) {
+                      socket.emit("user left", oldusername);
+                      window.location.href = "/";
+                    }
+                  );
+              }
+          }]
+      });
+    }
+    else {
+      for(key in userList) {
+        if(key == data.oldUsername){
+          tmp = userList[key];
+          delete userList[key];
+          userList[data.newUsername] = tmp;
+          console.log(userList);
+        }
+      }
+    }
+    updateUserList();
+  });
   // socket.on('unblock other operations', function () {
   //  $('#myModal2').modal('hide');
   // });
