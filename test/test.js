@@ -288,7 +288,7 @@ it('get all user profile: should return status code 200', function(done) {
 
 
 
-it('search private messages: should return status code 401', function(done) {
+it('get all user profile: should return status code 401', function(done) {
   var agent = require('supertest').agent(app);
 
   agent
@@ -296,6 +296,7 @@ it('search private messages: should return status code 401', function(done) {
     .expect(401)
     .end(done);
 });
+
 
 
 it('should response 401, wrong password', function(done) {
@@ -317,6 +318,28 @@ it('should response 401, wrong password', function(done) {
           .end(done);
         });
     });
+
+
+
+
+it('should respond 200, successful update user profile', function(done) {
+  var agent = require('supertest').agent(app);
+
+  agent
+    .post('/user/signup')
+    .send({"username":"SSNAdmin", "password":"admin"})
+    .expect(200, function() {
+      agent
+        .post('/updateUserProfile')
+        .send({"oldUsername":"aaaa",
+              "password":"aaaa",
+              "newUsername":"aaaaa",
+              "level":"Citizen",
+              "accountStatus":"active"})
+        .expect(200)
+        .end(done);
+    });
+});
 
 
 
