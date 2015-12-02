@@ -624,7 +624,9 @@ $(document).ready(function() {
                 '<button class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown"><span class="selection" id="accountstatus" value="'+data.accountStatus+'">'+data.accountStatus+
                 '<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#" id="accountactive">active</a></li><li><a href="#" id="accountinactive">inactive</a></li>'+
                 '</ul></div></div><div class="profile col-md-1"><button type="submit" class="btn btn-primary" id="updateprofile">Submit</button>'+
-                '</div><input style="display:none;" id="oldusername" class="form-control" value="'+data.username+'" placeholder="'+data.username+'"><li class="divider"></li></div>');
+                '</div><input style="display:none;" id="oldusername" class="form-control" value="'+data.username+'" placeholder="'+data.username+'">'+
+                '<input style="display:none;" id="oldlevel" class="form-control" value="'+data.username+'" placeholder="'+data.username+'">'
+                '<li class="divider"></li></div>');
       $('#tab6').append($html);
 
       $html.find('#admin').click(function (event){
@@ -687,7 +689,7 @@ $(document).ready(function() {
 
   $('#tab1toggle').click(function () {
     $userlist.empty();
-    
+
     $.get("/users", function (response) {
       if (response.statusCode === 200) {
         userList = response;
