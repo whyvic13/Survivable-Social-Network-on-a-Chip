@@ -19,10 +19,9 @@ var init = function(callback) {
         var sqlstm = "SELECT * FROM users WHERE username='SSNAdmin'";
         db.get(sqlstm, function(err, row){
           if (err) {
-            console.log(err);
+            //console.log(err);
           } else {
             if (!row) {
-              console.log("Not found");
               db.run("INSERT into users (username, password, level, userStatus) VALUES (?, ?, ?, ?)", "SSNAdmin", "admin", "Administrator", "OK");
             }
           }
@@ -39,9 +38,7 @@ var init = function(callback) {
 
 
 var configure = function(filename) {
-  console.log("configuring db..");
   db = new sqlite3.Database(filename, function(err) {
-    console.log("error is " + err);
   	if (!err) {
   		init();
   	}

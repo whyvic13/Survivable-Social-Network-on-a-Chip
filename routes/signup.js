@@ -47,15 +47,11 @@ function response(req, res, statusCode, username, mess, next) {
 function checkUserExisted(req, res, username, password, next) {
 	db.serialize(function() {
 		if (db.existed) {
-			console.log("querying");
 			db.get("SELECT * FROM users WHERE username='" + username +"'", function(err, row) {
-				console.log("on result");
 				if (err) {
 					response(req, res, 500, username, "Internal server error", next);
 					return;
 				}
-
-				console.log(row);
 
 				if (row === undefined) { // empty result
 					db.run("INSERT into users (username, password) VALUES (?, ?)",
