@@ -6,13 +6,10 @@ var commonWords = JSON.parse(fs.readFileSync(commonWordsFile, 'utf8'));
 
 exports.getAnnouncements = function(req, res) {
   var sqlstm = "SELECT * FROM announcements";
-  console.log(sqlstm);
   db.all(sqlstm, function(err, row){
     if (err) {
-      console.log(err);
       res.json({"statusCode": 400, "message": "Bad request"});
     }else{
-      console.log(row);
       res.status(200).json({"statusCode": 200, "data": row});
     }
   });
@@ -29,7 +26,6 @@ exports.insertAnnoucement = function(message, sender, timestamp){
 
 function insertAnnoucementSql(message, sender, timestamp){
   var sqlstm = "INSERT INTO announcements (message, sender, timestamp) VALUES (?, ?, ?)";
-  console.log(sqlstm);
   if (!timestamp) {
     timestamp = Math.floor(Date.now() / 1000);
   }

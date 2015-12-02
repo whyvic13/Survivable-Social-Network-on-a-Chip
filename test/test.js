@@ -271,6 +271,33 @@ it('search private messages: should return status code 401', function(done) {
 });
 
 
+
+it('get all user profile: should return status code 200', function(done) {
+  var agent = require('supertest').agent(app);
+
+  agent
+    .post('/user/signup')
+    .send({"username":"aaaa", "password":"aaaa"})
+    .expect(200, function() {
+      agent
+        .get('/allUserProfiles')
+        .expect(200)
+        .end(done);
+    });
+});
+
+
+
+it('search private messages: should return status code 401', function(done) {
+  var agent = require('supertest').agent(app);
+
+  agent
+    .get('/allUserProfiles')
+    .expect(401)
+    .end(done);
+});
+
+
 it('should response 401, wrong password', function(done) {
   var request = require('supertest');
   var express = require('express');
@@ -389,6 +416,7 @@ it('should send private message to user2', function(done) {
     });
   });
 });
+
 
 
 it('should send announcement to other users', function(done) {

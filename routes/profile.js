@@ -1,46 +1,33 @@
 var fs = require('fs');
-var sqlite3 = require('sqlite3').verbose();
-var dbfile = "database.db";
+var db = require('./database');
 var path = require('path');
-var dbFile = path.join(__dirname, "./database.db");
-var db = new sqlite3.Database(dbFile);
 
 exports.getProfileList = function(req, res){
-  // if (req.user.level == "Administrator") {
   var sqlstm = "SELECT username, password, level, accountStatus FROM users";
-  console.log(sqlstm);
-  db.all(sqlstm, function(err, rows){
-    if (err) {
-      console.log(err);
-      res.json({"statusCode": 400, "message": "Bad request"});
-    }else{
-      console.log(rows);
-      res.status(200).json({"statusCode": 200, "data": rows});
-    }
+  db.serialize(function() {
+    db.all(sqlstm, function(err, rows){
+      if (err) {
+        res.json({"statusCode": 400, "message": "Bad request"});
+      }else{
+        res.status(200).json({"statusCode": 200, "data": rows});
+      }
+    });
   });
-  // }else {
-  //   console.log(req.user.level);
-  //   res.status(401).json({"statusCode": 401, "message": "Unauthorized"});
-  // }
 }
 
 exports.updateUserProfile = function(req, res, next){
-  console.log(req.user.level);
   if (req.user.level == "Administrator") {
     if (qualifiedUsernamePassword(req.body.newUsername, req.body.password)) {
       db.get("SELECT * FROM users WHERE username='" + req.body.newUsername + "'", function(err, row){
         if (err) {
-          console.log(err);
           res.json({"statusCode": 500, "message": "Internal server error"});
         }else{
           if (!(row === undefined) && req.body.newUsername != req.body.oldUsername) {
             res.json({"statusCode": 401, "message": "Username already existed"});
           }else{
             var sqlstm = "UPDATE users SET username='" + req.body.newUsername + "', password='" + req.body.password + "', level='" + req.body.level + "', accountStatus='" + req.body.accountStatus + "' WHERE username='" + req.body.oldUsername + "'";
-            console.log(sqlstm);
             db.run(sqlstm, function(err){
               if (err) {
-                console.log(err);
                 res.json({"statusCode": 500, "message": "Internal server error"});
               }else{
                 // res.status(200).json({"statusCode": 200});
