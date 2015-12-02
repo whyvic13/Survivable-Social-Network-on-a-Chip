@@ -1,7 +1,5 @@
 var path = require('path');
-var dbFile = path.join(__dirname, "./database.db");
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(dbFile);
+var db = require('./database');
 var fs = require('fs');
 var commonWordsFile = path.join(__dirname, "./common-english-words.json");
 var commonWords = JSON.parse(fs.readFileSync(commonWordsFile, 'utf8'));
@@ -13,29 +11,26 @@ exports.getPublicMessages = function(req, res) {
   }
   else{
     var sqlstm = "SELECT * FROM publicChat WHERE timestamp <= " + req.query.start + " AND id < "+req.query.ID+" ORDER BY id DESC LIMIT 20";
-    console.log(sqlstm);
-
-    db.all(sqlstm, function(err, row){
-      if (err) {
-        console.log(err);
-        res.json({"statusCode": 400, "message": "Bad request"});
-      }else{
-        if(row.length !== 0){
-          row.reverse();
-          console.log(row);
-          console.log(row[0].timestamp);
-          res.status(200).json({"statusCode": 200, "data": row, "newtime": row[0].timestamp, "newID": row[0].id});
+    db.serialize(function() {
+      db.all(sqlstm, function(err, row){
+        if (err) {
+          console.log(err);
+          res.json({"statusCode": 400, "message": "Bad request"});
+        }else{
+          if(row.length !== 0){
+            row.reverse();
+            res.status(200).json({"statusCode": 200, "data": row, "newtime": row[0].timestamp, "newID": row[0].id});
+          }
+          else{
+            res.json({"statusCode": 401, "message": "No history messages!"});
+          }
         }
-        else{
-          res.json({"statusCode": 401, "message": "No history messages!"});
-        }
-      }
+      });
     });
   }
 }
 
 exports.searchPublicMessages = function(req, res) {
-
   var keywords = req.query.keywords;
   var words = keywords.split(' ');
   var stop = true;
@@ -70,23 +65,19 @@ exports.searchPublicMessages = function(req, res) {
 
   sqlstm = sqlstm + wordsToSql + ") AND id < " + req.query.id + " COLLATE NOCASE ORDER BY id DESC LIMIT 10"
 
-  console.log(sqlstm);
-
-  db.all(sqlstm, function(err, row){
-    if (err) {
-      console.log(err);
-      res.json({"statusCode": 400, "message": "Bad request"});
-      return;
-    }else{
-      if(row.length !== 0){
-        //row.reverse();
-        console.log(row);
-        //console.log(row[0].timestamp);
-        res.status(200).json({"statusCode": 200, "data": row});
+  db.serialize(function() {
+    db.all(sqlstm, function(err, row){
+      if (err) {
+        res.json({"statusCode": 400, "message": "Bad request"});
+        return;
+      }else{
+        if(row.length !== 0){
+          res.status(200).json({"statusCode": 200, "data": row});
+        }
+        else{
+          res.json({"statusCode": 401, "message": "No matched results"});
+        }
       }
-      else{
-        res.json({"statusCode": 401, "message": "No matched results"});
-      }
-    }
+    });
   });
 }

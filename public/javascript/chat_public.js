@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  //var io = require('socket.io-client');
   var socket = io.connect();
   var $public_post = $("#btn-chat");
   var $public_message = $("#btn-input");

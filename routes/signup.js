@@ -2,11 +2,8 @@
 // Checks if the user existed and returns a success/error code
 
 var fs = require('fs');
-var sqlite3 = require('sqlite3').verbose();
 var path = require('path');
-var dbfile = path.join(__dirname, "./database.db");
-
-var db = new sqlite3.Database(dbfile);
+var db = require('./database');
 
 var bannedUsersDict = {}; // a dictionary of banned users
 parseBannedUsers();
@@ -17,8 +14,6 @@ parseBannedUsers();
 exports.register = function(req, res, next) {
 	var username = req.body.username;
 	var password = req.body.password;
-	//console.log(username);
-	//console.log(password);
 	if (!qualifiedUsernamePassword(username, password)) {
 		response(req, res, 401, username, "Username and/or password does not meet requirements", next);
 	} else {
@@ -51,12 +46,16 @@ function response(req, res, statusCode, username, mess, next) {
 // var loggedInUsers = {}; // for unit test only, delete when intergrate
 function checkUserExisted(req, res, username, password, next) {
 	db.serialize(function() {
-		if (dbExisted) {
+		if (db.existed) {
+			console.log("querying");
 			db.get("SELECT * FROM users WHERE username='" + username +"'", function(err, row) {
+				console.log("on result");
 				if (err) {
 					response(req, res, 500, username, "Internal server error", next);
 					return;
 				}
+
+				console.log(row);
 
 				if (row === undefined) { // empty result
 					db.run("INSERT into users (username, password) VALUES (?, ?)",
@@ -65,8 +64,6 @@ function checkUserExisted(req, res, username, password, next) {
 						req.statusCode = 201;
 						next();
 				} else if (row.password === password) {
-					// loggedInUsers[username] = true;
-					// response(req, res, 200, username, "OK", next);
 					req.statusCode = 200;
 					next();
 				} else {
@@ -75,7 +72,6 @@ function checkUserExisted(req, res, username, password, next) {
 			});
 		} else {
 			response(req, res, 500, username, "Internal server error", next);
-			//console.log("database not existed");
 		}
 	});
 }

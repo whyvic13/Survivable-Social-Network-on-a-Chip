@@ -1,7 +1,5 @@
 var path = require('path');
-var dbFile = path.join(__dirname, "./database.db");
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(dbFile);
+var db = require('./database');
 var fs = require('fs');
 var commonWordsFile = path.join(__dirname, "./common-english-words.json");
 var commonWords = JSON.parse(fs.readFileSync(commonWordsFile, 'utf8'));
@@ -20,10 +18,10 @@ exports.getAnnouncements = function(req, res) {
   });
 }
 
-exports.postAnnouncement = function(req, res) {
+/*exports.postAnnouncement = function(req, res) {
   insertAnnoucementSql(req.body.message, req.body.sender, req.body.timestamp);
   res.status(200).json({"statusCode": 200});
-}
+}*/
 
 exports.insertAnnoucement = function(message, sender, timestamp){
   insertAnnoucementSql(message, sender, timestamp);
