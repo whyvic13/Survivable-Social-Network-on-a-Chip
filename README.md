@@ -1,1 +1,2 @@
-# FSE-F15-SA4-SSNoC
+# Survivable-Social-Network-on-a-Chip
+
